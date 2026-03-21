@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WoW Item Level Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c8a84b;
+    --gold-light: #f0d080;
+    --gold-dim: #7a6020;
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #181822;
+    --bg4: #1f1f2e;
+    --border: rgba(200,168,75,0.18);
+    --border-hover: rgba(200,168,75,0.45);
+    --text: #e8e0d0;
+    --text-muted: #7a7268;
+    --text-dim: #4a4540;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,168,75,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 10% 90%, rgba(100,30,120,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 90% 80%, rgba(30,60,120,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+  header {
+    text-align: center;
+    padding: 3.5rem 1rem 2.5rem;
+  }
+
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 60px rgba(200,168,75,0.3);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.2rem auto;
+    max-width: 320px;
+  }
+  .header-divider::before,
+  .header-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim));
+  }
+  .header-divider::after { background: linear-gradient(to left, transparent, var(--gold-dim)); }
+  .header-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .toolbar label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  select {
+    appearance: none;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 6px 28px 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6020'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    transition: border-color 0.2s;
+  }
+  select:hover { border-color: var(--border-hover); }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 7px 18px;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: rgba(200,168,75,0.1); border-color: var(--gold); box-shadow: 0 0 16px rgba(200,168,75,0.15); }
+  .btn:active { transform: scale(0.97); }
+  .btn.loading { opacity: 0.6; pointer-events: none; }
+
+  .status-text { font-size: 12px; color: var(--text-dim); margin-left: auto; font-style: italic; }
+  .status-text.ok { color: #5a9a5a; }
+  .status-text.err { color: #9a3a3a; }
+
+  .char-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .char-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1rem 0.9rem;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .char-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--class-color, var(--gold-dim)), transparent);
+    opacity: 0.7;
+  }
+
+  .char-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(200,168,75,0.05);
+  }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.6rem; }
+
+  .char-avatar { width: 36px; height: 36px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); background: var(--bg4); }
+  .char-avatar-placeholder {
+    width: 36px; height: 36px; border-radius: 4px; background: var(--bg4);
+    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; font-size: 14px; color: var(--text-muted);
+  }
+
+  .char-name { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .char-realm { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .char-class-badge {
+    display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 2px; background: rgba(255,255,255,0.05);
+    color: var(--class-color, var(--text-muted)); border: 1px solid rgba(255,255,255,0.06);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  .ilvl-row { display: flex; align-items: baseline; gap: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 4px; }
+  .ilvl-num { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .ilvl-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.2; }
+  .spec-text { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .empty-state {
+    text-align: center; padding: 3.5rem 1rem;
+    border: 1px dashed rgba(200,168,75,0.15); border-radius: 6px;
+    color: var(--text-dim); font-size: 14px; line-height: 1.7;
+    grid-column: 1 / -1;
+  }
+  .empty-state .empty-icon { font-size: 32px; margin-bottom: 0.8rem; opacity: 0.4; display: block; }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--border); border-top-color: var(--gold);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .char-card.loading-card { animation: pulse 1.5s ease-in-out infinite; min-height: 160px; }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  footer {
+    text-align: center; padding: 2rem 0 1rem; font-size: 12px;
+    color: var(--text-dim); border-top: 1px solid var(--border); margin-top: 3rem;
+  }
+  footer a { color: var(--gold-dim); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  .cls-warrior       { --class-color: #C79C6E; }
+  .cls-paladin       { --class-color: #F58CBA; }
+  .cls-hunter        { --class-color: #ABD473; }
+  .cls-rogue         { --class-color: #FFF569; }
+  .cls-priest        { --class-color: #FFFFFF; }
+  .cls-death-knight  { --class-color: #C41E3A; }
+  .cls-shaman        { --class-color: #0070DE; }
+  .cls-mage          { --class-color: #69CCF0; }
+  .cls-warlock       { --class-color: #9482C9; }
+  .cls-monk          { --class-color: #00FF96; }
+  .cls-druid         { --class-color: #FF7D0A; }
+  .cls-demon-hunter  { --class-color: #A330C9; }
+  .cls-evoker        { --class-color: #33937F; }
+
+  @media (max-width: 500px) {
+    .char-grid { grid-template-columns: repeat(2, 1fr); }
+    header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="header-eyebrow">⚔ &nbsp; Azeroth Chronicles &nbsp; ⚔</div>
+    <h1>Item Level Tracker</h1>
+    <div class="header-divider"><div class="header-diamond"></div></div>
+    <div style="font-size:13px; color:var(--text-muted);">Track your characters across realms &amp; regions</div>
+  </header>
+
+  <div class="toolbar">
+    <label>Sort</label>
+    <select onchange="sortAndRender(this.value)">
+      <option value="ilvl">Item Level ↓</option>
+      <option value="name">Name</option>
+      <option value="class">Class</option>
+    </select>
+    <button class="btn" id="btn-refresh" onclick="loadChars()">↻ &nbsp;Refresh</button>
+    <span class="status-text" id="status-text"></span>
+  </div>
+  <div class="char-grid" id="char-grid"></div>
+
+  <footer>
+    Data provided by <a href="https://raider.io" target="_blank">Raider.IO</a> &nbsp;·&nbsp; World of Warcraft is a trademark of Blizzard Entertainment
+  </footer>
+</main>
+
+<script>
+const MY_CHARS = [
+  { name: 'Aelindra', realm: 'eredar', region: 'eu' },
+  { name: 'Korgath',  realm: 'eredar', region: 'eu' },
+  { name: 'Jeadas',   realm: 'eredar', region: 'eu' },
+  { name: 'Jeadoom',  realm: 'eredar', region: 'eu' },
+];
+
+let chars = [];
+let sortBy = 'ilvl';
+
+function classCssKey(cls) { return (cls||'').toLowerCase().replace(/\s+/g,'-'); }
+
+function classColor(cls) {
+  const map = {
+    warrior:'#C79C6E', paladin:'#F58CBA', hunter:'#ABD473', rogue:'#FFF569',
+    priest:'#FFFFFF', 'death-knight':'#C41E3A', shaman:'#0070DE', mage:'#69CCF0',
+    warlock:'#9482C9', monk:'#00FF96', druid:'#FF7D0A', 'demon-hunter':'#A330C9', evoker:'#33937F'
+  };
+  return map[classCssKey(cls)] || '#8a8070';
+}
+
+async function fetchChar(name, realm, region) {
+  const apiUrl = `https://raider.io/api/v1/characters/profile?region=${region}&realm=${encodeURIComponent(realm)}&name=${encodeURIComponent(name)}&fields=gear,spec`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(apiUrl)}`,
+    apiUrl,
+  ];
+  let lastErr;
+  for (const url of proxies) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const d = await res.json();
+      if (d.statusCode === 400 || d.error) throw new Error(d.message || 'API error');
+      return {
+        name: d.name, realm: d.realm, region: d.region.toUpperCase(),
+        class: d.class, spec: d.active_spec_name || '',
+        ilvl: Math.round(d.gear?.item_level_equipped || 0),
+        thumbnail: d.thumbnail_url || null,
+      };
+    } catch(e) { lastErr = e; }
+  }
+  throw lastErr;
+}
+
+async function loadChars() {
+  const btn = document.getElementById('btn-refresh');
+  btn.classList.add('loading');
+  setStatus('<span class="spinner"></span> Loading…', '');
+
+  const grid = document.getElementById('char-grid');
+  grid.innerHTML = MY_CHARS.map(() => '<div class="char-card loading-card"></div>').join('');
+
+  const results = await Promise.allSettled(MY_CHARS.map(c => fetchChar(c.name, c.realm, c.region)));
+  chars = [];
+  let errs = 0;
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled') chars.push(r.value);
+    else {
+      errs++;
+      console.error(`Failed to load ${MY_CHARS[i].name}:`, r.reason);
+      chars.push({ name: MY_CHARS[i].name, realm: MY_CHARS[i].realm, region: MY_CHARS[i].region.toUpperCase(), class: '—', spec: '', ilvl: null, error: true });
+    }
+  });
+
+  sortChars();
+  render();
+  btn.classList.remove('loading');
+  setStatus(
+    chars.length + ' characters' + (errs ? ` · ${errs} not found` : ''),
+    errs ? 'err' : 'ok'
+  );
+}
+
+function sortAndRender(by) { sortBy = by; sortChars(); render(); }
+
+function sortChars() {
+  chars.sort((a,b) => {
+    if (sortBy === 'ilvl') return (b.ilvl||0) - (a.ilvl||0);
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    if (sortBy === 'class') return a.class.localeCompare(b.class);
+    return 0;
+  });
+}
+
+function render() {
+  const grid = document.getElementById('char-grid');
+  if (!chars.length) {
+    grid.innerHTML = '<div class="empty-state"><span class="empty-icon">⚔</span>No characters loaded</div>';
+    return;
+  }
+  grid.innerHTML = chars.map((c, i) => {
+    const clsKey = classCssKey(c.class);
+    const color  = classColor(c.class);
+    const avatar = c.thumbnail
+      ? `<img class="char-avatar" src="${c.thumbnail}" alt="${c.name}" onerror="this.outerHTML='<div class=char-avatar-placeholder>${c.name[0]}</div>'">`
+      : `<div class="char-avatar-placeholder">${c.name[0]}</div>`;
+    if (c.error) return `
+    <div class="char-card" style="animation-delay:${i*40}ms; opacity:0.45;">
+      <div class="char-name">${c.name}</div>
+      <div class="char-realm">${c.realm} · ${c.region}</div>
+      <div style="font-size:11px;color:#9a3a3a;margin-top:8px;">Not found on Raider.IO</div>
+    </div>`;
+    return `
+    <div class="char-card cls-${clsKey}" style="--class-color:${color}; animation-delay:${i*40}ms">
+      <div class="card-top">${avatar}</div>
+      <div class="char-name" title="${c.name}">${c.name}</div>
+      <div class="char-realm">${c.realm} · ${c.region}</div>
+      <div class="char-class-badge">${c.class}</div>
+      ${c.spec ? `<div class="spec-text">${c.spec}</div>` : ''}
+      <div class="ilvl-row">
+        <div>
+          <div class="ilvl-num">${c.ilvl || '—'}</div>
+          <div class="ilvl-label">ilvl equipped</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status-text');
+  el.innerHTML = msg;
+  el.className = 'status-text ' + type;
+}
+
+// Auto-load on page open
+loadChars();
+</script>
+</body>
+</html>
