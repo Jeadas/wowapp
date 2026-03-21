@@ -345,6 +345,13 @@ const STORAGE_KEY = 'wow_watch_list_v1';
 let myChars     = [];
 let watchChars  = [];
 let watchList   = loadWatchList();
+if (watchList.length === 0) {
+  watchList = [
+    { name: 'Jeadas', realm: 'eredar', region: 'eu' },
+    { name: 'Jeadoom', realm: 'eredar', region: 'eu' }
+  ];
+  saveWatchList();
+}
 let mySortBy    = 'name';
 let watchSortBy = 'name';
 
@@ -616,6 +623,7 @@ function flash(id) {
 // ── Init ──────────────────────────────────────────────────────
 renderWatchTags();
 document.getElementById('watchCount').textContent = watchList.length;
+loadWatchChars();
 </script>
 </body>
 </html>
