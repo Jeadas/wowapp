@@ -165,44 +165,39 @@
   .error-icon { font-size:48px; margin-bottom:16px; }
 
   /* Setup notice */
-  .setup-notice { background:rgba(200,168,75,.06); border:1px solid var(--border-gold); padding:20px 24px; margin-bottom:0; font-size:14px; color:var(--text-muted); line-height:1.8; }
-  .setup-notice strong { color:var(--gold); font-family:'Cinzel',serif; font-size:13px; letter-spacing:1px; }
-  .setup-notice code { background:rgba(0,0,0,.4); padding:2px 6px; font-size:12px; color:var(--gold); border:1px solid var(--border); }
-  .setup-notice .dismiss { float:right; cursor:pointer; color:var(--text-dim); font-size:18px; line-height:1; }
-  .setup-notice .dismiss:hover { color:var(--gold); }
+  .setup-notice { background:rgba(200,168,75,0.05); border:1px solid var(--gold-dim); padding:16px; margin-bottom:24px; text-align:center; font-size:14px; color:var(--gold); }
 
-  @media (max-width:600px) {
-    .grid { grid-template-columns:1fr; }
+  @media (max-width: 768px) {
+    .container { padding:0 16px 40px; }
     .controls { flex-direction:column; align-items:stretch; }
-    .add-char-form { flex-direction:column; }
-    .tab-btn { padding:10px 14px; font-size:10px; letter-spacing:1px; }
+    .add-char-form { flex-direction:column; align-items:stretch; }
+    .form-input, .form-select, .btn { width:100%; }
+    .tabs-nav { overflow-x:auto; }
+    .tab-btn { padding:12px 20px; flex-shrink:0; }
   }
 </style>
 </head>
 <body>
+
 <div class="container">
-
   <header>
-    <div class="header-ornament">⚔ &nbsp; Azeroth Chronicles &nbsp; ⚔</div>
+    <div class="header-ornament">✦ &nbsp; Azeroth Chronicles &nbsp; ✦</div>
     <h1>Item Level Tracker</h1>
-    <div class="subtitle">Eredar &mdash; EU</div>
+    <div class="subtitle">Eredar — EU</div>
+    <div class="ornament"> — ✦ — </div>
   </header>
-  <div class="ornament">— ✦ —</div>
 
-  <nav class="tabs-nav">
-    <button class="tab-btn active" onclick="switchTab('mine',this)">
-      Meine Charaktere <span class="tab-count" id="myCount">—</span>
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('mine', this)">
+      Meine Charaktere <span class="tab-count" id="myCount">0</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('friends',this)">
-      Freunde <span class="tab-count" id="friendsCount">—</span>
+    <button class="tab-btn" onclick="switchTab('watch', this)">
+      Beobachtungsliste <span class="tab-count" id="watchCount">0</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('watch',this)">
-      Beobachten <span class="tab-count" id="watchCount">0</span>
-    </button>
-  </nav>
+  </div>
 
-  <!-- ══════ TAB 1: MEINE CHARAKTERE ══════ -->
-  <div class="tab-pane active" id="tab-mine">
+  <!-- Tab: Meine Charaktere -->
+  <div id="tab-mine" class="tab-pane active">
     <div class="controls">
       <div class="sort-bar">
         Sortieren:
@@ -228,73 +223,35 @@
     </div>
   </div>
 
-
-  <!-- ══════ TAB 2: FREUNDE ══════ -->
-  <div class="tab-pane" id="tab-friends">
-    <div class="controls">
-      <div class="sort-bar">
-        Sortieren:
-        <button class="sort-btn active" onclick="sortFriendCards('name',this)">Name</button>
-        <button class="sort-btn" onclick="sortFriendCards('ilvl',this)">Ilvl ↓</button>
-        <button class="sort-btn" onclick="sortFriendCards('class',this)">Klasse</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span class="last-updated" id="friendsLastUpdated"></span>
-        <button class="btn" id="friendsRefreshBtn" onclick="loadFriendChars()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-          </svg>
-          Daten laden
-        </button>
-      </div>
-    </div>
-    <div class="grid" id="friendsGrid">
-      <div class="state-container">
-        <div class="state-title">Bereit</div>
-        <div class="state-sub">Klicke auf „Daten laden“ um die Freunde-Daten abzurufen</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════ TAB 3: BEOBACHTEN ══════ -->
-  <div class="tab-pane" id="tab-watch">
+  <!-- Tab: Beobachtungsliste -->
+  <div id="tab-watch" class="tab-pane">
     <div class="add-char-panel">
       <div class="panel-title">✦ Charakter hinzufügen</div>
       <div class="add-char-form">
         <div class="form-group">
           <label class="form-label">Charaktername</label>
-          <input class="form-input" id="inputCharName" placeholder="z.B. Thrall" onkeydown="if(event.key==='Enter')addWatchChar()">
+          <input type="text" id="inputCharName" class="form-input" placeholder="z.B. Jeadas">
         </div>
         <div class="form-group">
           <label class="form-label">Realm</label>
-          <input class="form-input" id="inputRealm" placeholder="z.B. Eredar" onkeydown="if(event.key==='Enter')addWatchChar()">
+          <input type="text" id="inputRealm" class="form-input" placeholder="z.B. Eredar">
         </div>
         <div class="form-group">
           <label class="form-label">Region</label>
-          <select class="form-select" id="inputRegion">
+          <select id="inputRegion" class="form-select">
             <option value="eu">EU</option>
             <option value="us">US</option>
             <option value="kr">KR</option>
             <option value="tw">TW</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">&nbsp;</label>
-          <button class="btn" onclick="addWatchChar()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            Hinzufügen
-          </button>
-        </div>
+        <button class="btn" onclick="addWatchChar()">Hinzufügen</button>
       </div>
     </div>
 
     <div class="watched-list">
       <div class="watched-list-title">Beobachtungsliste</div>
-      <div class="watched-tags" id="watchedTags">
-        <span class="watched-empty">Noch keine Charaktere hinzugefügt</span>
-      </div>
+      <div class="watched-tags" id="watchedTags"></div>
     </div>
 
     <div class="controls">
@@ -342,16 +299,22 @@ const LEFT_SLOTS  = ['Head','Neck','Shoulder','Back','Chest','Wrist','Main Hand'
 const RIGHT_SLOTS = ['Hands','Waist','Legs','Feet','Ring 1','Ring 2','Trinket 1','Trinket 2'];
 const STORAGE_KEY = 'wow_watch_list_v1';
 
+// Initial character list
+const INITIAL_CHARS = [
+  { name: 'Jeadas', realm: 'eredar', region: 'eu' },
+  { name: 'Jeadoom', realm: 'eredar', region: 'eu' }
+];
+
 let myChars     = [];
 let watchChars  = [];
 let watchList   = loadWatchList();
+
+// If watchList is empty, initialize with Jeadas and Jeadoom
 if (watchList.length === 0) {
-  watchList = [
-    { name: 'Jeadas', realm: 'eredar', region: 'eu' },
-    { name: 'Jeadoom', realm: 'eredar', region: 'eu' }
-  ];
+  watchList = [...INITIAL_CHARS];
   saveWatchList();
 }
+
 let mySortBy    = 'name';
 let watchSortBy = 'name';
 
@@ -368,17 +331,24 @@ async function loadMyChars() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.classList.add('loading');
   setGrid('myGrid', loadingHTML('Charakterdaten werden geladen','Rufe Blizzard API ab …'));
-  try {
-    const r = await fetch(API_BASE + '/api/characters');
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    myChars = await r.json();
-    if (myChars.error) throw new Error(myChars.error);
-    document.getElementById('myCount').textContent = myChars.length;
-    renderMyCards();
-    document.getElementById('lastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
-  } catch {
-    setGrid('myGrid', errorHTML('Stelle sicher, dass <code style="color:var(--gold)">python server.py</code> läuft.'));
+  
+  myChars = [];
+  const errors = [];
+  
+  for (const entry of INITIAL_CHARS) {
+    try {
+      const url = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d.error) throw new Error(d.error);
+      myChars.push(d);
+    } catch(e) { errors.push(entry.name + ' (' + entry.realm + '): ' + e.message); }
   }
+  
+  document.getElementById('myCount').textContent = myChars.length;
+  renderMyCards(errors);
+  document.getElementById('lastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
   btn.disabled = false; btn.classList.remove('loading');
 }
 
@@ -389,71 +359,14 @@ function sortMyCards(by, el) {
   renderMyCards();
 }
 
-function renderMyCards() {
+function renderMyCards(errors = []) {
   const g = document.getElementById('myGrid');
   g.innerHTML = '';
   sortChars([...myChars], mySortBy).forEach((c,i) => g.appendChild(buildCard(c,i,false)));
-}
-
-// ── Friends list ──────────────────────────────────────────────
-// Freunde hier eintragen: { name, realm, region }
-const FRIENDS_LIST = [
-  { name: 'Nesquik', realm: 'Eredar', region: 'eu' },
-  { name: 'Cerox', realm: 'Eredar', region: 'eu' },
-  { name: 'Balu', realm: 'Eredar', region: 'eu' },
-  { name: 'Dexra', realm: 'Eredar', region: 'eu' },
-  { name: 'Papercutz', realm: 'Eredar', region: 'eu' },
-  { name: 'Kuroxpriest', realm: 'Eredar', region: 'eu' },
-  { name: 'Qurox', realm: 'Eredar', region: 'eu' },
-  { name: 'Cändy', realm: 'Eredar', region: 'eu' },
-  { name: 'Papercutqq', realm: 'Eredar', region: 'eu' },
-  { name: 'Kurox', realm: 'Eredar', region: 'eu' },
-];
-
-let friendChars  = [];
-let friendSortBy = 'name';
-
-async function loadFriendChars() {
-  const btn = document.getElementById('friendsRefreshBtn');
-  btn.disabled = true; btn.classList.add('loading');
-  setGrid('friendsGrid', loadingHTML('Freunde werden geladen', 'Rufe Blizzard API ab …'));
-  friendChars = [];
-  const errors = [];
-  for (const entry of FRIENDS_LIST) {
-    try {
-      const url = API_BASE + '/api/character?name=' + encodeURIComponent(entry.name) + '&realm=' + encodeURIComponent(entry.realm) + '&region=' + entry.region;
-      const r = await fetch(url);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const d = await r.json();
-      if (d.error) throw new Error(d.error);
-      friendChars.push(d);
-    } catch(e) { errors.push(entry.name + ' (' + entry.realm + '): ' + e.message); }
-  }
-  document.getElementById('friendsCount').textContent = friendChars.length;
-  renderFriendCards(errors);
-  document.getElementById('friendsLastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
-  btn.disabled = false; btn.classList.remove('loading');
-}
-
-function sortFriendCards(by, el) {
-  friendSortBy = by;
-  document.querySelectorAll('#tab-friends .sort-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderFriendCards();
-}
-
-function renderFriendCards(errors = []) {
-  const g = document.getElementById('friendsGrid');
-  if (!friendChars.length && !errors.length) {
-    setGrid('friendsGrid', '<div class="state-container"><div class="state-title">Bereit</div><div class="state-sub">Klicke auf „Daten laden“</div></div>');
-    return;
-  }
-  g.innerHTML = '';
-  sortChars([...friendChars], friendSortBy).forEach((c,i) => g.appendChild(buildCard(c,i,false)));
   if (errors.length) {
     const div = document.createElement('div');
     div.style.cssText = 'grid-column:1/-1;padding:16px;';
-    div.innerHTML = errors.map(e => '<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ' + e + '</div>').join('');
+    div.innerHTML = errors.map(e => `<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ${e}</div>`).join('');
     g.appendChild(div);
   }
 }
@@ -498,8 +411,9 @@ function renderWatchTags() {
   el.innerHTML = watchList.map((c,i) => `
     <div class="watched-tag">
       ${c.name} <span class="tag-realm">${c.realm} (${c.region.toUpperCase()})</span>
-      <span class="remove-tag" onclick="removeWatchChar(${i})" title="Entfernen">✕</span>
-    </div>`).join('');
+      <span class="remove-tag" onclick="removeWatchChar(${i})">✕</span>
+    </div>
+  `).join('');
 }
 
 async function loadWatchChars() {
@@ -623,6 +537,7 @@ function flash(id) {
 // ── Init ──────────────────────────────────────────────────────
 renderWatchTags();
 document.getElementById('watchCount').textContent = watchList.length;
+loadMyChars();
 loadWatchChars();
 </script>
 </body>
