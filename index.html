@@ -1,471 +1,621 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WoW Item Level Tracker</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
     --gold: #c8a84b;
-    --gold-light: #f0d080;
-    --gold-dim: #7a6020;
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #181822;
-    --bg4: #1f1f2e;
-    --border: rgba(200,168,75,0.18);
-    --border-hover: rgba(200,168,75,0.45);
-    --text: #e8e0d0;
-    --text-muted: #7a7268;
-    --text-dim: #4a4540;
+    --gold-bright: #ffd700;
+    --gold-dim: #7a6430;
+    --bg-deep: #0a0804;
+    --bg-card: #12100a;
+    --border: #2a2216;
+    --border-gold: #3d3020;
+    --text-bright: #f0e8d0;
+    --text-muted: #8a7d60;
+    --text-dim: #4a4030;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg-deep);
+    color: var(--text-bright);
+    font-family: 'Crimson Pro', Georgia, serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
-
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,168,75,0.07) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 10% 90%, rgba(100,30,120,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse 40% 40% at 90% 80%, rgba(30,60,120,0.08) 0%, transparent 50%);
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(200,168,75,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(200,168,75,0.03) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect width='60' height='60' fill='none'/%3E%3Cpath d='M0 30h60M30 0v60' stroke='%23c8a84b' stroke-width='0.15' opacity='0.15'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 0;
   }
+  .container { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; padding: 0 24px 60px; }
 
-  body::after {
+  /* Header */
+  header { text-align: center; padding: 48px 0 32px; }
+  header::after {
     content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 4rem; }
-
-  header {
-    text-align: center;
-    padding: 3.5rem 1rem 2.5rem;
-  }
-
-  .header-eyebrow {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 0.35em;
-    color: var(--gold-dim);
-    text-transform: uppercase;
-    margin-bottom: 0.8rem;
-  }
-
-  header h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 700;
-    color: var(--gold);
-    text-shadow: 0 0 60px rgba(200,168,75,0.3);
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-  }
-
-  .header-divider {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.2rem auto;
-    max-width: 320px;
-  }
-  .header-divider::before,
-  .header-divider::after {
-    content: '';
-    flex: 1;
+    display: block;
+    width: 600px;
+    max-width: 90%;
     height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold-dim));
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto 0;
   }
-  .header-divider::after { background: linear-gradient(to left, transparent, var(--gold-dim)); }
-  .header-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
+  .header-ornament { font-family:'Cinzel Decorative',serif; font-size:11px; letter-spacing:6px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
+  h1 { font-family:'Cinzel Decorative',serif; font-size:clamp(24px,4vw,48px); font-weight:700; color:var(--gold); text-shadow:0 0 40px rgba(200,168,75,.4),0 2px 4px rgba(0,0,0,.8); letter-spacing:3px; line-height:1.2; }
+  .subtitle { font-family:'Crimson Pro',serif; font-size:16px; color:var(--text-muted); margin-top:8px; letter-spacing:2px; font-style:italic; }
+  .ornament { text-align:center; color:var(--gold-dim); font-size:18px; letter-spacing:8px; margin:4px 0 0; }
 
-  .toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+  /* Tabs */
+  .tabs-nav { display:flex; gap:0; margin:28px 0 0; border-bottom:1px solid var(--border-gold); }
+  .tab-btn {
+    padding:12px 32px;
+    background:transparent;
+    border:1px solid transparent;
+    border-bottom:none;
+    color:var(--text-dim);
+    font-family:'Cinzel',serif;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all .25s;
+    position:relative;
+    bottom:-1px;
   }
+  .tab-btn:hover { color:var(--text-muted); }
+  .tab-btn.active { color:var(--gold); border-color:var(--border-gold); border-bottom-color:var(--bg-deep); background:var(--bg-deep); }
+  .tab-count { display:inline-block; margin-left:6px; padding:1px 7px; background:var(--border); border-radius:10px; font-size:10px; color:var(--text-muted); }
+  .tab-btn.active .tab-count { background:var(--gold-dim); color:var(--gold); }
+  .tab-pane { display:none; padding-top:28px; }
+  .tab-pane.active { display:block; }
 
-  .toolbar label {
-    font-size: 12px;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+  /* Controls */
+  .controls { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+  .last-updated { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-dim); font-style:italic; }
+  .sort-bar { display:flex; align-items:center; gap:8px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--text-dim); text-transform:uppercase; }
+  .sort-btn { padding:6px 14px; background:transparent; border:1px solid var(--border); color:var(--text-muted); font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; cursor:pointer; transition:all .2s; text-transform:uppercase; }
+  .sort-btn:hover,.sort-btn.active { border-color:var(--gold-dim); color:var(--gold); }
 
-  select {
-    appearance: none;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    padding: 6px 28px 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6020'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 9px center;
-    transition: border-color 0.2s;
-  }
-  select:hover { border-color: var(--border-hover); }
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 24px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; cursor:pointer; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
+  .btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(200,168,75,.1),transparent); opacity:0; transition:opacity .3s; }
+  .btn:hover { border-color:var(--gold); color:var(--gold-bright); }
+  .btn:hover::before { opacity:1; }
+  .btn:disabled { opacity:.4; cursor:not-allowed; }
+  .btn.loading svg { animation:spin 1s linear infinite; }
+  .btn-sm { padding:7px 14px; font-size:10px; letter-spacing:1px; }
+  .btn-danger { border-color:#5a1a1a; color:#c05050; }
+  .btn-danger:hover { border-color:#c05050; color:#ff6060; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  .btn {
-    font-family: 'Cinzel', serif;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    padding: 7px 18px;
-    background: transparent;
-    border: 1px solid var(--gold-dim);
-    color: var(--gold);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn:hover { background: rgba(200,168,75,0.1); border-color: var(--gold); box-shadow: 0 0 16px rgba(200,168,75,0.15); }
-  .btn:active { transform: scale(0.97); }
-  .btn.loading { opacity: 0.6; pointer-events: none; }
+  /* Grid */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
 
-  .status-text { font-size: 12px; color: var(--text-dim); margin-left: auto; font-style: italic; }
-  .status-text.ok { color: #5a9a5a; }
-  .status-text.err { color: #9a3a3a; }
+  /* Card */
+  .card { background:var(--bg-card); border:1px solid var(--border); position:relative; transition:transform .3s,border-color .3s; animation:fadeIn .5s ease both; }
+  .card:hover { transform:translateY(-2px); border-color:var(--border-gold); }
+  .card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--cls-color,var(--gold-dim)); opacity:.7; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .card-header { display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border); }
+  .avatar-wrap { width:52px; height:52px; border:2px solid var(--cls-color,var(--gold-dim)); flex-shrink:0; overflow:hidden; }
+  .avatar-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+  .avatar-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--border); font-size:20px; }
+  .char-info { flex:1; min-width:0; }
+  .char-name { font-family:'Cinzel',serif; font-size:15px; font-weight:600; color:var(--text-bright); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .char-meta { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .char-class { font-size:12px; font-weight:600; color:var(--cls-color,var(--text-muted)); letter-spacing:.5px; }
+  .ilvl-badge { text-align:center; flex-shrink:0; }
+  .ilvl-number { font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:var(--gold); line-height:1; }
+  .ilvl-label { font-size:10px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+  .card-actions { padding:8px 16px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; }
 
-  .char-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-  }
+  /* Slots */
+  .slots { padding:12px 16px; display:grid; grid-template-columns:1fr 1fr; gap:3px 12px; }
+  .slot-row { display:flex; align-items:center; justify-content:space-between; padding:3px 0; border-bottom:1px solid rgba(42,34,22,.5); }
+  .slot-name { font-size:11px; color:var(--text-dim); letter-spacing:.3px; }
+  .slot-ilvl { font-family:'Cinzel',serif; font-size:12px; font-weight:600; }
+  .slot-ilvl.q-EPIC { color:#a335ee; }
+  .slot-ilvl.q-RARE { color:#0070dd; }
+  .slot-ilvl.q-UNCOMMON { color:#1eff00; }
+  .slot-ilvl.q-COMMON { color:var(--text-muted); }
+  .slot-ilvl.q-LEGENDARY { color:#ff8000; }
+  .slot-ilvl.q-HEIRLOOM { color:#00ccff; }
+  .slot-ilvl.empty { color:var(--text-dim); font-size:10px; }
 
-  .char-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 1.5rem;
-    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.3s ease both;
-  }
+  /* Add-char panel */
+  .add-char-panel { background:var(--bg-card); border:1px solid var(--border-gold); padding:24px 28px; margin-bottom:20px; position:relative; }
+  .add-char-panel::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,transparent,var(--gold-dim),transparent); }
+  .panel-title { font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-bottom:16px; }
+  .add-char-form { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+  .form-group { display:flex; flex-direction:column; gap:5px; }
+  .form-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; font-family:'Cinzel',serif; }
+  .form-input { padding:9px 14px; background:rgba(0,0,0,.4); border:1px solid var(--border); color:var(--text-bright); font-family:'Crimson Pro',serif; font-size:15px; outline:none; transition:border-color .2s; min-width:180px; }
+  .form-input:focus { border-color:var(--gold-dim); }
+  .form-input::placeholder { color:var(--text-dim); }
+  .form-input.error { border-color:#c05050 !important; }
+  .form-select { padding:9px 14px; background:rgba(0,0,0,.4); border:1px solid var(--border); color:var(--text-muted); font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; outline:none; cursor:pointer; transition:border-color .2s; -webkit-appearance:none; appearance:none; padding-right:28px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a6430'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; }
+  .form-select:focus { border-color:var(--gold-dim); color:var(--gold); }
+  .form-select option { background:#1a1610; color:var(--text-bright); }
 
-  .char-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--class-color, var(--gold-dim)), transparent);
-    opacity: 0.7;
-  }
+  /* Watch list tags */
+  .watched-list { background:rgba(0,0,0,.2); border:1px solid var(--border); padding:12px 16px; margin-bottom:20px; }
+  .watched-list-title { font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; }
+  .watched-tags { display:flex; flex-wrap:wrap; gap:8px; min-height:28px; align-items:center; }
+  .watched-tag { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:var(--bg-card); border:1px solid var(--border); font-size:12px; color:var(--text-muted); font-family:'Cinzel',serif; letter-spacing:.5px; }
+  .tag-realm { font-size:10px; color:var(--text-dim); }
+  .remove-tag { cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; transition:color .2s; margin-left:2px; }
+  .remove-tag:hover { color:#c05050; }
+  .watched-empty { font-size:13px; color:var(--text-dim); font-style:italic; }
 
-  .char-card:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(200,168,75,0.05);
-  }
+  /* State containers */
+  .state-container { grid-column:1/-1; text-align:center; padding:80px 20px; }
+  .loading-ring { width:60px; height:60px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 24px; }
+  .state-title { font-family:'Cinzel',serif; font-size:18px; color:var(--gold); margin-bottom:8px; }
+  .state-sub { font-size:14px; color:var(--text-dim); font-style:italic; }
+  .error-icon { font-size:48px; margin-bottom:16px; }
 
-  .card-top { display: flex; align-items: center; gap: 15px; margin-bottom: 1.2rem; }
+  /* Setup notice */
+  .setup-notice { background:rgba(200,168,75,.06); border:1px solid var(--border-gold); padding:20px 24px; margin-bottom:0; font-size:14px; color:var(--text-muted); line-height:1.8; }
+  .setup-notice strong { color:var(--gold); font-family:'Cinzel',serif; font-size:13px; letter-spacing:1px; }
+  .setup-notice code { background:rgba(0,0,0,.4); padding:2px 6px; font-size:12px; color:var(--gold); border:1px solid var(--border); }
+  .setup-notice .dismiss { float:right; cursor:pointer; color:var(--text-dim); font-size:18px; line-height:1; }
+  .setup-notice .dismiss:hover { color:var(--gold); }
 
-  .char-avatar { width: 64px; height: 64px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border); background: var(--bg4); }
-  .char-avatar-placeholder {
-    width: 64px; height: 64px; border-radius: 4px; background: var(--bg4);
-    border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-    font-family: 'Cinzel', serif; font-size: 24px; color: var(--text-muted);
-  }
-
-  .char-info { flex: 1; }
-  .char-name { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-  .char-realm { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .char-class-badge {
-    display: inline-block; font-size: 11px; font-weight: 500; letter-spacing: 0.05em;
-    padding: 2px 8px; border-radius: 2px; background: rgba(255,255,255,0.05);
-    color: var(--class-color, var(--text-muted)); border: 1px solid rgba(255,255,255,0.06);
-    text-transform: uppercase;
-  }
-
-  .ilvl-main { text-align: right; }
-  .ilvl-num { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 700; color: var(--gold); line-height: 1; }
-  .ilvl-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-
-  .gear-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 20px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 15px;
-    margin-top: 10px;
-  }
-
-  .gear-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-  }
-
-  .slot-name { color: var(--text-dim); font-size: 12px; }
-  .slot-ilvl { font-weight: 500; color: var(--text-muted); }
-  .slot-ilvl.high { color: #a335ee; } /* Epic quality color */
-  .slot-ilvl.legendary { color: #ff8000; }
-
-  .empty-state {
-    text-align: center; padding: 3.5rem 1rem;
-    border: 1px dashed rgba(200,168,75,0.15); border-radius: 6px;
-    color: var(--text-dim); font-size: 14px; line-height: 1.7;
-    grid-column: 1 / -1;
-  }
-  .empty-state .empty-icon { font-size: 32px; margin-bottom: 0.8rem; opacity: 0.4; display: block; }
-
-  .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid var(--border); border-top-color: var(--gold);
-    border-radius: 50%; animation: spin 0.7s linear infinite;
-    vertical-align: middle; margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .char-card.loading-card { animation: pulse 1.5s ease-in-out infinite; min-height: 200px; }
-  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
-
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-  footer {
-    text-align: center; padding: 2rem 0 1rem; font-size: 12px;
-    color: var(--text-dim); border-top: 1px solid var(--border); margin-top: 3rem;
-  }
-  footer a { color: var(--gold-dim); text-decoration: none; }
-  footer a:hover { color: var(--gold); }
-
-  .cls-warrior       { --class-color: #C79C6E; }
-  .cls-paladin       { --class-color: #F58CBA; }
-  .cls-hunter        { --class-color: #ABD473; }
-  .cls-rogue         { --class-color: #FFF569; }
-  .cls-priest        { --class-color: #FFFFFF; }
-  .cls-death-knight  { --class-color: #C41E3A; }
-  .cls-shaman        { --class-color: #0070DE; }
-  .cls-mage          { --class-color: #69CCF0; }
-  .cls-warlock       { --class-color: #9482C9; }
-  .cls-monk          { --class-color: #00FF96; }
-  .cls-druid         { --class-color: #FF7D0A; }
-  .cls-demon-hunter  { --class-color: #A330C9; }
-  .cls-evoker        { --class-color: #33937F; }
-
-  @media (max-width: 700px) {
-    .char-grid { grid-template-columns: 1fr; }
+  @media (max-width:600px) {
+    .grid { grid-template-columns:1fr; }
+    .controls { flex-direction:column; align-items:stretch; }
+    .add-char-form { flex-direction:column; }
+    .tab-btn { padding:10px 14px; font-size:10px; letter-spacing:1px; }
   }
 </style>
 </head>
 <body>
-<main>
+<div class="container">
+
   <header>
-    <div class="header-eyebrow">⚔ &nbsp; Azeroth Chronicles &nbsp; ⚔</div>
+    <div class="header-ornament">⚔ &nbsp; Azeroth Chronicles &nbsp; ⚔</div>
     <h1>Item Level Tracker</h1>
-    <div class="header-divider"><div class="header-diamond"></div></div>
-    <div style="font-size:13px; color:var(--text-muted);">Track your characters across realms &amp; regions</div>
+    <div class="subtitle">Eredar &mdash; EU</div>
   </header>
+  <div class="ornament">— ✦ —</div>
 
-  <div class="toolbar">
-    <label>Sort</label>
-    <select onchange="sortAndRender(this.value)">
-      <option value="ilvl">Item Level ↓</option>
-      <option value="name">Name</option>
-      <option value="class">Class</option>
-    </select>
-    <button class="btn" id="btn-refresh" onclick="loadChars()">↻ &nbsp;Refresh</button>
-    <span class="status-text" id="status-text"></span>
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('mine',this)">
+      Meine Charaktere <span class="tab-count" id="myCount">—</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('friends',this)">
+      Freunde <span class="tab-count" id="friendsCount">—</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('watch',this)">
+      Beobachten <span class="tab-count" id="watchCount">0</span>
+    </button>
+  </nav>
+
+  <!-- ══════ TAB 1: MEINE CHARAKTERE ══════ -->
+  <div class="tab-pane active" id="tab-mine">
+    <div class="controls">
+      <div class="sort-bar">
+        Sortieren:
+        <button class="sort-btn active" onclick="sortMyCards('name',this)">Name</button>
+        <button class="sort-btn" onclick="sortMyCards('ilvl',this)">Ilvl ↓</button>
+        <button class="sort-btn" onclick="sortMyCards('class',this)">Klasse</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span class="last-updated" id="lastUpdated"></span>
+        <button class="btn" id="refreshBtn" onclick="loadMyChars()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Daten laden
+        </button>
+      </div>
+    </div>
+    <div class="grid" id="myGrid">
+      <div class="state-container">
+        <div class="state-title">Bereit</div>
+        <div class="state-sub">Klicke auf „Daten laden" um die Charakterdaten abzurufen</div>
+      </div>
+    </div>
   </div>
-  <div class="char-grid" id="char-grid"></div>
 
-  <footer>
-    Data provided by <a href="https://raider.io" target="_blank">Raider.IO</a> &nbsp;·&nbsp; World of Warcraft is a trademark of Blizzard Entertainment
-  </footer>
-</main>
+
+  <!-- ══════ TAB 2: FREUNDE ══════ -->
+  <div class="tab-pane" id="tab-friends">
+    <div class="controls">
+      <div class="sort-bar">
+        Sortieren:
+        <button class="sort-btn active" onclick="sortFriendCards('name',this)">Name</button>
+        <button class="sort-btn" onclick="sortFriendCards('ilvl',this)">Ilvl ↓</button>
+        <button class="sort-btn" onclick="sortFriendCards('class',this)">Klasse</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span class="last-updated" id="friendsLastUpdated"></span>
+        <button class="btn" id="friendsRefreshBtn" onclick="loadFriendChars()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Daten laden
+        </button>
+      </div>
+    </div>
+    <div class="grid" id="friendsGrid">
+      <div class="state-container">
+        <div class="state-title">Bereit</div>
+        <div class="state-sub">Klicke auf „Daten laden“ um die Freunde-Daten abzurufen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ TAB 3: BEOBACHTEN ══════ -->
+  <div class="tab-pane" id="tab-watch">
+    <div class="add-char-panel">
+      <div class="panel-title">✦ Charakter hinzufügen</div>
+      <div class="add-char-form">
+        <div class="form-group">
+          <label class="form-label">Charaktername</label>
+          <input class="form-input" id="inputCharName" placeholder="z.B. Thrall" onkeydown="if(event.key==='Enter')addWatchChar()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Realm</label>
+          <input class="form-input" id="inputRealm" placeholder="z.B. Eredar" onkeydown="if(event.key==='Enter')addWatchChar()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Region</label>
+          <select class="form-select" id="inputRegion">
+            <option value="eu">EU</option>
+            <option value="us">US</option>
+            <option value="kr">KR</option>
+            <option value="tw">TW</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn" onclick="addWatchChar()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Hinzufügen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="watched-list">
+      <div class="watched-list-title">Beobachtungsliste</div>
+      <div class="watched-tags" id="watchedTags">
+        <span class="watched-empty">Noch keine Charaktere hinzugefügt</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="sort-bar">
+        Sortieren:
+        <button class="sort-btn active" onclick="sortWatchCards('name',this)">Name</button>
+        <button class="sort-btn" onclick="sortWatchCards('ilvl',this)">Ilvl ↓</button>
+        <button class="sort-btn" onclick="sortWatchCards('class',this)">Klasse</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <span class="last-updated" id="watchLastUpdated"></span>
+        <button class="btn" id="watchRefreshBtn" onclick="loadWatchChars()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Alle laden
+        </button>
+      </div>
+    </div>
+
+    <div class="grid" id="watchGrid">
+      <div class="state-container">
+        <div class="state-title">Keine Charaktere</div>
+        <div class="state-sub">Füge oben Charaktere hinzu um sie zu beobachten</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 <script>
-const MY_CHARS = [
-  { name: 'Jeadas',   realm: 'eredar', region: 'eu' },
-  { name: 'Jeadoom',  realm: 'eredar', region: 'eu' },
-];
+// ── Konfiguration ──────────────────────────────────────────
+const API_BASE = 'https://odd-haze-05b0.billywurow-edc.workers.dev';
 
-let chars = [];
-let sortBy = 'ilvl';
+const CLASS_COLORS = {
+  'Death Knight':'#c41e3a','Demon Hunter':'#a330c9','Druid':'#ff7c0a','Evoker':'#33937f',
+  'Hunter':'#aad372','Mage':'#3fc7eb','Monk':'#00ff98','Paladin':'#f48cba',
+  'Priest':'#c0c0c0','Rogue':'#fff468','Shaman':'#0070dd','Warlock':'#8788ee','Warrior':'#c69b3a',
+};
+const CLASS_ICONS = {
+  'Death Knight':'💀','Demon Hunter':'👁','Druid':'🌿','Evoker':'🐉','Hunter':'🏹',
+  'Mage':'❄️','Monk':'☯','Paladin':'🌟','Priest':'✨','Rogue':'🗡','Shaman':'⚡','Warlock':'🔮','Warrior':'⚔️',
+};
+const LEFT_SLOTS  = ['Head','Neck','Shoulder','Back','Chest','Wrist','Main Hand','Off Hand'];
+const RIGHT_SLOTS = ['Hands','Waist','Legs','Feet','Ring 1','Ring 2','Trinket 1','Trinket 2'];
+const STORAGE_KEY = 'wow_watch_list_v1';
 
-const SLOTS = [
-  { key: 'head', label: 'Head' },
-  { key: 'hands', label: 'Hands' },
-  { key: 'neck', label: 'Neck' },
-  { key: 'waist', label: 'Waist' },
-  { key: 'shoulder', label: 'Shoulder' },
-  { key: 'legs', label: 'Legs' },
-  { key: 'back', label: 'Back' },
-  { key: 'feet', label: 'Feet' },
-  { key: 'chest', label: 'Chest' },
-  { key: 'finger1', label: 'Ring 1' },
-  { key: 'wrist', label: 'Wrist' },
-  { key: 'finger2', label: 'Ring 2' },
-  { key: 'mainhand', label: 'Main Hand' },
-  { key: 'trinket1', label: 'Trinket 1' },
-  { key: 'offhand', label: 'Off Hand' },
-  { key: 'trinket2', label: 'Trinket 2' }
-];
+let myChars     = [];
+let watchChars  = [];
+let watchList   = loadWatchList();
+let mySortBy    = 'name';
+let watchSortBy = 'name';
 
-function classCssKey(cls) { return (cls||'').toLowerCase().replace(/\s+/g,'-'); }
-
-function classColor(cls) {
-  const map = {
-    warrior:'#C79C6E', paladin:'#F58CBA', hunter:'#ABD473', rogue:'#FFF569',
-    priest:'#FFFFFF', 'death-knight':'#C41E3A', shaman:'#0070DE', mage:'#69CCF0',
-    warlock:'#9482C9', monk:'#00FF96', druid:'#FF7D0A', 'demon-hunter':'#A330C9', evoker:'#33937F'
-  };
-  return map[classCssKey(cls)] || '#8a8070';
+// ── Tabs ──────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
 }
 
-async function fetchChar(name, realm, region) {
-  const apiUrl = `https://raider.io/api/v1/characters/profile?region=${region}&realm=${encodeURIComponent(realm)}&name=${encodeURIComponent(name)}&fields=gear,spec`;
-  const proxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(apiUrl)}`,
-    apiUrl,
-  ];
-  let lastErr;
-  for (const url of proxies) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const d = await res.json();
-      if (d.statusCode === 400 || d.error) throw new Error(d.message || 'API error');
-      
-      return {
-        name: d.name, realm: d.realm, region: d.region.toUpperCase(),
-        class: d.class, spec: d.active_spec_name || '',
-        ilvl: Math.round(d.gear?.item_level_equipped || 0),
-        thumbnail: d.thumbnail_url || null,
-        items: d.gear?.items || {}
-      };
-    } catch(e) { lastErr = e; }
+// ── My chars ──────────────────────────────────────────────────
+async function loadMyChars() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  setGrid('myGrid', loadingHTML('Charakterdaten werden geladen','Rufe Blizzard API ab …'));
+  try {
+    const r = await fetch(API_BASE + '/api/characters');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    myChars = await r.json();
+    if (myChars.error) throw new Error(myChars.error);
+    document.getElementById('myCount').textContent = myChars.length;
+    renderMyCards();
+    document.getElementById('lastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
+  } catch {
+    setGrid('myGrid', errorHTML('Stelle sicher, dass <code style="color:var(--gold)">python server.py</code> läuft.'));
   }
-  throw lastErr;
+  btn.disabled = false; btn.classList.remove('loading');
 }
 
-async function loadChars() {
-  const btn = document.getElementById('btn-refresh');
-  btn.classList.add('loading');
-  setStatus('<span class="spinner"></span> Loading…', '');
-
-  const grid = document.getElementById('char-grid');
-  grid.innerHTML = MY_CHARS.map(() => '<div class="char-card loading-card"></div>').join('');
-
-  const results = await Promise.allSettled(MY_CHARS.map(c => fetchChar(c.name, c.realm, c.region)));
-  chars = [];
-  let errs = 0;
-  results.forEach((r, i) => {
-    if (r.status === 'fulfilled') chars.push(r.value);
-    else {
-      errs++;
-      console.error(`Failed to load ${MY_CHARS[i].name}:`, r.reason);
-      chars.push({ name: MY_CHARS[i].name, realm: MY_CHARS[i].realm, region: MY_CHARS[i].region.toUpperCase(), class: '—', spec: '', ilvl: null, error: true });
-    }
-  });
-
-  sortChars();
-  render();
-  btn.classList.remove('loading');
-  setStatus(
-    chars.length + ' characters' + (errs ? ` · ${errs} not found` : ''),
-    errs ? 'err' : 'ok'
-  );
+function sortMyCards(by, el) {
+  mySortBy = by;
+  document.querySelectorAll('#tab-mine .sort-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderMyCards();
 }
 
-function sortAndRender(by) { sortBy = by; sortChars(); render(); }
-
-function sortChars() {
-  chars.sort((a,b) => {
-    if (sortBy === 'ilvl') return (b.ilvl||0) - (a.ilvl||0);
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    if (sortBy === 'class') return a.class.localeCompare(b.class);
-    return 0;
-  });
+function renderMyCards() {
+  const g = document.getElementById('myGrid');
+  g.innerHTML = '';
+  sortChars([...myChars], mySortBy).forEach((c,i) => g.appendChild(buildCard(c,i,false)));
 }
 
-function render() {
-  const grid = document.getElementById('char-grid');
-  if (!chars.length) {
-    grid.innerHTML = '<div class="empty-state"><span class="empty-icon">⚔</span>No characters loaded</div>';
+// ── Friends list ──────────────────────────────────────────────
+// Freunde hier eintragen: { name, realm, region }
+const FRIENDS_LIST = [
+  { name: 'Nesquik', realm: 'Eredar', region: 'eu' },
+  { name: 'Cerox', realm: 'Eredar', region: 'eu' },
+  { name: 'Balu', realm: 'Eredar', region: 'eu' },
+  { name: 'Dexra', realm: 'Eredar', region: 'eu' },
+  { name: 'Papercutz', realm: 'Eredar', region: 'eu' },
+  { name: 'Kuroxpriest', realm: 'Eredar', region: 'eu' },
+  { name: 'Qurox', realm: 'Eredar', region: 'eu' },
+  { name: 'Cändy', realm: 'Eredar', region: 'eu' },
+  { name: 'Papercutqq', realm: 'Eredar', region: 'eu' },
+  { name: 'Kurox', realm: 'Eredar', region: 'eu' },
+];
+
+let friendChars  = [];
+let friendSortBy = 'name';
+
+async function loadFriendChars() {
+  const btn = document.getElementById('friendsRefreshBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  setGrid('friendsGrid', loadingHTML('Freunde werden geladen', 'Rufe Blizzard API ab …'));
+  friendChars = [];
+  const errors = [];
+  for (const entry of FRIENDS_LIST) {
+    try {
+      const url = API_BASE + '/api/character?name=' + encodeURIComponent(entry.name) + '&realm=' + encodeURIComponent(entry.realm) + '&region=' + entry.region;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d.error) throw new Error(d.error);
+      friendChars.push(d);
+    } catch(e) { errors.push(entry.name + ' (' + entry.realm + '): ' + e.message); }
+  }
+  document.getElementById('friendsCount').textContent = friendChars.length;
+  renderFriendCards(errors);
+  document.getElementById('friendsLastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
+  btn.disabled = false; btn.classList.remove('loading');
+}
+
+function sortFriendCards(by, el) {
+  friendSortBy = by;
+  document.querySelectorAll('#tab-friends .sort-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderFriendCards();
+}
+
+function renderFriendCards(errors = []) {
+  const g = document.getElementById('friendsGrid');
+  if (!friendChars.length && !errors.length) {
+    setGrid('friendsGrid', '<div class="state-container"><div class="state-title">Bereit</div><div class="state-sub">Klicke auf „Daten laden“</div></div>');
     return;
   }
-  grid.innerHTML = chars.map((c, i) => {
-    const clsKey = classCssKey(c.class);
-    const color  = classColor(c.class);
-    const avatar = c.thumbnail
-      ? `<img class="char-avatar" src="${c.thumbnail}" alt="${c.name}" onerror="this.outerHTML='<div class=char-avatar-placeholder>${c.name[0]}</div>'">`
-      : `<div class="char-avatar-placeholder">${c.name[0]}</div>`;
-    
-    if (c.error) return `
-    <div class="char-card" style="animation-delay:${i*40}ms; opacity:0.45;">
-      <div class="char-name">${c.name}</div>
-      <div class="char-realm">${c.realm} · ${c.region}</div>
-      <div style="font-size:11px;color:#9a3a3a;margin-top:8px;">Not found on Raider.IO</div>
-    </div>`;
-
-    const gearHtml = SLOTS.map(slot => {
-      const item = c.items[slot.key];
-      const ilvl = item ? Math.round(item.item_level) : '—';
-      return `
-        <div class="gear-item">
-          <span class="slot-name">${slot.label}</span>
-          <span class="slot-ilvl">${ilvl}</span>
-        </div>
-      `;
-    }).join('');
-
-    return `
-    <div class="char-card cls-${clsKey}" style="--class-color:${color}; animation-delay:${i*40}ms">
-      <div class="card-top">
-        ${avatar}
-        <div class="char-info">
-          <div class="char-name" title="${c.name}">${c.name}</div>
-          <div class="char-realm">${c.realm} · ${c.region}</div>
-          <div class="char-class-badge">${c.spec} ${c.class}</div>
-        </div>
-        <div class="ilvl-main">
-          <div class="ilvl-num">${c.ilvl || '—'}</div>
-          <div class="ilvl-label">ILVL</div>
-        </div>
-      </div>
-      <div class="gear-grid">
-        ${gearHtml}
-      </div>
-    </div>`;
-  }).join('');
+  g.innerHTML = '';
+  sortChars([...friendChars], friendSortBy).forEach((c,i) => g.appendChild(buildCard(c,i,false)));
+  if (errors.length) {
+    const div = document.createElement('div');
+    div.style.cssText = 'grid-column:1/-1;padding:16px;';
+    div.innerHTML = errors.map(e => '<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ' + e + '</div>').join('');
+    g.appendChild(div);
+  }
 }
 
-function setStatus(msg, type) {
-  const el = document.getElementById('status-text');
-  el.innerHTML = msg;
-  el.className = 'status-text ' + type;
+// ── Watch list ────────────────────────────────────────────────
+function loadWatchList() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+}
+function saveWatchList() { localStorage.setItem(STORAGE_KEY, JSON.stringify(watchList)); }
+
+function addWatchChar() {
+  const name   = document.getElementById('inputCharName').value.trim();
+  const realm  = document.getElementById('inputRealm').value.trim();
+  const region = document.getElementById('inputRegion').value;
+  if (!name) { flash('inputCharName'); return; }
+  if (!realm) { flash('inputRealm'); return; }
+  const key = name.toLowerCase() + '-' + realm.toLowerCase() + '-' + region;
+  if (watchList.some(c => c.name.toLowerCase()+'-'+c.realm.toLowerCase()+'-'+c.region === key)) {
+    flash('inputCharName'); return;
+  }
+  watchList.push({name, realm, region});
+  saveWatchList();
+  document.getElementById('inputCharName').value = '';
+  document.getElementById('inputRealm').value = '';
+  renderWatchTags();
+  document.getElementById('watchCount').textContent = watchList.length;
 }
 
-// Auto-load on page open
-loadChars();
+function removeWatchChar(i) {
+  const rem = watchList[i];
+  watchList.splice(i, 1);
+  watchChars = watchChars.filter(c => !(c.name.toLowerCase()===rem.name.toLowerCase() && c.realm.toLowerCase()===rem.realm.toLowerCase()));
+  saveWatchList();
+  renderWatchTags();
+  renderWatchCards();
+  document.getElementById('watchCount').textContent = watchList.length;
+}
+
+function renderWatchTags() {
+  const el = document.getElementById('watchedTags');
+  if (!watchList.length) { el.innerHTML = '<span class="watched-empty">Noch keine Charaktere hinzugefügt</span>'; return; }
+  el.innerHTML = watchList.map((c,i) => `
+    <div class="watched-tag">
+      ${c.name} <span class="tag-realm">${c.realm} (${c.region.toUpperCase()})</span>
+      <span class="remove-tag" onclick="removeWatchChar(${i})" title="Entfernen">✕</span>
+    </div>`).join('');
+}
+
+async function loadWatchChars() {
+  if (!watchList.length) return;
+  const btn = document.getElementById('watchRefreshBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  setGrid('watchGrid', loadingHTML('Lade ' + watchList.length + ' Charakter(e)','Rufe Blizzard API ab …'));
+  watchChars = [];
+  const errors = [];
+  for (const entry of watchList) {
+    try {
+      const url = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d.error) throw new Error(d.error);
+      watchChars.push(d);
+    } catch(e) { errors.push(entry.name + ' (' + entry.realm + '): ' + e.message); }
+  }
+  renderWatchCards(errors);
+  document.getElementById('watchLastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
+  btn.disabled = false; btn.classList.remove('loading');
+}
+
+function sortWatchCards(by, el) {
+  watchSortBy = by;
+  document.querySelectorAll('#tab-watch .sort-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderWatchCards();
+}
+
+function renderWatchCards(errors = []) {
+  const g = document.getElementById('watchGrid');
+  if (!watchList.length) {
+    setGrid('watchGrid', '<div class="state-container"><div class="state-title">Keine Charaktere</div><div class="state-sub">Füge oben Charaktere hinzu</div></div>');
+    return;
+  }
+  if (!watchChars.length && !errors.length) {
+    setGrid('watchGrid', '<div class="state-container"><div class="state-title">Bereit</div><div class="state-sub">Klicke auf „Alle laden"</div></div>');
+    return;
+  }
+  g.innerHTML = '';
+  sortChars([...watchChars], watchSortBy).forEach((c,i) => g.appendChild(buildCard(c,i,true)));
+  if (errors.length) {
+    const div = document.createElement('div');
+    div.style.cssText = 'grid-column:1/-1;padding:16px;';
+    div.innerHTML = errors.map(e => `<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ${e}</div>`).join('');
+    g.appendChild(div);
+  }
+}
+
+// ── Card builder ──────────────────────────────────────────────
+function buildCard(char, index, showRemove) {
+  const cls   = char.class || 'Unknown';
+  const color = CLASS_COLORS[cls] || '#c8a84b';
+  const icon  = CLASS_ICONS[cls] || '⚔';
+  const card  = document.createElement('div');
+  card.className = 'card';
+  card.style.setProperty('--cls-color', color);
+  card.style.animationDelay = index * 60 + 'ms';
+
+  const av = char.avatar
+    ? `<img src="${char.avatar}" alt="${char.name}" onerror="this.parentElement.innerHTML='<div class=avatar-placeholder>${icon}</div>'">`
+    : `<div class="avatar-placeholder">${icon}</div>`;
+
+  const regionTag = char.region
+    ? `<span style="font-size:10px;color:var(--text-dim);margin-left:5px">${char.region.toUpperCase()}</span>` : '';
+
+  const actions = showRemove
+    ? `<div class="card-actions"><button class="btn btn-sm btn-danger" onclick="removeByName('${char.name}','${char.realm}')">✕ Entfernen</button></div>` : '';
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="avatar-wrap">${av}</div>
+      <div class="char-info">
+        <div class="char-name">${char.name}${regionTag}</div>
+        <div class="char-class">${cls}</div>
+        <div class="char-meta">${char.spec} · Lvl ${char.level} · ${char.realm}</div>
+      </div>
+      <div class="ilvl-badge">
+        <div class="ilvl-number">${char.equipped_ilvl}</div>
+        <div class="ilvl-label">Ilvl</div>
+      </div>
+    </div>
+    <div class="slots">
+      <div>${LEFT_SLOTS.map(s=>slotRow(char,s)).join('')}</div>
+      <div>${RIGHT_SLOTS.map(s=>slotRow(char,s)).join('')}</div>
+    </div>
+    ${actions}`;
+  return card;
+}
+
+function slotRow(char, name) {
+  const item = char.slots && char.slots[name];
+  const cls  = item ? 'q-' + item.quality : 'empty';
+  const tip  = item ? ` title="${item.name}"` : '';
+  return `<div class="slot-row"><span class="slot-name">${name}</span><span class="slot-ilvl ${cls}"${tip}>${item ? item.ilvl : '—'}</span></div>`;
+}
+
+function removeByName(name, realm) {
+  const i = watchList.findIndex(c => c.name.toLowerCase()===name.toLowerCase() && c.realm.toLowerCase()===realm.toLowerCase());
+  if (i !== -1) removeWatchChar(i);
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function sortChars(arr, by) {
+  if (by==='name')  return arr.sort((a,b)=>a.name.localeCompare(b.name));
+  if (by==='ilvl')  return arr.sort((a,b)=>b.equipped_ilvl-a.equipped_ilvl);
+  if (by==='class') return arr.sort((a,b)=>(a.class||'').localeCompare(b.class||''));
+  return arr;
+}
+function setGrid(id, html) { document.getElementById(id).innerHTML = html; }
+function loadingHTML(t,s) { return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`; }
+function errorHTML(s)     { return `<div class="state-container"><div class="error-icon">⚠️</div><div class="state-title">Verbindungsfehler</div><div class="state-sub">${s}</div></div>`; }
+function flash(id) {
+  const el = document.getElementById(id);
+  el.classList.add('error');
+  setTimeout(()=>el.classList.remove('error'), 1000);
+}
+
+// ── Init ──────────────────────────────────────────────────────
+renderWatchTags();
+document.getElementById('watchCount').textContent = watchList.length;
 </script>
 </body>
 </html>
