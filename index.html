@@ -216,14 +216,14 @@
   .raid-table { table-layout:fixed; }
   .raid-table th { text-align:center; padding:12px 16px; border-bottom:2px solid var(--border-gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; width:25%; }
   .raid-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; text-align:center; width:25%; }
-  .boss-name { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-bright); }
+  .boss-name { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-bright); text-align:left; }
   .talent-icons { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
   .talent-icon { width:32px; height:32px; border:1px solid var(--gold-dim); border-radius:4px; background:var(--bg-deep); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:help; }
   .talent-icon.highlight { border-color:var(--gold-bright); box-shadow:0 0 12px rgba(255,215,0,0.4); }
   .cooldown-list { list-style:none; font-size:13px; color:var(--text-muted); display:inline-block; text-align:left; }
   .cooldown-item { margin-bottom:4px; display:flex; gap:8px; }
   .timestamp { color:var(--gold); font-weight:600; min-width:45px; }
-  .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; }
+  .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; text-align:left; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -260,7 +260,7 @@
   .color-dot.green-dot { background:#1eff00; }
   /* Talent grid in table */
   .talent-grid { display:flex; gap:3px; flex-wrap:nowrap; justify-content:center; }
-  .talent-cell { width:26px; height:26px; object-fit:cover; display:block; border:2px solid; flex-shrink:0; }
+  .talent-cell { width:34px; height:34px; object-fit:cover; display:block; border:2px solid; flex-shrink:0; }
   .talent-cell.tc-red { border-color:#c41e3a; box-shadow:0 0 6px rgba(196,30,58,0.4); }
   .talent-cell.tc-green { border-color:#1eff00; box-shadow:0 0 6px rgba(30,255,0,0.3); }
 
