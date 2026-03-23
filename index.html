@@ -258,6 +258,12 @@
   .color-dot.selected { border-color:#fff; }
   .color-dot.red-dot { background:#c41e3a; }
   .color-dot.green-dot { background:#1eff00; }
+  /* Saved icon picker */
+  .saved-icon-grid { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; padding:6px; background:var(--bg-deep); border:1px solid var(--border); }
+  .saved-icon-item { display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; padding:3px; border:1px solid transparent; }
+  .saved-icon-item:hover { border-color:var(--gold-dim); }
+  .saved-icon-item img { width:34px; height:34px; object-fit:cover; display:block; }
+  .saved-icon-name { font-size:8px; color:var(--text-muted); text-align:center; max-width:42px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   /* Talent grid in table */
   .talent-grid { display:flex; gap:3px; flex-wrap:nowrap; justify-content:center; }
   .talent-cell { width:34px; height:34px; object-fit:cover; display:block; border:2px solid; flex-shrink:0; }
@@ -464,6 +470,10 @@ const RAIDS = {
 let myChars = [];
 let currentRaidTab = 'voidspire';
 let editState = [];
+
+const SAVED_ICONS = ['Blightburst','Ghoulish Frenzy','Menacing Magus','Morbidity','Unholy Aura'];
+const iconCache = {};
+const iconPickerData = {};
 
 // ── Tabs ────────────────────────────────────────────────────
 function switchTab(id, btn) {
@@ -749,7 +759,13 @@ function renderEditModalBody() {
       <div id="tgaWrap-${bi}" ${(boss.talents||[]).length >= 6 ? 'style="display:none"' : ''}>
         <input type="file" accept=".tga" id="tgaInput-${bi}" style="display:none"
           onchange="handleTgaUpload(${bi}, this)">
-        <button class="btn-small" onclick="document.getElementById('tgaInput-${bi}').click()">+ Upload Talent (.tga)</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn-small" onclick="document.getElementById('tgaInput-${bi}').click()">+ Upload (.tga)</button>
+          <button class="btn-small" onclick="toggleIconPicker(${bi})">+ Pick Saved</button>
+        </div>
+        <div id="iconPicker-${bi}" style="display:none">
+          <div class="saved-icon-grid" id="savedIconGrid-${bi}"></div>
+        </div>
       </div>
     </div>`).join('');
 }
@@ -823,64 +839,108 @@ async function handleTgaUpload(bi, input) {
 }
 
 // ── TGA Decoder ──────────────────────────────────────────────
+function decodeTGABuffer(buf) {
+  const raw  = new Uint8Array(buf);
+  const view = new DataView(buf);
+  const idLen  = raw[0];
+  const cmType = raw[1];
+  const imgType = raw[2];
+  const w = view.getUint16(12, true);
+  const h = view.getUint16(14, true);
+  const bpp = raw[16];
+  const flipV = !(raw[17] & 0x20);
+  if (imgType !== 2 && imgType !== 10) throw new Error('Unsupported TGA type ' + imgType);
+  if (bpp !== 24 && bpp !== 32) throw new Error('Unsupported bit depth ' + bpp);
+  const cmLen = cmType ? view.getUint16(5, true) * Math.ceil(raw[7] / 8) : 0;
+  let src = 18 + idLen + cmLen;
+  const bytes = bpp >> 3;
+  const pixels = new Uint8ClampedArray(w * h * 4);
+  let i = 0;
+  if (imgType === 2) {
+    for (; i < w * h; i++, src += bytes) {
+      pixels[i*4]=raw[src+2]; pixels[i*4+1]=raw[src+1]; pixels[i*4+2]=raw[src]; pixels[i*4+3]=bpp===32?raw[src+3]:255;
+    }
+  } else {
+    while (i < w * h) {
+      const rep = raw[src++], cnt = (rep & 0x7f) + 1;
+      if (rep & 0x80) {
+        const r=raw[src+2],g=raw[src+1],b=raw[src],a=bpp===32?raw[src+3]:255; src+=bytes;
+        for (let j=0;j<cnt;j++,i++) { pixels[i*4]=r;pixels[i*4+1]=g;pixels[i*4+2]=b;pixels[i*4+3]=a; }
+      } else {
+        for (let j=0;j<cnt;j++,i++,src+=bytes) {
+          pixels[i*4]=raw[src+2];pixels[i*4+1]=raw[src+1];pixels[i*4+2]=raw[src];pixels[i*4+3]=bpp===32?raw[src+3]:255;
+        }
+      }
+    }
+  }
+  if (flipV) {
+    const row = new Uint8ClampedArray(w * 4);
+    for (let y = 0; y < h >> 1; y++) {
+      const t = y*w*4, bo = (h-1-y)*w*4;
+      row.set(pixels.subarray(t, t+w*4));
+      pixels.copyWithin(t, bo, bo+w*4);
+      pixels.set(row, bo);
+    }
+  }
+  const sc = document.createElement('canvas'); sc.width=w; sc.height=h;
+  sc.getContext('2d').putImageData(new ImageData(pixels, w, h), 0, 0);
+  const dc = document.createElement('canvas'); dc.width=52; dc.height=52;
+  dc.getContext('2d').drawImage(sc, 0, 0, 52, 52);
+  return dc.toDataURL('image/png');
+}
+
 function decodeTGA(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const buf  = e.target.result;
-        const raw  = new Uint8Array(buf);
-        const view = new DataView(buf);
-        const idLen  = raw[0];
-        const cmType = raw[1];
-        const imgType = raw[2];
-        const w = view.getUint16(12, true);
-        const h = view.getUint16(14, true);
-        const bpp = raw[16];
-        const flipV = !(raw[17] & 0x20); // 0 = bottom-to-top
-        if (imgType !== 2 && imgType !== 10) throw new Error('Unsupported TGA image type ' + imgType + ' (only 2 and 10 supported)');
-        if (bpp !== 24 && bpp !== 32) throw new Error('Unsupported bit depth ' + bpp);
-        const cmLen = cmType ? view.getUint16(5, true) * Math.ceil(raw[7] / 8) : 0;
-        let src = 18 + idLen + cmLen;
-        const bytes = bpp >> 3;
-        const pixels = new Uint8ClampedArray(w * h * 4);
-        let i = 0;
-        if (imgType === 2) {
-          for (; i < w * h; i++, src += bytes) {
-            pixels[i*4]=raw[src+2]; pixels[i*4+1]=raw[src+1]; pixels[i*4+2]=raw[src]; pixels[i*4+3]=bpp===32?raw[src+3]:255;
-          }
-        } else {
-          while (i < w * h) {
-            const rep = raw[src++], cnt = (rep & 0x7f) + 1;
-            if (rep & 0x80) {
-              const r=raw[src+2],g=raw[src+1],b=raw[src],a=bpp===32?raw[src+3]:255; src+=bytes;
-              for (let j=0;j<cnt;j++,i++) { pixels[i*4]=r;pixels[i*4+1]=g;pixels[i*4+2]=b;pixels[i*4+3]=a; }
-            } else {
-              for (let j=0;j<cnt;j++,i++,src+=bytes) {
-                pixels[i*4]=raw[src+2];pixels[i*4+1]=raw[src+1];pixels[i*4+2]=raw[src];pixels[i*4+3]=bpp===32?raw[src+3]:255;
-              }
-            }
-          }
-        }
-        if (flipV) {
-          const row = new Uint8ClampedArray(w * 4);
-          for (let y = 0; y < h >> 1; y++) {
-            const t = y*w*4, bo = (h-1-y)*w*4;
-            row.set(pixels.subarray(t, t+w*4));
-            pixels.copyWithin(t, bo, bo+w*4);
-            pixels.set(row, bo);
-          }
-        }
-        const sc = document.createElement('canvas'); sc.width=w; sc.height=h;
-        sc.getContext('2d').putImageData(new ImageData(pixels, w, h), 0, 0);
-        const dc = document.createElement('canvas'); dc.width=52; dc.height=52;
-        dc.getContext('2d').drawImage(sc, 0, 0, 52, 52);
-        resolve(dc.toDataURL('image/png'));
-      } catch(err) { reject(err); }
-    };
+    reader.onload = e => { try { resolve(decodeTGABuffer(e.target.result)); } catch(err) { reject(err); } };
     reader.onerror = () => reject(new Error('File read failed'));
     reader.readAsArrayBuffer(file);
   });
+}
+
+async function decodeTGAFromUrl(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return decodeTGABuffer(await res.arrayBuffer());
+}
+
+async function toggleIconPicker(bi) {
+  const picker = document.getElementById('iconPicker-' + bi);
+  if (picker.style.display !== 'none') { picker.style.display = 'none'; return; }
+  picker.style.display = '';
+  const grid = document.getElementById('savedIconGrid-' + bi);
+  if (grid.dataset.loaded) return;
+  grid.dataset.loaded = '1';
+  grid.innerHTML = '<span style="font-size:11px;color:var(--text-dim)">Loading…</span>';
+
+  await Promise.all(SAVED_ICONS.map(async name => {
+    if (!iconCache[name]) {
+      try { iconCache[name] = await decodeTGAFromUrl('icons/' + name + '.tga'); }
+      catch(e) { iconCache[name] = null; }
+    }
+  }));
+
+  const items = SAVED_ICONS.filter(n => iconCache[n]).map(n => ({ name: n, dataUrl: iconCache[n] }));
+  iconPickerData[bi] = items;
+  grid.innerHTML = items.map((item, idx) =>
+    `<div class="saved-icon-item" onclick="selectSavedIcon(${bi},${idx})" title="${esc(item.name)}">
+      <img src="${item.dataUrl}">
+      <div class="saved-icon-name">${esc(item.name)}</div>
+    </div>`
+  ).join('') || '<span style="font-size:11px;color:var(--text-dim)">No saved icons found</span>';
+}
+
+function selectSavedIcon(bi, idx) {
+  const item = (iconPickerData[bi] || [])[idx];
+  if (!item || editState[bi].talents.length >= 6) return;
+  const ti = editState[bi].talents.length;
+  editState[bi].talents.push({ dataUrl: item.dataUrl, color: 'green' });
+  document.getElementById('chips-' + bi).insertAdjacentHTML('beforeend', chipHTML(bi, ti, item.dataUrl, 'green'));
+  if (editState[bi].talents.length >= 6) {
+    const wrap = document.getElementById('tgaWrap-' + bi);
+    if (wrap) wrap.style.display = 'none';
+  }
+  document.getElementById('iconPicker-' + bi).style.display = 'none';
 }
 
 function esc(s) {
