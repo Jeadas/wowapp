@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Belo'ren, Child of Al'ar",
+    "talents": [],
+    "cooldowns": [
+      { "time": "0:45", "label": "Empower Rune Weapon" },
+      { "time": "3:15", "label": "Army of the Dead" }
+    ],
+    "notes": "Spread for Fireballs. Kill Phoenix adds."
+  },
+  {
+    "name": "Midnight Falls",
+    "talents": [],
+    "cooldowns": [
+      { "time": "2:00", "label": "Army of the Dead" },
+      { "time": "5:00", "label": "Empower Rune Weapon" }
+    ],
+    "notes": "Final encounter. Use everything on P3."
+  }
+]

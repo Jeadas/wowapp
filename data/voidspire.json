@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Imperator Averzian",
+    "talents": [],
+    "cooldowns": [
+      { "time": "0:45", "label": "Army of the Dead" },
+      { "time": "2:30", "label": "Empower Rune Weapon" }
+    ],
+    "notes": "Watch out for Void Blast. Save AMS for P2."
+  },
+  {
+    "name": "Vorasius",
+    "talents": [],
+    "cooldowns": [
+      { "time": "1:15", "label": "Abomination Limb" },
+      { "time": "3:45", "label": "Army of the Dead" }
+    ],
+    "notes": "Stack for soak. Use Death Advance for pushback."
+  },
+  {
+    "name": "Fallen-King Salhadaar",
+    "talents": [],
+    "cooldowns": [
+      { "time": "0:30", "label": "Empower Rune Weapon" },
+      { "time": "4:00", "label": "Army of the Dead" }
+    ],
+    "notes": "Interrupt Shadow Bolt. Move out with debuff."
+  },
+  {
+    "name": "Vaelgor & Ezzorak",
+    "talents": [],
+    "cooldowns": [
+      { "time": "1:00", "label": "Abomination Limb" },
+      { "time": "3:00", "label": "Army of the Dead" }
+    ],
+    "notes": "Keep bosses apart. Focus Vaelgor first."
+  },
+  {
+    "name": "Lightblinded Vanguard",
+    "talents": [],
+    "cooldowns": [
+      { "time": "0:15", "label": "Empower Rune Weapon" },
+      { "time": "5:00", "label": "Army of the Dead" }
+    ],
+    "notes": "Dodge the Light beams. Use AMS for Holy damage."
+  },
+  {
+    "name": "Crown of the Cosmos",
+    "talents": [],
+    "cooldowns": [
+      { "time": "2:00", "label": "Army of the Dead" },
+      { "time": "4:30", "label": "Empower Rune Weapon" }
+    ],
+    "notes": "Final boss. Kill adds quickly. Stack for healing."
+  }
+]
