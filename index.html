@@ -462,6 +462,12 @@ function renderMyChars(errors = []) {
     div.innerHTML = errors.map(e => `<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ${e}</div>`).join('');
     g.appendChild(div);
   }
+
+  // Lock tabs-wrap min-width to the rendered character grid width
+  requestAnimationFrame(() => {
+    const wrap = document.querySelector('.tabs-wrap');
+    if (wrap) wrap.style.minWidth = g.offsetWidth + 'px';
+  });
 }
 
 // ── Row builder ─────────────────────────────────────────────
