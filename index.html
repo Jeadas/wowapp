@@ -96,7 +96,8 @@
   .char-rows { display:flex; flex-direction:column; gap:14px; }
   .char-row {
     display:grid;
-    grid-template-columns: 340px 2fr 3fr;
+    grid-template-columns: auto auto auto;
+    width:fit-content;
     background:var(--bg-card);
     border:1px solid var(--border);
     position:relative;
@@ -131,10 +132,10 @@
   .slot-ilvl.empty { color:var(--text-dim); font-size:12px; }
 
   /* Column: M+ */
-  .col-mplus { border-right:1px solid var(--border); padding:14px 0; }
-  .col-raids { padding:14px 0; }
-  .col-header { display:flex; align-items:baseline; justify-content:space-between; font-family:'Cinzel',serif; font-size:12px; font-weight:700; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding:0 16px 7px; }
-  .dungeon-grid { display:grid; grid-template-columns:repeat(4,auto); gap:4px; padding:0 2px; justify-content:start; }
+  .col-mplus { border-right:1px solid var(--border); padding:10px 0; }
+  .col-raids { padding:10px 0; }
+  .col-header { display:flex; align-items:baseline; justify-content:space-between; font-family:'Cinzel',serif; font-size:12px; font-weight:700; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:8px; border-bottom:1px solid var(--border); padding:0 10px 6px; }
+  .dungeon-grid { display:grid; grid-template-columns:repeat(3,auto); gap:4px; padding:0 10px; justify-content:start; }
   .dungeon-square {
     border-radius:3px; border:2px solid var(--border);
     background:linear-gradient(160deg,#0d0a14,#180f2a);
@@ -172,7 +173,7 @@
   .diff-badge.dim { opacity:0.45; }
 
   /* Boss Grid */
-  .boss-master-grid { display:grid; grid-template-columns:repeat(3,auto); gap:4px; padding:0 2px; justify-content:start; }
+  .boss-master-grid { display:grid; grid-template-columns:repeat(3,auto); gap:4px; padding:0 10px; justify-content:start; }
   .rr-label {
     font-size:9px; color:var(--text-dim); font-family:'Cinzel',serif;
     text-transform:uppercase; letter-spacing:0.06em;
