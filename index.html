@@ -133,7 +133,7 @@
   /* Column: M+ */
   .col-mplus { border-right:1px solid var(--border); padding:14px 0; }
   .col-raids { padding:14px 0; }
-  .col-header { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding:0 16px 7px; }
+  .col-header { display:flex; align-items:baseline; justify-content:space-between; font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding:0 16px 7px; }
   .dungeon-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; padding:0 2px; }
   .dungeon-square {
     position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
@@ -150,14 +150,11 @@
     font-size:10px; padding:5px 2px 2px;
     text-align:center; color:var(--text-bright); letter-spacing:0.03em;
   }
-  .mplus-score-row { display:flex; align-items:baseline; gap:7px; margin-top:8px; padding:0 16px; }
-  .mplus-score-big { font-family:'Cinzel',serif; font-size:28px; font-weight:700; line-height:1; }
-  .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
+  .mplus-score-inline { font-family:'Cinzel',serif; font-size:13px; font-weight:700; line-height:1; letter-spacing:0; text-transform:none; }
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
-
-  .raid-prog-summary { display:flex; align-items:baseline; gap:10px; margin-top:8px; padding:0 16px; }
-  .raid-prog-summary .diff-val { font-family:'Cinzel',serif; font-size:13px; font-weight:700; }
-  .raid-prog-summary .diff-tag { font-size:10px; letter-spacing:1px; }
+  .raid-summary-inline { display:flex; gap:8px; letter-spacing:0; text-transform:none; }
+  .raid-summary-inline .diff-val { font-family:'Cinzel',serif; font-size:12px; font-weight:700; }
+  .raid-summary-inline .diff-tag { font-size:10px; letter-spacing:0.5px; }
 
   /* Column: Raids */
   .raid-prog-list { display:flex; flex-direction:column; gap:4px; }
@@ -499,19 +496,17 @@ function buildCharRow(char, index) {
       </div>
     </div>
     <div class="col-mplus">
-      <div class="col-header">Mythic+</div>
-      ${buildMplusHTML(char.rio)}
+      ${(() => { const mp = buildMplusHTML(char.rio); return `<div class="col-header">Mythic+<span class="mplus-score-inline" style="color:${mp.color || 'var(--text-dim)'}">${mp.score || '—'}</span></div>${mp.grid}`; })()}
     </div>
     <div class="col-raids">
-      <div class="col-header">Raid Progression</div>
-      <div class="raid-prog-list">${buildRaidHTML(char.rio)}</div>
+      ${(() => { const rp = buildRaidHTML(char.rio); return `<div class="col-header">Raid Progression<span class="raid-summary-inline"><span><span class="diff-val" style="color:#a335ee">${rp.kM}/${rp.total}</span> <span class="diff-tag" style="color:#a335ee">M</span></span><span><span class="diff-val" style="color:#0070dd">${rp.kH}/${rp.total}</span> <span class="diff-tag" style="color:#0070dd">H</span></span><span><span class="diff-val" style="color:#1eff00">${rp.kN}/${rp.total}</span> <span class="diff-tag" style="color:#1eff00">N</span></span></span></div><div class="raid-prog-list">${rp.grid}</div>`; })()}
     </div>`;
 
   return row;
 }
 
 function buildMplusHTML(rio) {
-  if (!rio) return '<div class="data-na">Keine Daten verfügbar</div>';
+  if (!rio) return { grid: '<div class="data-na">Keine Daten verfügbar</div>', score: 0, color: 'var(--text-dim)' };
 
   const season   = rio.mythic_plus_scores_by_season;
   const rawScore = season && season.length ? (season[0].scores?.all ?? 0) : 0;
@@ -538,12 +533,7 @@ function buildMplusHTML(rio) {
     </div>`;
   }).join('');
 
-  return `
-    <div class="dungeon-grid">${squaresHTML}</div>
-    <div class="mplus-score-row">
-      <span class="mplus-score-big" style="color:${color}">${score || '—'}</span>
-      <span class="mplus-score-label">Gesamt-Score</span>
-    </div>`;
+  return { grid: `<div class="dungeon-grid">${squaresHTML}</div>`, score, color };
 }
 
 function buildRaidHTML(rio) {
@@ -585,16 +575,7 @@ function buildRaidHTML(rio) {
   const kH = killed('heroic_bosses_killed');
   const kN = killed('normal_bosses_killed');
 
-  return `<div class="boss-master-grid">
-    ${vsBosses}
-    ${drBoss}
-    ${mqBosses}
-  </div>
-  <div class="raid-prog-summary">
-    <span><span class="diff-val" style="color:#a335ee">${kM}/${total}</span> <span class="diff-tag" style="color:#a335ee">M</span></span>
-    <span><span class="diff-val" style="color:#0070dd">${kH}/${total}</span> <span class="diff-tag" style="color:#0070dd">H</span></span>
-    <span><span class="diff-val" style="color:#1eff00">${kN}/${total}</span> <span class="diff-tag" style="color:#1eff00">N</span></span>
-  </div>`;
+  return { grid: `<div class="boss-master-grid">${vsBosses}${drBoss}${mqBosses}</div>`, kM, kH, kN, total };
 }
 
 function scoreColor(score) {
