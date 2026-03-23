@@ -213,15 +213,14 @@
   /* Raid Table Styles */
   .raid-table-container { background:var(--bg-card); border:1px solid var(--border-gold); padding:24px; overflow-x:auto; }
   .raid-table { width:100%; border-collapse:collapse; font-family:'Crimson Pro',serif; }
-  .raid-table th { text-align:left; padding:12px 16px; border-bottom:2px solid var(--border-gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; }
-  .raid-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; }
-  .raid-table td:first-child, .raid-table th:first-child { width:1%; white-space:nowrap; }
-  .raid-table td:nth-child(2), .raid-table th:nth-child(2) { padding-left:32px; }
+  .raid-table { table-layout:fixed; }
+  .raid-table th { text-align:center; padding:12px 16px; border-bottom:2px solid var(--border-gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; width:25%; }
+  .raid-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; text-align:center; width:25%; }
   .boss-name { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-bright); }
-  .talent-icons { display:flex; gap:8px; flex-wrap:wrap; }
+  .talent-icons { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
   .talent-icon { width:32px; height:32px; border:1px solid var(--gold-dim); border-radius:4px; background:var(--bg-deep); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:help; }
   .talent-icon.highlight { border-color:var(--gold-bright); box-shadow:0 0 12px rgba(255,215,0,0.4); }
-  .cooldown-list { list-style:none; font-size:13px; color:var(--text-muted); }
+  .cooldown-list { list-style:none; font-size:13px; color:var(--text-muted); display:inline-block; text-align:left; }
   .cooldown-item { margin-bottom:4px; display:flex; gap:8px; }
   .timestamp { color:var(--gold); font-weight:600; min-width:45px; }
   .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; }
@@ -260,7 +259,7 @@
   .color-dot.red-dot { background:#c41e3a; }
   .color-dot.green-dot { background:#1eff00; }
   /* Talent grid in table */
-  .talent-grid { display:flex; gap:3px; flex-wrap:nowrap; }
+  .talent-grid { display:flex; gap:3px; flex-wrap:nowrap; justify-content:center; }
   .talent-cell { width:26px; height:26px; object-fit:cover; display:block; border:2px solid; flex-shrink:0; }
   .talent-cell.tc-red { border-color:#c41e3a; box-shadow:0 0 6px rgba(196,30,58,0.4); }
   .talent-cell.tc-green { border-color:#1eff00; box-shadow:0 0 6px rgba(30,255,0,0.3); }
@@ -298,13 +297,13 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>
-        Reload Characters
+        Reload
       </button>
       <button class="btn" id="editBtn" onclick="openEditModal()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
-        Edit Table
+        Edit
       </button>
     </div>
   </div>
@@ -315,7 +314,7 @@
     <div id="myGrid">
       <div class="state-container">
         <div class="state-title">Ready</div>
-        <div class="state-sub">Click "Reload Characters" to fetch character data</div>
+        <div class="state-sub">Click "Reload" to fetch character data</div>
       </div>
     </div>
   </div>
