@@ -133,14 +133,24 @@
   .col-mplus { border-right:1px solid var(--border); padding:14px 16px; }
   .col-raids { padding:14px 16px; }
   .col-header { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px; }
-  .mplus-score-big { font-family:'Cinzel',serif; font-size:38px; font-weight:700; line-height:1; }
-  .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:3px; margin-bottom:12px; }
-  .dungeon-list { display:flex; flex-direction:column; gap:3px; }
-  .dungeon-row { display:grid; grid-template-columns:1fr auto auto auto; gap:8px; align-items:center; padding:3px 6px; border:1px solid var(--border); }
-  .dungeon-name { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .dungeon-key { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); font-weight:600; text-align:right; }
-  .dungeon-score { font-size:11px; color:var(--text-dim); text-align:right; min-width:38px; }
-  .dungeon-clears { font-size:11px; color:var(--text-dim); text-align:right; min-width:24px; }
+  .dungeon-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
+  .dungeon-square {
+    position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
+    background:linear-gradient(160deg,#0d0a14,#180f2a);
+    display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:default;
+  }
+  .dungeon-square.dg-cleared { border-color:var(--gold-dim); box-shadow:inset 0 0 10px rgba(200,168,75,0.2); }
+  .dungeon-square.dg-uncleared { filter:brightness(0.35) saturate(0.2); }
+  .dungeon-key-center { font-family:'Cinzel',serif; font-size:17px; font-weight:700; line-height:1; }
+  .dungeon-name-label {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(transparent,rgba(0,0,0,0.9));
+    font-size:8px; padding:5px 2px 2px;
+    text-align:center; color:var(--text-bright); letter-spacing:0.03em;
+  }
+  .mplus-score-row { display:flex; align-items:baseline; gap:7px; margin-top:8px; }
+  .mplus-score-big { font-family:'Cinzel',serif; font-size:28px; font-weight:700; line-height:1; }
+  .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
 
   /* Column: Raids */
@@ -502,49 +512,30 @@ function buildMplusHTML(rio) {
   const score    = Math.round(rawScore);
   const color    = scoreColor(score);
 
-  // Best run per dungeon (keyed by short_name)
   const bestMap = {};
   for (const r of (rio.mythic_plus_best_runs || [])) {
     bestMap[r.short_name] = { key: r.mythic_level, score: Math.round(r.score) };
   }
 
-  // Clears count from recent runs
-  const clearMap = {};
-  for (const r of (rio.mythic_plus_recent_runs || [])) {
-    clearMap[r.short_name] = (clearMap[r.short_name] || 0) + 1;
-  }
+  const dungeons = seasonDungeons.length
+    ? seasonDungeons
+    : (rio.mythic_plus_best_runs || []).map(r => ({ name: r.dungeon, short_name: r.short_name }));
 
-  let runsHTML;
-  if (seasonDungeons.length) {
-    runsHTML = seasonDungeons.map(d => {
-      const best   = bestMap[d.short_name];
-      const clears = clearMap[d.short_name] || 0;
-      return `<div class="dungeon-row">
-        <span class="dungeon-name">${d.short_name}</span>
-        <span class="dungeon-key">${best ? '+' + best.key : '—'}</span>
-        <span class="dungeon-score">${best ? best.score : '—'}</span>
-        <span class="dungeon-clears">${clears}x</span>
-      </div>`;
-    }).join('');
-  } else {
-    const runs = (rio.mythic_plus_best_runs || []).sort((a, b) => b.score - a.score);
-    runsHTML = runs.length
-      ? runs.map(r => {
-          const clears = clearMap[r.short_name] || 0;
-          return `<div class="dungeon-row">
-            <span class="dungeon-name">${r.short_name}</span>
-            <span class="dungeon-key">+${r.mythic_level}</span>
-            <span class="dungeon-score">${Math.round(r.score)}</span>
-            <span class="dungeon-clears">${clears}x</span>
-          </div>`;
-        }).join('')
-      : '<div class="data-na">Season noch nicht gestartet</div>';
-  }
+  const squaresHTML = dungeons.map(d => {
+    const best = bestMap[d.short_name];
+    const keyColor = best ? scoreColor(best.score) : 'var(--text-dim)';
+    return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
+      <div class="dungeon-key-center" style="color:${keyColor}">${best ? '+' + best.key : '—'}</div>
+      <div class="dungeon-name-label">${d.short_name}</div>
+    </div>`;
+  }).join('');
 
   return `
-    <div class="mplus-score-big" style="color:${color}">${score || '—'}</div>
-    <div class="mplus-score-label">Gesamt-Score</div>
-    <div class="dungeon-list">${runsHTML}</div>`;
+    <div class="dungeon-grid">${squaresHTML}</div>
+    <div class="mplus-score-row">
+      <span class="mplus-score-big" style="color:${color}">${score || '—'}</span>
+      <span class="mplus-score-label">Gesamt-Score</span>
+    </div>`;
 }
 
 function buildRaidHTML(rio) {
