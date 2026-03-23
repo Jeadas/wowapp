@@ -156,8 +156,29 @@
   }
   .diff-badge.normal { border-color:#1a6e1a; color:#4ade4a; background:rgba(26,110,26,0.12); }
   .diff-badge.heroic { border-color:#0050a0; color:#4da6ff; background:rgba(0,80,160,0.12); }
-  .diff-badge.mythic { border-color:var(--gold-dim); color:var(--gold); background:rgba(200,168,75,0.1); }
+  .diff-badge.mythic { border-color:#6e24a8; color:#c47dff; background:rgba(100,30,160,0.12); }
   .diff-badge.dim { opacity:0.45; }
+
+  /* Boss Grid */
+  .raid-section + .raid-section { margin-top:8px; }
+  .raid-section-title { font-size:9px; color:var(--text-dim); margin-bottom:4px; letter-spacing:0.08em; text-transform:uppercase; font-family:'Cinzel',serif; }
+  .boss-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+  .boss-square {
+    position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
+    overflow:hidden; cursor:default;
+    background:linear-gradient(160deg,#0d0a14,#180f2a);
+  }
+  .boss-square img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; }
+  .boss-name-label {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(transparent,rgba(0,0,0,0.9));
+    padding:12px 2px 3px; font-family:'Cinzel',serif; font-size:7px;
+    text-align:center; color:var(--text-bright); line-height:1.15; letter-spacing:0.03em;
+  }
+  .boss-square.b-mythic { border-color:#a335ee; box-shadow:inset 0 0 10px rgba(163,53,238,0.4); }
+  .boss-square.b-heroic { border-color:#0070dd; box-shadow:inset 0 0 10px rgba(0,112,221,0.4); }
+  .boss-square.b-normal { border-color:#1eff00; box-shadow:inset 0 0 10px rgba(30,255,0,0.3); }
+  .boss-square.b-uncleared { border-color:var(--border); filter:brightness(0.35) saturate(0.2); }
 
   /* State */
   .state-container { text-align:center; padding:60px 20px; }
@@ -278,7 +299,48 @@ const INITIAL_CHARS = [
   { name: 'Jeadoom', realm: 'eredar', region: 'eu' },
 ];
 
-let seasonDungeons = []; // populated from raider.io static-data on init
+let seasonDungeons = []; // populated from raider.io static-data on init; falls back to hardcoded list
+
+const FALLBACK_DUNGEONS = [
+  { name: 'Windrunner Spire',        short_name: 'WS',   slug: 'windrunner-spire' },
+  { name: 'Murder Row',              short_name: 'MR',   slug: 'murder-row' },
+  { name: 'Den of Nalorakk',         short_name: 'DoN',  slug: 'den-of-nalorakk' },
+  { name: 'Maisara Caverns',         short_name: 'MC',   slug: 'maisara-caverns' },
+  { name: "Magister's Terrace",      short_name: 'MgT',  slug: 'magisters-terrace' },
+  { name: 'Pit of Saron',            short_name: 'PoS',  slug: 'pit-of-saron' },
+  { name: 'Seat of the Triumvirate', short_name: 'SotT', slug: 'seat-of-the-triumvirate' },
+  { name: 'Skyreach',                short_name: 'Sky',  slug: 'skyreach' },
+];
+
+const SEASON_RAIDS = [
+  {
+    slug: 'voidspire', name: 'The Voidspire',
+    bg: 'linear-gradient(160deg,#0d0914,#1a0826)',
+    bosses: [
+      { name: 'Imperator Averzian',      short: 'Averzian',  npcId: 240435 },
+      { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434 },
+      { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432 },
+      { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056 },
+      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: null },
+      { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: null },
+    ],
+  },
+  {
+    slug: 'dreamrift', name: 'The Dreamrift',
+    bg: 'linear-gradient(160deg,#060d14,#091a1a)',
+    bosses: [
+      { name: 'Chimaerus, the Undreamt God', short: 'Chimaerus', npcId: 256116 },
+    ],
+  },
+  {
+    slug: 'march-on-queldanas', name: "March on Quel'Danas",
+    bg: 'linear-gradient(160deg,#140c06,#1a1408)',
+    bosses: [
+      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: null },
+      { name: 'Midnight Falls',            short: 'Midnight Falls', npcId: null },
+    ],
+  },
+];
 
 const RAIDS = {
   voidspire: [
@@ -323,6 +385,7 @@ async function fetchSeasonDungeons() {
       }
     } catch(e) {}
   }
+  seasonDungeons = FALLBACK_DUNGEONS; // API unavailable, use hardcoded Midnight S1 list
 }
 
 // ── Data fetch ──────────────────────────────────────────────
@@ -483,36 +546,37 @@ function buildMplusHTML(rio) {
 
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
-  if (!prog) return '<div class="data-na">Keine Daten verfügbar</div>';
 
-  const entries = Object.entries(prog);
-  if (!entries.length) return '<div class="data-na">Keine Raids gefunden</div>';
+  return SEASON_RAIDS.map(raid => {
+    const data = prog && prog[raid.slug];
+    const n = data ? data.normal_bosses_killed : 0;
+    const h = data ? data.heroic_bosses_killed : 0;
+    const m = data ? data.mythic_bosses_killed : 0;
 
-  return entries.map(([slug, data]) => {
-    const total = data.total_bosses;
-    const n = data.normal_bosses_killed;
-    const h = data.heroic_bosses_killed;
-    const m = data.mythic_bosses_killed;
-    return `<div class="raid-prog-item">
-      <div class="raid-prog-name">${raidSlugToName(slug)}</div>
-      <div class="raid-prog-badges">
-        <span class="diff-badge normal ${n === total ? '' : 'dim'}">${n}/${total} N</span>
-        <span class="diff-badge heroic ${h === total ? '' : 'dim'}">${h}/${total} H</span>
-        <span class="diff-badge mythic ${m === total ? '' : 'dim'}">${m}/${total} M</span>
-      </div>
+    const squares = raid.bosses.map((boss, i) => {
+      let cls = 'b-uncleared';
+      if      (i < m) cls = 'b-mythic';
+      else if (i < h) cls = 'b-heroic';
+      else if (i < n) cls = 'b-normal';
+
+      const imgSrc = boss.npcId
+        ? `https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg`
+        : '';
+      const imgTag = imgSrc
+        ? `<img src="${imgSrc}" onerror="this.remove()" alt="">`
+        : '';
+
+      return `<div class="boss-square ${cls}" style="background:${raid.bg}" title="${boss.name}">
+        ${imgTag}
+        <div class="boss-name-label">${boss.short}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="raid-section">
+      <div class="raid-section-title">${raid.name}</div>
+      <div class="boss-grid">${squares}</div>
     </div>`;
   }).join('');
-}
-
-function raidSlugToName(slug) {
-  const overrides = {
-    'nerub-ar-palace': "Nerub-ar Palace",
-    'liberation-of-undermine': 'Liberation of Undermine',
-    'voidspire': 'Voidspire',
-    'dreamrift': 'Dreamrift',
-    'march-on-queldanas': "March on Quel'Danas",
-  };
-  return overrides[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function scoreColor(score) {
