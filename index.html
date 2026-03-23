@@ -333,29 +333,44 @@ const SEASON_RAIDS = [
     slug: 'voidspire', name: 'The Voidspire',
     bg: 'linear-gradient(160deg,#0d0914,#1a0826)',
     bosses: [
-      { name: 'Imperator Averzian',      short: 'Averzian',  npcId: 240435, ki: 0 },
-      { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434, ki: 1 },
-      { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432, ki: 2 },
-      { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056, ki: 3 },
-      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: 250588, ki: 4 },
-      { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: 244761, ki: 6 },
+      { name: 'Imperator Averzian',      short: 'Averzian',  npcId: 240435 },
+      { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434 },
+      { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432 },
+      { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056 },
+      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: 250588 },
+      { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: 244761 },
     ],
   },
   {
     slug: 'dreamrift', name: 'The Dreamrift',
     bg: 'linear-gradient(160deg,#060d14,#091a1a)',
     bosses: [
-      { name: 'Chimaerus, the Undreamt God', short: 'Chimaerus', npcId: 256116, ki: 5 },
+      { name: 'Chimaerus, the Undreamt God', short: 'Chimaerus', npcId: 256116 },
     ],
   },
   {
     slug: 'march-on-queldanas', name: "March on Quel'Danas",
     bg: 'linear-gradient(160deg,#140c06,#1a1408)',
     bosses: [
-      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: 240387, ki: 7 },
-      { name: 'Midnight Falls',            short: 'Midnight Falls', npcId: 214650, ki: 8 },
+      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",       npcId: 240387 },
+      { name: 'Midnight Falls',           short: 'Midnight Falls',  npcId: 214650 },
     ],
   },
+];
+
+// Boss order as raider.io counts them (position = kill index).
+// raider.io only exposes aggregate kill counts, so this order must match
+// their internal encounter sequence for correct per-boss coloring.
+const RAID_BOSS_ORDER = [
+  { short: 'Averzian',       npcId: 240435, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 1 },
+  { short: 'Vorasius',       npcId: 240434, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 2 },
+  { short: 'Salhadaar',      npcId: 240432, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 3 },
+  { short: 'Vaelgor',        npcId: 242056, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 4 },
+  { short: 'Vanguard',       npcId: 250588, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 5 },
+  { short: 'Chimaerus',      npcId: 256116, bg: 'linear-gradient(160deg,#060d14,#091a1a)', gridRow: 2, gridCol: 1 },
+  { short: 'Cosmos',         npcId: 244761, bg: 'linear-gradient(160deg,#0d0914,#1a0826)', gridRow: 1, gridCol: 6 },
+  { short: "Belo'ren",       npcId: 240387, bg: 'linear-gradient(160deg,#140c06,#1a1408)', gridRow: 2, gridCol: 3 },
+  { short: 'Midnight Falls', npcId: 214650, bg: 'linear-gradient(160deg,#140c06,#1a1408)', gridRow: 2, gridCol: 4 },
 ];
 
 const RAIDS = {
@@ -543,35 +558,21 @@ function buildRaidHTML(rio) {
   const h = d ? (d.heroic_bosses_killed  || 0) : 0;
   const m = d ? (d.mythic_bosses_killed  || 0) : 0;
 
-  function killClass(globalIdx) {
-    if (globalIdx < m) return 'b-mythic';
-    if (globalIdx < h) return 'b-heroic';
-    if (globalIdx < n) return 'b-normal';
-    return 'b-uncleared';
-  }
-
-  function sq(raid, boss, globalIdx, gridStyle) {
-    const cls = killClass(globalIdx);
+  const squares = RAID_BOSS_ORDER.map((boss, i) => {
+    let cls;
+    if (i < m)      cls = 'b-mythic';
+    else if (i < h) cls = 'b-heroic';
+    else if (i < n) cls = 'b-normal';
+    else            cls = 'b-uncleared';
     const img = boss.npcId
       ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
       : '';
-    return `<div class="boss-square ${cls}" style="background:${raid.bg};${gridStyle}" title="${boss.name}">
+    return `<div class="boss-square ${cls}" style="background:${boss.bg};grid-column:${boss.gridCol};grid-row:${boss.gridRow}" title="${boss.short}">
       ${img}<div class="boss-name-label">${boss.short}</div>
     </div>`;
-  }
+  }).join('');
 
-  const [vs, dr, mq] = SEASON_RAIDS;
-  const total = SEASON_RAIDS.reduce((s, r) => s + r.bosses.length, 0);
-
-  const vsBosses = vs.bosses.map((b, i) => sq(vs, b, b.ki, '')).join('');
-  const drBoss = sq(dr, dr.bosses[0], dr.bosses[0].ki, 'grid-column:1;grid-row:2');
-  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, b.ki, `grid-column:${i+3};grid-row:2`)).join('');
-
-  const kM = m;
-  const kH = h;
-  const kN = n;
-
-  return { grid: `<div class="boss-master-grid">${vsBosses}${drBoss}${mqBosses}</div>`, kM, kH, kN, total };
+  return { grid: `<div class="boss-master-grid">${squares}</div>`, kM: m, kH: h, kN: n, total: RAID_BOSS_ORDER.length };
 }
 
 function scoreColor(score) {
