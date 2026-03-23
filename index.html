@@ -303,7 +303,7 @@ const INITIAL_CHARS = [
   { name: 'Jeadoom', realm: 'eredar', region: 'eu' },
 ];
 
-let seasonDungeons = []; // populated from raider.io static-data on init; falls back to hardcoded list
+let seasonDungeons = FALLBACK_DUNGEONS; // hardcoded Midnight S1 list (raider.io static-data still returns old expansion)
 
 const FALLBACK_DUNGEONS = [
   { name: 'Windrunner Spire',        short_name: 'WS',   slug: 'windrunner-spire' },
@@ -375,22 +375,8 @@ function switchTab(id, btn) {
 }
 
 // ── Season dungeons ──────────────────────────────────────────
-async function fetchSeasonDungeons() {
-  for (const expId of [10, 9, 11]) {
-    try {
-      const r = await fetch(`https://raider.io/api/v1/mythic-plus/static-data?expansion_id=${expId}`);
-      if (!r.ok) continue;
-      const data = await r.json();
-      const seasons = data.seasons || [];
-      const latest = seasons[seasons.length - 1];
-      if (latest && latest.dungeons && latest.dungeons.length > 0) {
-        seasonDungeons = latest.dungeons;
-        return;
-      }
-    } catch(e) {}
-  }
-  seasonDungeons = FALLBACK_DUNGEONS; // API unavailable, use hardcoded Midnight S1 list
-}
+// fetchSeasonDungeons removed — raider.io static-data still returns TWW expansion data.
+// seasonDungeons is initialised directly from FALLBACK_DUNGEONS (Midnight S1 hardcoded list).
 
 // ── Data fetch ──────────────────────────────────────────────
 async function fetchAllData(entry) {
@@ -629,7 +615,6 @@ function loadingHTML(t, s) {
 }
 
 // ── Init ─────────────────────────────────────────────────────
-fetchSeasonDungeons();
 loadMyChars();
 renderRaidTables();
 </script>
