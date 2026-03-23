@@ -538,6 +538,7 @@ function buildMplusHTML(rio) {
 
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
+  console.log('raid_progression keys:', prog ? Object.keys(prog) : null, prog);
 
   function killClass(raid, i) {
     const d = prog && prog[raid.slug];
