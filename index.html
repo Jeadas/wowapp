@@ -41,25 +41,23 @@
   .container { position: relative; z-index: 1; max-width: 1600px; margin: 0 auto; padding: 0 24px 60px; }
 
   /* Header */
-  header { text-align: center; padding: 48px 0 32px; }
+  header { text-align: center; padding: 20px 0 0; }
   header::after {
     content: '';
     display: block;
-    width: 600px;
+    width: 400px;
     max-width: 90%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 24px auto 0;
+    margin: 10px auto 0;
   }
-  .header-ornament { font-family:'Cinzel Decorative',serif; font-size:11px; letter-spacing:6px; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
-  h1 { font-family:'Cinzel Decorative',serif; font-size:clamp(24px,4vw,48px); font-weight:700; color:var(--gold); text-shadow:0 0 40px rgba(200,168,75,.4),0 2px 4px rgba(0,0,0,.8); letter-spacing:3px; line-height:1.2; }
-  .subtitle { font-family:'Crimson Pro',serif; font-size:16px; color:var(--text-muted); margin-top:8px; letter-spacing:2px; font-style:italic; }
-  .ornament { text-align:center; color:var(--gold-dim); font-size:18px; letter-spacing:8px; margin:4px 0 0; }
+  h1 { font-family:'Cinzel Decorative',serif; font-size:clamp(20px,3vw,36px); font-weight:700; color:var(--gold); text-shadow:0 0 40px rgba(200,168,75,.4); letter-spacing:3px; }
+  .subtitle { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-muted); margin-top:4px; letter-spacing:2px; font-style:italic; }
 
   /* Tabs */
-  .tabs-nav { display:flex; gap:0; margin:28px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap: wrap; }
+  .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; }
   .tab-btn {
-    padding:12px 24px;
+    padding:9px 20px;
     background:transparent;
     border:1px solid transparent;
     border-bottom:none;
@@ -77,15 +75,15 @@
   .tab-btn.active { color:var(--gold); border-color:var(--border-gold); border-bottom-color:var(--bg-deep); background:var(--bg-deep); }
   .tab-count { display:inline-block; margin-left:6px; padding:1px 7px; background:var(--border); border-radius:10px; font-size:10px; color:var(--text-muted); }
   .tab-btn.active .tab-count { background:var(--gold-dim); color:var(--gold); }
-  .tab-pane { display:none; padding-top:28px; }
+  .tab-pane { display:none; padding-top:22px; }
   .tab-pane.active { display:block; }
 
   /* Controls */
-  .controls { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+  .controls { display:flex; align-items:center; justify-content:flex-end; gap:16px; margin-bottom:18px; }
   .last-updated { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-dim); font-style:italic; }
 
   /* Buttons */
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 24px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:2px; cursor:pointer; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; cursor:pointer; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
   .btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(200,168,75,.1),transparent); opacity:0; transition:opacity .3s; }
   .btn:hover { border-color:var(--gold); color:var(--gold-bright); }
   .btn:hover::before { opacity:1; }
@@ -93,15 +91,22 @@
   .btn.loading svg { animation:spin 1s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* Grid */
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+  /* Character rows */
+  .char-rows { display:flex; flex-direction:column; gap:14px; }
+  .char-row {
+    display:grid;
+    grid-template-columns: 340px 1fr 1fr;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    position:relative;
+    animation:fadeIn .5s ease both;
+  }
+  .char-row::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--cls-color,var(--gold-dim)); opacity:.7; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-  /* Card */
-  .card { background:var(--bg-card); border:1px solid var(--border); position:relative; transition:transform .3s,border-color .3s; animation:fadeIn .5s ease both; }
-  .card:hover { transform:translateY(-2px); border-color:var(--border-gold); }
-  .card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:var(--cls-color,var(--gold-dim)); opacity:.7; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .card-header { display:flex; align-items:center; gap:12px; padding:16px; border-bottom:1px solid var(--border); }
+  /* Column: Armory */
+  .col-armory { border-right:1px solid var(--border); }
+  .card-header { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--border); }
   .avatar-wrap { width:52px; height:52px; border:2px solid var(--cls-color,var(--gold-dim)); flex-shrink:0; overflow:hidden; }
   .avatar-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
   .avatar-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--border); font-size:20px; }
@@ -112,12 +117,10 @@
   .ilvl-badge { text-align:center; flex-shrink:0; }
   .ilvl-number { font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:var(--gold); line-height:1; }
   .ilvl-label { font-size:10px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
-
-  /* Slots */
-  .slots { padding:12px 16px; display:grid; grid-template-columns:1fr 1fr; gap:3px 12px; }
-  .slot-row { display:flex; align-items:center; justify-content:space-between; padding:3px 0; border-bottom:1px solid rgba(42,34,22,.5); }
-  .slot-name { font-size:11px; color:var(--text-dim); letter-spacing:.3px; }
-  .slot-ilvl { font-family:'Cinzel',serif; font-size:12px; font-weight:600; }
+  .slots { padding:10px 14px; display:grid; grid-template-columns:1fr 1fr; gap:2px 10px; }
+  .slot-row { display:flex; align-items:center; justify-content:space-between; padding:2px 0; border-bottom:1px solid rgba(42,34,22,.5); }
+  .slot-name { font-size:10px; color:var(--text-dim); letter-spacing:.3px; }
+  .slot-ilvl { font-family:'Cinzel',serif; font-size:11px; font-weight:600; }
   .slot-ilvl.q-EPIC { color:#a335ee; }
   .slot-ilvl.q-RARE { color:#0070dd; }
   .slot-ilvl.q-UNCOMMON { color:#1eff00; }
@@ -126,6 +129,41 @@
   .slot-ilvl.q-HEIRLOOM { color:#00ccff; }
   .slot-ilvl.empty { color:var(--text-dim); font-size:10px; }
 
+  /* Column: M+ */
+  .col-mplus { border-right:1px solid var(--border); padding:14px 16px; }
+  .col-raids { padding:14px 16px; }
+  .col-header { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px; }
+  .mplus-score-big { font-family:'Cinzel',serif; font-size:38px; font-weight:700; line-height:1; }
+  .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:3px; margin-bottom:12px; }
+  .dungeon-list { display:flex; flex-direction:column; gap:3px; }
+  .dungeon-row { display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center; padding:3px 6px; border:1px solid var(--border); }
+  .dungeon-name { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dungeon-key { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); font-weight:600; text-align:right; }
+  .dungeon-score { font-size:11px; color:var(--text-dim); text-align:right; min-width:38px; }
+  .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
+
+  /* Column: Raids */
+  .raid-prog-list { display:flex; flex-direction:column; gap:10px; }
+  .raid-prog-name { font-family:'Cinzel',serif; font-size:12px; color:var(--text-bright); margin-bottom:5px; }
+  .raid-prog-badges { display:flex; gap:5px; flex-wrap:wrap; }
+  .diff-badge {
+    padding:2px 8px;
+    font-family:'Cinzel',serif;
+    font-size:10px;
+    letter-spacing:.5px;
+    border:1px solid;
+  }
+  .diff-badge.normal { border-color:#1a6e1a; color:#4ade4a; background:rgba(26,110,26,0.12); }
+  .diff-badge.heroic { border-color:#0050a0; color:#4da6ff; background:rgba(0,80,160,0.12); }
+  .diff-badge.mythic { border-color:var(--gold-dim); color:var(--gold); background:rgba(200,168,75,0.1); }
+  .diff-badge.dim { opacity:0.45; }
+
+  /* State */
+  .state-container { text-align:center; padding:60px 20px; }
+  .loading-ring { width:48px; height:48px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 18px; }
+  .state-title { font-family:'Cinzel',serif; font-size:16px; color:var(--gold); margin-bottom:6px; }
+  .state-sub { font-size:13px; color:var(--text-dim); font-style:italic; }
+
   /* Raid Table Styles */
   .raid-table-container { background:var(--bg-card); border:1px solid var(--border-gold); padding:24px; overflow-x:auto; }
   .raid-table { width:100%; border-collapse:collapse; font-family:'Crimson Pro',serif; }
@@ -133,26 +171,21 @@
   .raid-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; }
   .boss-name { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-bright); }
   .talent-icons { display:flex; gap:8px; flex-wrap:wrap; }
-  .talent-icon { width:32px; height:32px; border:1px solid var(--gold-dim); border-radius:4px; background:var(--bg-deep); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:help; position:relative; }
-  .talent-icon:hover { border-color:var(--gold); box-shadow:0 0 8px rgba(200,168,75,0.3); }
+  .talent-icon { width:32px; height:32px; border:1px solid var(--gold-dim); border-radius:4px; background:var(--bg-deep); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:help; }
   .talent-icon.highlight { border-color:var(--gold-bright); box-shadow:0 0 12px rgba(255,215,0,0.4); }
   .cooldown-list { list-style:none; font-size:13px; color:var(--text-muted); }
   .cooldown-item { margin-bottom:4px; display:flex; gap:8px; }
   .timestamp { color:var(--gold); font-weight:600; min-width:45px; }
   .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; }
 
-  /* State containers */
-  .state-container { grid-column:1/-1; text-align:center; padding:80px 20px; }
-  .loading-ring { width:60px; height:60px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 24px; }
-  .state-title { font-family:'Cinzel',serif; font-size:18px; color:var(--gold); margin-bottom:8px; }
-  .state-sub { font-size:14px; color:var(--text-dim); font-style:italic; }
-
-  @media (max-width: 768px) {
-    .container { padding:0 16px 40px; }
-    .controls { flex-direction:column; align-items:stretch; }
-    .btn { width:100%; }
-    .tabs-nav { overflow-x:auto; }
-    .tab-btn { padding:12px 20px; flex-shrink:0; }
+  @media (max-width:1100px) {
+    .char-row { grid-template-columns:1fr 1fr; }
+    .col-armory { grid-column:1/-1; border-right:none; border-bottom:1px solid var(--border); }
+  }
+  @media (max-width:700px) {
+    .char-row { grid-template-columns:1fr; }
+    .col-mplus { border-right:none; border-bottom:1px solid var(--border); }
+    .container { padding:0 12px 40px; }
   }
 </style>
 </head>
@@ -160,44 +193,34 @@
 
 <div class="container">
   <header>
-    <div class="header-ornament">✦ &nbsp; Midnight Season 1 &nbsp; ✦</div>
     <h1>JDoc</h1>
-    <div class="ornament"> — ✦ — </div>
+    <div class="subtitle">Midnight · Season 1</div>
   </header>
 
   <div class="tabs-nav">
     <button class="tab-btn active" onclick="switchTab('mine', this)">
       Meine Charaktere <span class="tab-count" id="myCount">0</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('voidspire', this)">
-      Voidspire
-    </button>
-    <button class="tab-btn" onclick="switchTab('dreamrift', this)">
-      Dreamrift
-    </button>
-    <button class="tab-btn" onclick="switchTab('quel-danas', this)">
-      March on Quel'Danas
-    </button>
+    <button class="tab-btn" onclick="switchTab('voidspire', this)">Voidspire</button>
+    <button class="tab-btn" onclick="switchTab('dreamrift', this)">Dreamrift</button>
+    <button class="tab-btn" onclick="switchTab('quel-danas', this)">March on Quel'Danas</button>
   </div>
 
   <!-- Tab: Meine Charaktere -->
   <div id="tab-mine" class="tab-pane active">
     <div class="controls">
-      <div></div>
-      <div style="display:flex;align-items:center;gap:16px;">
-        <span class="last-updated" id="lastUpdated"></span>
-        <button class="btn" id="refreshBtn" onclick="loadMyChars()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-          </svg>
-          Daten laden
-        </button>
-      </div>
+      <span class="last-updated" id="lastUpdated"></span>
+      <button class="btn" id="refreshBtn" onclick="loadMyChars()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Daten laden
+      </button>
     </div>
-    <div class="grid" id="myGrid">
+    <div id="myGrid">
       <div class="state-container">
         <div class="state-title">Bereit</div>
-        <div class="state-sub">Klicke auf „Daten laden" um die Charakterdaten abzurufen</div>
+        <div class="state-sub">Klicke auf „Daten laden" um Charakterdaten abzurufen</div>
       </div>
     </div>
   </div>
@@ -206,17 +229,8 @@
   <div id="tab-voidspire" class="tab-pane">
     <div class="raid-table-container">
       <table class="raid-table">
-        <thead>
-          <tr>
-            <th>Boss</th>
-            <th>Talents</th>
-            <th>Cooldowns</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="voidspire-body">
-          <!-- Bosses: Imperator Averzian, Vorasius, Fallen-King Salhadaar, Vaelgor & Ezzorak, Lightblinded Vanguard, Void-Touched Amalgam -->
-        </tbody>
+        <thead><tr><th>Boss</th><th>Talents</th><th>Cooldowns</th><th>Notes</th></tr></thead>
+        <tbody id="voidspire-body"></tbody>
       </table>
     </div>
   </div>
@@ -225,17 +239,8 @@
   <div id="tab-dreamrift" class="tab-pane">
     <div class="raid-table-container">
       <table class="raid-table">
-        <thead>
-          <tr>
-            <th>Boss</th>
-            <th>Talents</th>
-            <th>Cooldowns</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="dreamrift-body">
-          <!-- Boss: Chimaerus -->
-        </tbody>
+        <thead><tr><th>Boss</th><th>Talents</th><th>Cooldowns</th><th>Notes</th></tr></thead>
+        <tbody id="dreamrift-body"></tbody>
       </table>
     </div>
   </div>
@@ -244,25 +249,15 @@
   <div id="tab-quel-danas" class="tab-pane">
     <div class="raid-table-container">
       <table class="raid-table">
-        <thead>
-          <tr>
-            <th>Boss</th>
-            <th>Talents</th>
-            <th>Cooldowns</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody id="quel-danas-body">
-          <!-- Bosses: Belo'ren, Midnight Falls -->
-        </tbody>
+        <thead><tr><th>Boss</th><th>Talents</th><th>Cooldowns</th><th>Notes</th></tr></thead>
+        <tbody id="quel-danas-body"></tbody>
       </table>
     </div>
   </div>
-
 </div>
 
 <script>
-// ── Konfiguration ──────────────────────────────────────────
+// ── Config ──────────────────────────────────────────────────
 const API_BASE = 'https://odd-haze-05b0.billywurow-edc.workers.dev';
 
 const CLASS_COLORS = {
@@ -277,119 +272,109 @@ const CLASS_ICONS = {
 const LEFT_SLOTS  = ['Head','Neck','Shoulder','Back','Chest','Wrist','Main Hand','Off Hand'];
 const RIGHT_SLOTS = ['Hands','Waist','Legs','Feet','Ring 1','Ring 2','Trinket 1','Trinket 2'];
 
-// Initial character list
 const INITIAL_CHARS = [
-  { name: 'Jeadas', realm: 'eredar', region: 'eu' },
-  { name: 'Jeadoom', realm: 'eredar', region: 'eu' }
+  { name: 'Jeadas',  realm: 'eredar', region: 'eu' },
+  { name: 'Jeadoom', realm: 'eredar', region: 'eu' },
 ];
 
-// Raid Data
+const RAID_SLUGS = [
+  { slug: 'voidspire',           name: 'Voidspire',            total: 8 },
+  { slug: 'dreamrift',           name: 'Dreamrift',            total: 8 },
+  { slug: 'march-on-queldanas',  name: "March on Quel'Danas",  total: 8 },
+];
+
 const RAIDS = {
   voidspire: [
-    { name: 'Imperator Averzian', talents: ['💀', '🔥', '🛡️'], cds: [['0:45', 'Army of the Dead'], ['2:30', 'Empower Rune Weapon']], notes: 'Watch out for Void Blast. Save AMS for P2.' },
-    { name: 'Vorasius', talents: ['💀', '❄️', '🗡️'], cds: [['1:15', 'Abomination Limb'], ['3:45', 'Army of the Dead']], notes: 'Stack for soak. Use Death Advance for pushback.' },
-    { name: 'Fallen-King Salhadaar', talents: ['💀', '🔮', '🛡️'], cds: [['0:30', 'Empower Rune Weapon'], ['4:00', 'Army of the Dead']], notes: 'Interrupt Shadow Bolt. Move out with debuff.' },
-    { name: 'Vaelgor & Ezzorak', talents: ['💀', '⚡', '🗡️'], cds: [['1:00', 'Abomination Limb'], ['3:00', 'Army of the Dead']], notes: 'Keep bosses apart. Focus Vaelgor first.' },
-    { name: 'Lightblinded Vanguard', talents: ['💀', '✨', '🛡️'], cds: [['0:15', 'Empower Rune Weapon'], ['5:00', 'Army of the Dead']], notes: 'Dodge the Light beams. Use AMS for Holy damage.' },
-    { name: 'Void-Touched Amalgam', talents: ['💀', '🌑', '🗡️'], cds: [['2:00', 'Army of the Dead'], ['4:30', 'Empower Rune Weapon']], notes: 'Kill adds quickly. Stack for healing.' }
+    { name: 'Imperator Averzian',    talents: ['💀','🔥','🛡️'], cds: [['0:45','Army of the Dead'],['2:30','Empower Rune Weapon']], notes: 'Watch out for Void Blast. Save AMS for P2.' },
+    { name: 'Vorasius',              talents: ['💀','❄️','🗡️'], cds: [['1:15','Abomination Limb'],['3:45','Army of the Dead']],    notes: 'Stack for soak. Use Death Advance for pushback.' },
+    { name: 'Fallen-King Salhadaar', talents: ['💀','🔮','🛡️'], cds: [['0:30','Empower Rune Weapon'],['4:00','Army of the Dead']], notes: 'Interrupt Shadow Bolt. Move out with debuff.' },
+    { name: 'Vaelgor & Ezzorak',     talents: ['💀','⚡','🗡️'], cds: [['1:00','Abomination Limb'],['3:00','Army of the Dead']],    notes: 'Keep bosses apart. Focus Vaelgor first.' },
+    { name: 'Lightblinded Vanguard', talents: ['💀','✨','🛡️'], cds: [['0:15','Empower Rune Weapon'],['5:00','Army of the Dead']], notes: 'Dodge the Light beams. Use AMS for Holy damage.' },
+    { name: 'Void-Touched Amalgam',  talents: ['💀','🌑','🗡️'], cds: [['2:00','Army of the Dead'],['4:30','Empower Rune Weapon']], notes: 'Kill adds quickly. Stack for healing.' },
   ],
   dreamrift: [
-    { name: 'Chimaerus, the Undreamt God', talents: ['💀', '💤', '🛡️'], cds: [['1:30', 'Army of the Dead'], ['4:00', 'Empower Rune Weapon']], notes: 'Don\'t fall asleep! Use AMS for Dream Breath.' }
+    { name: 'Chimaerus, the Undreamt God', talents: ['💀','💤','🛡️'], cds: [['1:30','Army of the Dead'],['4:00','Empower Rune Weapon']], notes: "Don't fall asleep! Use AMS for Dream Breath." },
   ],
   'quel-danas': [
-    { name: 'Belo\'ren, Child of Al\'ar', talents: ['💀', '🔥', '🗡️'], cds: [['0:45', 'Empower Rune Weapon'], ['3:15', 'Army of the Dead']], notes: 'Spread for Fireballs. Kill Phoenix adds.' },
-    { name: 'Midnight Falls', talents: ['💀', '🌑', '🛡️'], cds: [['2:00', 'Army of the Dead'], ['5:00', 'Empower Rune Weapon']], notes: 'Final encounter. Use everything on P3.' }
-  ]
+    { name: "Belo'ren, Child of Al'ar", talents: ['💀','🔥','🗡️'], cds: [['0:45','Empower Rune Weapon'],['3:15','Army of the Dead']], notes: 'Spread for Fireballs. Kill Phoenix adds.' },
+    { name: 'Midnight Falls',           talents: ['💀','🌑','🛡️'], cds: [['2:00','Army of the Dead'],['5:00','Empower Rune Weapon']], notes: 'Final encounter. Use everything on P3.' },
+  ],
 };
 
 let myChars = [];
 
-// ── Tabs ──────────────────────────────────────────────────────
+// ── Tabs ────────────────────────────────────────────────────
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
 }
 
-// ── My chars ──────────────────────────────────────────────────
+// ── Data fetch ──────────────────────────────────────────────
+async function fetchAllData(entry) {
+  const charUrl = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
+  const rioFields = 'mythic_plus_scores_by_season:current,mythic_plus_best_runs,raid_progression';
+  const rioUrl = `https://raider.io/api/v1/characters/profile?region=${entry.region}&realm=${encodeURIComponent(entry.realm)}&name=${encodeURIComponent(entry.name)}&fields=${rioFields}`;
+
+  const [charData, rioData] = await Promise.all([
+    fetch(charUrl).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }),
+    fetch(rioUrl).then(r => r.ok ? r.json() : null).catch(() => null),
+  ]);
+
+  if (charData.error) throw new Error(charData.error);
+  return { ...charData, rio: rioData };
+}
+
+// ── Load & render ───────────────────────────────────────────
 async function loadMyChars() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.classList.add('loading');
-  setGrid('myGrid', loadingHTML('Charakterdaten werden geladen','Rufe Blizzard API ab …'));
-  
+  document.getElementById('myGrid').innerHTML = loadingHTML('Daten werden geladen', 'Rufe Blizzard API und Raider.IO ab …');
+
   myChars = [];
   const errors = [];
-  
-  for (const entry of INITIAL_CHARS) {
+
+  await Promise.all(INITIAL_CHARS.map(async entry => {
     try {
-      const url = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
-      const r = await fetch(url);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const d = await r.json();
-      if (d.error) throw new Error(d.error);
-      myChars.push(d);
-    } catch(e) { errors.push(entry.name + ' (' + entry.realm + '): ' + e.message); }
-  }
-  
+      const data = await fetchAllData(entry);
+      myChars.push(data);
+    } catch(e) {
+      errors.push(`${entry.name} (${entry.realm}): ${e.message}`);
+    }
+  }));
+
   document.getElementById('myCount').textContent = myChars.length;
-  renderMyCards(errors);
+  renderMyChars(errors);
   document.getElementById('lastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
   btn.disabled = false; btn.classList.remove('loading');
 }
 
-function renderMyCards(errors = []) {
+function renderMyChars(errors = []) {
   const g = document.getElementById('myGrid');
   g.innerHTML = '';
-  const sorted = [...myChars].sort((a,b)=>a.name.localeCompare(b.name));
-  sorted.forEach((c,i) => g.appendChild(buildCard(c,i,false)));
+  g.className = 'char-rows';
+
+  const sorted = [...myChars].sort((a, b) => a.name.localeCompare(b.name));
+  sorted.forEach((c, i) => g.appendChild(buildCharRow(c, i)));
+
   if (errors.length) {
     const div = document.createElement('div');
-    div.style.cssText = 'grid-column:1/-1;padding:16px;';
+    div.style.cssText = 'padding:12px 0;';
     div.innerHTML = errors.map(e => `<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ${e}</div>`).join('');
     g.appendChild(div);
   }
 }
 
-// ── Raid Tables ───────────────────────────────────────────────
-function renderRaidTables() {
-  for (const [raidId, bosses] of Object.entries(RAIDS)) {
-    const body = document.getElementById(`${raidId}-body`);
-    if (!body) continue;
-    
-    body.innerHTML = bosses.map(boss => `
-      <tr>
-        <td><div class="boss-name">${boss.name}</div></td>
-        <td>
-          <div class="talent-icons">
-            ${boss.talents.map(t => `<div class="talent-icon highlight" title="Talent Placeholder">${t}</div>`).join('')}
-          </div>
-        </td>
-        <td>
-          <ul class="cooldown-list">
-            ${boss.cds.map(cd => `
-              <li class="cooldown-item">
-                <span class="timestamp">${cd[0]}</span>
-                <span>${cd[1]}</span>
-              </li>
-            `).join('')}
-          </ul>
-        </td>
-        <td><div class="notes-text">${boss.notes}</div></td>
-      </tr>
-    `).join('');
-  }
-}
-
-// ── Card builder ──────────────────────────────────────────────
-function buildCard(char, index, showRemove) {
+// ── Row builder ─────────────────────────────────────────────
+function buildCharRow(char, index) {
   const cls   = char.class || 'Unknown';
   const color = CLASS_COLORS[cls] || '#c8a84b';
   const icon  = CLASS_ICONS[cls] || '⚔';
-  const card  = document.createElement('div');
-  card.className = 'card';
-  card.style.setProperty('--cls-color', color);
-  card.style.animationDelay = index * 60 + 'ms';
+  const row   = document.createElement('div');
+  row.className = 'char-row';
+  row.style.setProperty('--cls-color', color);
+  row.style.animationDelay = index * 80 + 'ms';
 
   const av = char.avatar
     ? `<img src="${char.avatar}" alt="${char.name}" onerror="this.parentElement.innerHTML='<div class=avatar-placeholder>${icon}</div>'">`
@@ -398,24 +383,95 @@ function buildCard(char, index, showRemove) {
   const regionTag = char.region
     ? `<span style="font-size:10px;color:var(--text-dim);margin-left:5px">${char.region.toUpperCase()}</span>` : '';
 
-  card.innerHTML = `
-    <div class="card-header">
-      <div class="avatar-wrap">${av}</div>
-      <div class="char-info">
-        <div class="char-name">${char.name}${regionTag}</div>
-        <div class="char-class">${cls}</div>
-        <div class="char-meta">${char.spec} · Lvl ${char.level} · ${char.realm}</div>
+  row.innerHTML = `
+    <div class="col-armory">
+      <div class="card-header">
+        <div class="avatar-wrap">${av}</div>
+        <div class="char-info">
+          <div class="char-name">${char.name}${regionTag}</div>
+          <div class="char-class">${cls}</div>
+          <div class="char-meta">${char.spec} · Lvl ${char.level} · ${char.realm}</div>
+        </div>
+        <div class="ilvl-badge">
+          <div class="ilvl-number">${char.equipped_ilvl}</div>
+          <div class="ilvl-label">Ilvl</div>
+        </div>
       </div>
-      <div class="ilvl-badge">
-        <div class="ilvl-number">${char.equipped_ilvl}</div>
-        <div class="ilvl-label">Ilvl</div>
+      <div class="slots">
+        <div>${LEFT_SLOTS.map(s => slotRow(char, s)).join('')}</div>
+        <div>${RIGHT_SLOTS.map(s => slotRow(char, s)).join('')}</div>
       </div>
     </div>
-    <div class="slots">
-      <div>${LEFT_SLOTS.map(s=>slotRow(char,s)).join('')}</div>
-      <div>${RIGHT_SLOTS.map(s=>slotRow(char,s)).join('')}</div>
+    <div class="col-mplus">
+      <div class="col-header">Mythic+</div>
+      ${buildMplusHTML(char.rio)}
+    </div>
+    <div class="col-raids">
+      <div class="col-header">Raid Progression</div>
+      <div class="raid-prog-list">${buildRaidHTML(char.rio)}</div>
     </div>`;
-  return card;
+
+  return row;
+}
+
+function buildMplusHTML(rio) {
+  if (!rio) return '<div class="data-na">Keine Daten verfügbar</div>';
+
+  const season   = rio.mythic_plus_scores_by_season;
+  const rawScore = season && season.length ? (season[0].scores?.all ?? 0) : 0;
+  const score    = Math.round(rawScore);
+  const color    = scoreColor(score);
+  const runs     = (rio.mythic_plus_best_runs || []).sort((a, b) => b.score - a.score);
+
+  const runsHTML = runs.length
+    ? runs.map(r => `
+        <div class="dungeon-row">
+          <span class="dungeon-name">${r.short_name}</span>
+          <span class="dungeon-key">+${r.mythic_level}</span>
+          <span class="dungeon-score">${Math.round(r.score)}</span>
+        </div>`).join('')
+    : '<div class="data-na">Keine Runs gefunden</div>';
+
+  return `
+    <div class="mplus-score-big" style="color:${color}">${score}</div>
+    <div class="mplus-score-label">Gesamt-Score</div>
+    <div class="dungeon-list">${runsHTML}</div>`;
+}
+
+function buildRaidHTML(rio) {
+  const prog = rio && rio.raid_progression;
+
+  return RAID_SLUGS.map(raid => {
+    const data = prog && prog[raid.slug];
+    if (!data) {
+      return `<div class="raid-prog-item">
+        <div class="raid-prog-name">${raid.name}</div>
+        <div class="raid-prog-badges"><span class="data-na" style="margin-top:0">N/A</span></div>
+      </div>`;
+    }
+    const total = data.total_bosses;
+    const n = data.normal_bosses_killed;
+    const h = data.heroic_bosses_killed;
+    const m = data.mythic_bosses_killed;
+    return `<div class="raid-prog-item">
+      <div class="raid-prog-name">${raid.name}</div>
+      <div class="raid-prog-badges">
+        <span class="diff-badge normal ${n === total ? '' : 'dim'}">${n}/${total} N</span>
+        <span class="diff-badge heroic ${h === total ? '' : 'dim'}">${h}/${total} H</span>
+        <span class="diff-badge mythic ${m === total ? '' : 'dim'}">${m}/${total} M</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function scoreColor(score) {
+  if (score >= 3000) return '#ff8000';
+  if (score >= 2500) return '#ffd700';
+  if (score >= 2000) return '#a335ee';
+  if (score >= 1500) return '#0070dd';
+  if (score >= 1000) return '#1eff00';
+  if (score > 0)     return '#aaa';
+  return 'var(--text-dim)';
 }
 
 function slotRow(char, name) {
@@ -425,12 +481,27 @@ function slotRow(char, name) {
   return `<div class="slot-row"><span class="slot-name">${name}</span><span class="slot-ilvl ${cls}"${tip}>${item ? item.ilvl : '—'}</span></div>`;
 }
 
-// ── Helpers ───────────────────────────────────────────────────
-function setGrid(id, html) { document.getElementById(id).innerHTML = html; }
-function loadingHTML(t,s) { return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`; }
-function errorHTML(s)     { return `<div class="state-container"><div class="error-icon">⚠️</div><div class="state-title">Verbindungsfehler</div><div class="state-sub">${s}</div></div>`; }
+// ── Raid Tables ─────────────────────────────────────────────
+function renderRaidTables() {
+  for (const [raidId, bosses] of Object.entries(RAIDS)) {
+    const body = document.getElementById(`${raidId}-body`);
+    if (!body) continue;
+    body.innerHTML = bosses.map(boss => `
+      <tr>
+        <td><div class="boss-name">${boss.name}</div></td>
+        <td><div class="talent-icons">${boss.talents.map(t => `<div class="talent-icon highlight">${t}</div>`).join('')}</div></td>
+        <td><ul class="cooldown-list">${boss.cds.map(cd => `<li class="cooldown-item"><span class="timestamp">${cd[0]}</span><span>${cd[1]}</span></li>`).join('')}</ul></td>
+        <td><div class="notes-text">${boss.notes}</div></td>
+      </tr>`).join('');
+  }
+}
 
-// ── Init ──────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────
+function loadingHTML(t, s) {
+  return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`;
+}
+
+// ── Init ─────────────────────────────────────────────────────
 loadMyChars();
 renderRaidTables();
 </script>
