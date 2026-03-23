@@ -56,7 +56,7 @@
   .subtitle { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:var(--text-muted); margin-top:4px; letter-spacing:2px; }
 
   /* Tabs */
-  .tabs-wrap { width:100%; }
+  .tabs-wrap { width:fit-content; margin:0 auto; }
   header { text-align:center; }
   .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; align-items:flex-end; }
   .tab-btn {
@@ -534,6 +534,14 @@ function renderMyChars(errors = []) {
     div.innerHTML = errors.map(e => `<div style="font-size:13px;color:#c05050;margin:3px 0">⚠ ${e}</div>`).join('');
     g.appendChild(div);
   }
+
+  requestAnimationFrame(() => {
+    const row = document.querySelector('.char-row');
+    if (!row) return;
+    const w = row.offsetWidth;
+    document.querySelector('.tabs-wrap').style.minWidth = w + 'px';
+    console.log('[JDoc] char-row width:', w, 'px  ← report this value to hardcode');
+  });
 
 }
 
