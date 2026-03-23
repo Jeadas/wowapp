@@ -56,7 +56,7 @@
   .subtitle { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:var(--text-muted); margin-top:4px; letter-spacing:2px; }
 
   /* Tabs */
-  .tabs-wrap { width:fit-content; margin:0 auto; }
+  .tabs-wrap { width:100%; }
   header { text-align:center; }
   .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; align-items:flex-end; }
   .tab-btn {
@@ -86,7 +86,7 @@
   .last-updated { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-dim); font-style:italic; }
 
   /* Buttons */
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; cursor:pointer; transition:all .3s; text-transform:uppercase; position:relative; overflow:hidden; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:9px 20px; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; font-size:11px; letter-spacing:2px; cursor:pointer; transition:border-color .3s, color .3s; text-transform:uppercase; position:relative; overflow:hidden; }
   .btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(200,168,75,.1),transparent); opacity:0; transition:opacity .3s; }
   .btn:hover { border-color:var(--gold); color:var(--gold-bright); }
   .btn:hover::before { opacity:1; }
@@ -291,14 +291,14 @@
     <button class="tab-btn" onclick="switchTab('dreamrift', this)">Dreamrift</button>
     <button class="tab-btn" onclick="switchTab('quel-danas', this)">March on Quel'Danas</button>
     <span class="last-updated" id="lastUpdated" style="margin-left:auto;margin-bottom:8px;padding:0 12px;"></span>
-    <div style="position:relative;margin-bottom:6px;">
-      <button class="btn" id="refreshBtn" onclick="loadMyChars()">
+    <div style="display:inline-grid;align-self:flex-end;margin-bottom:6px;">
+      <button class="btn" id="refreshBtn" onclick="loadMyChars()" style="grid-area:1/1;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>
         Reload Characters
       </button>
-      <button class="btn" id="editBtn" onclick="openEditModal()" style="position:absolute;inset:0;visibility:hidden;pointer-events:none;">
+      <button class="btn" id="editBtn" onclick="openEditModal()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
@@ -535,11 +535,6 @@ function renderMyChars(errors = []) {
     g.appendChild(div);
   }
 
-  // Lock tabs-wrap min-width to the rendered character grid width
-  requestAnimationFrame(() => {
-    const wrap = document.querySelector('.tabs-wrap');
-    if (wrap) wrap.style.minWidth = g.offsetWidth + 'px';
-  });
 }
 
 // ── Row builder ─────────────────────────────────────────────
