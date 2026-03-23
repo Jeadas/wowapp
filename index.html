@@ -538,21 +538,20 @@ function buildMplusHTML(rio) {
 
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
-  console.log('raid_progression keys:', prog ? Object.keys(prog) : null, prog);
+  const d = prog && prog['tier-mn-1'];
+  const n = d ? (d.normal_bosses_killed  || 0) : 0;
+  const h = d ? (d.heroic_bosses_killed  || 0) : 0;
+  const m = d ? (d.mythic_bosses_killed  || 0) : 0;
 
-  function killClass(raid, i) {
-    const d = prog && prog[raid.slug];
-    const n = d ? d.normal_bosses_killed : 0;
-    const h = d ? d.heroic_bosses_killed : 0;
-    const m = d ? d.mythic_bosses_killed : 0;
-    if (i < m) return 'b-mythic';
-    if (i < h) return 'b-heroic';
-    if (i < n) return 'b-normal';
+  function killClass(globalIdx) {
+    if (globalIdx < m) return 'b-mythic';
+    if (globalIdx < h) return 'b-heroic';
+    if (globalIdx < n) return 'b-normal';
     return 'b-uncleared';
   }
 
-  function sq(raid, boss, i, gridStyle) {
-    const cls = killClass(raid, i);
+  function sq(raid, boss, globalIdx, gridStyle) {
+    const cls = killClass(globalIdx);
     const img = boss.npcId
       ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
       : '';
@@ -565,16 +564,12 @@ function buildRaidHTML(rio) {
   const total = SEASON_RAIDS.reduce((s, r) => s + r.bosses.length, 0);
 
   const vsBosses = vs.bosses.map((b, i) => sq(vs, b, i, '')).join('');
-  const drBoss = sq(dr, dr.bosses[0], 0, 'grid-column:1;grid-row:2');
-  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, i, `grid-column:${i+3};grid-row:2`)).join('');
+  const drBoss = sq(dr, dr.bosses[0], vs.bosses.length, 'grid-column:1;grid-row:2');
+  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, vs.bosses.length + 1 + i, `grid-column:${i+3};grid-row:2`)).join('');
 
-  const killed = (key) => SEASON_RAIDS.reduce((s, r) => {
-    const d = prog && prog[r.slug];
-    return s + (d ? (d[key] || 0) : 0);
-  }, 0);
-  const kM = killed('mythic_bosses_killed');
-  const kH = killed('heroic_bosses_killed');
-  const kN = killed('normal_bosses_killed');
+  const kM = m;
+  const kH = h;
+  const kN = n;
 
   return { grid: `<div class="boss-master-grid">${vsBosses}${drBoss}${mqBosses}</div>`, kM, kH, kN, total };
 }
