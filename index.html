@@ -141,7 +141,8 @@
   }
   .dungeon-square.dg-cleared { border-color:var(--gold-dim); box-shadow:inset 0 0 10px rgba(200,168,75,0.2); }
   .dungeon-square.dg-uncleared { filter:brightness(0.35) saturate(0.2); }
-  .dungeon-key-center { font-family:'Cinzel',serif; font-size:20px; font-weight:700; line-height:1; }
+  .dungeon-square img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+  .dungeon-key-center { font-family:'Cinzel',serif; font-size:20px; font-weight:700; line-height:1; position:relative; text-shadow:0 1px 4px rgba(0,0,0,0.9); }
   .dungeon-name-label {
     position:absolute; bottom:0; left:0; right:0;
     background:linear-gradient(transparent,rgba(0,0,0,0.9));
@@ -338,7 +339,7 @@ const SEASON_RAIDS = [
       { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434 },
       { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432 },
       { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056 },
-      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: null },
+      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: 250588 },
       { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: null },
     ],
   },
@@ -353,7 +354,7 @@ const SEASON_RAIDS = [
     slug: 'march-on-queldanas', name: "March on Quel'Danas",
     bg: 'linear-gradient(160deg,#140c06,#1a1408)',
     bosses: [
-      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: null },
+      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: 240387 },
       { name: 'Midnight Falls',            short: 'Midnight Falls', npcId: null },
     ],
   },
@@ -366,7 +367,7 @@ const RAIDS = {
     { name: 'Fallen-King Salhadaar', talents: ['💀','🔮','🛡️'], cds: [['0:30','Empower Rune Weapon'],['4:00','Army of the Dead']], notes: 'Interrupt Shadow Bolt. Move out with debuff.' },
     { name: 'Vaelgor & Ezzorak',     talents: ['💀','⚡','🗡️'], cds: [['1:00','Abomination Limb'],['3:00','Army of the Dead']],    notes: 'Keep bosses apart. Focus Vaelgor first.' },
     { name: 'Lightblinded Vanguard', talents: ['💀','✨','🛡️'], cds: [['0:15','Empower Rune Weapon'],['5:00','Army of the Dead']], notes: 'Dodge the Light beams. Use AMS for Holy damage.' },
-    { name: 'Void-Touched Amalgam',  talents: ['💀','🌑','🗡️'], cds: [['2:00','Army of the Dead'],['4:30','Empower Rune Weapon']], notes: 'Kill adds quickly. Stack for healing.' },
+    { name: 'Crown of the Cosmos',   talents: ['💀','🌑','🗡️'], cds: [['2:00','Army of the Dead'],['4:30','Empower Rune Weapon']], notes: 'Final boss. Kill adds quickly. Stack for healing.' },
   ],
   dreamrift: [
     { name: 'Chimaerus, the Undreamt God', talents: ['💀','💤','🛡️'], cds: [['1:30','Army of the Dead'],['4:00','Empower Rune Weapon']], notes: "Don't fall asleep! Use AMS for Dream Breath." },
@@ -528,7 +529,9 @@ function buildMplusHTML(rio) {
   const squaresHTML = dungeons.map(d => {
     const best = bestMap[d.short_name];
     const keyColor = best ? scoreColor(best.score) : 'var(--text-dim)';
+    const slug = d.slug || d.short_name.toLowerCase().replace(/\s+/g,'-');
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
+      <img src="https://cdnassets.raider.io/images/dungeons/icons/season-midnight-1/${slug}.jpg" onerror="this.remove()" alt="">
       <div class="dungeon-key-center" style="color:${keyColor}">${best ? '+' + best.key : '—'}</div>
       <div class="dungeon-name-label">${d.short_name}</div>
     </div>`;
