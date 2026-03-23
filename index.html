@@ -144,7 +144,8 @@
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
 
   /* Column: Raids */
-  .raid-prog-list { display:flex; flex-direction:column; gap:10px; }
+  .raid-prog-list { display:flex; flex-direction:column; gap:4px; }
+  .boss-row { display:grid; gap:4px; }
   .raid-prog-name { font-family:'Cinzel',serif; font-size:12px; color:var(--text-bright); margin-bottom:5px; }
   .raid-prog-badges { display:flex; gap:5px; flex-wrap:wrap; }
   .diff-badge {
@@ -547,36 +548,32 @@ function buildMplusHTML(rio) {
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
 
-  return SEASON_RAIDS.map(raid => {
-    const data = prog && prog[raid.slug];
-    const n = data ? data.normal_bosses_killed : 0;
-    const h = data ? data.heroic_bosses_killed : 0;
-    const m = data ? data.mythic_bosses_killed : 0;
-
-    const squares = raid.bosses.map((boss, i) => {
-      let cls = 'b-uncleared';
-      if      (i < m) cls = 'b-mythic';
-      else if (i < h) cls = 'b-heroic';
-      else if (i < n) cls = 'b-normal';
-
-      const imgSrc = boss.npcId
-        ? `https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg`
-        : '';
-      const imgTag = imgSrc
-        ? `<img src="${imgSrc}" onerror="this.remove()" alt="">`
-        : '';
-
-      return `<div class="boss-square ${cls}" style="background:${raid.bg}" title="${boss.name}">
-        ${imgTag}
-        <div class="boss-name-label">${boss.short}</div>
-      </div>`;
+  function raidSquares(raids) {
+    return raids.flatMap(raid => {
+      const data = prog && prog[raid.slug];
+      const n = data ? data.normal_bosses_killed : 0;
+      const h = data ? data.heroic_bosses_killed : 0;
+      const m = data ? data.mythic_bosses_killed : 0;
+      return raid.bosses.map((boss, i) => {
+        let cls = 'b-uncleared';
+        if      (i < m) cls = 'b-mythic';
+        else if (i < h) cls = 'b-heroic';
+        else if (i < n) cls = 'b-normal';
+        const imgTag = boss.npcId
+          ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
+          : '';
+        return `<div class="boss-square ${cls}" style="background:${raid.bg}" title="${boss.name}">
+          ${imgTag}
+          <div class="boss-name-label">${boss.short}</div>
+        </div>`;
+      });
     }).join('');
+  }
 
-    return `<div class="raid-section">
-      <div class="raid-section-title">${raid.name}</div>
-      <div class="boss-grid">${squares}</div>
-    </div>`;
-  }).join('');
+  // Row 1: Voidspire (6 bosses), Row 2: Dreamrift + Quel'Danas (3 bosses)
+  return `
+    <div class="boss-row" style="grid-template-columns:repeat(6,1fr)">${raidSquares(SEASON_RAIDS.slice(0,1))}</div>
+    <div class="boss-row" style="grid-template-columns:repeat(3,1fr)">${raidSquares(SEASON_RAIDS.slice(1))}</div>`;
 }
 
 function scoreColor(score) {
