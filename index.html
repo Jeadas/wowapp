@@ -139,11 +139,18 @@
   .dungeon-square {
     border-radius:3px; border:2px solid var(--border);
     background:linear-gradient(160deg,#0d0a14,#180f2a);
-    display:inline-flex; flex-direction:column; overflow:hidden; cursor:default;
+    display:inline-flex; flex-direction:column; overflow:hidden; cursor:default; position:relative;
   }
   .dungeon-square.dg-cleared { border-color:var(--gold-dim); box-shadow:inset 0 0 10px rgba(200,168,75,0.2); }
   .dungeon-square.dg-uncleared { filter:brightness(0.35) saturate(0.2); }
   .dungeon-square img { display:block; width:auto; height:auto; max-width:none; }
+  .dungeon-key-overlay {
+    position:absolute; top:0; left:0; right:0; bottom:22px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel',serif; font-size:16px; font-weight:700; line-height:1;
+    text-shadow:0 0 6px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.9);
+    pointer-events:none;
+  }
   .dungeon-name-label {
     background:rgba(0,0,0,0.6); font-size:9px; padding:4px 4px 3px;
     text-align:center; color:var(--text-bright); letter-spacing:0.03em; flex-shrink:0;
@@ -517,7 +524,8 @@ function buildMplusHTML(rio) {
     const keyColor = best ? scoreColor(best.score) : 'var(--text-dim)';
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
       <img src="${d.img}" onerror="this.remove()" alt="">
-      <div class="dungeon-name-label"><span style="color:${keyColor}">${best ? '+' + best.key + ' · ' : ''}</span>${d.short_name}</div>
+      ${best ? `<div class="dungeon-key-overlay" style="color:${keyColor}">+${best.key}</div>` : ''}
+      <div class="dungeon-name-label">${d.short_name}</div>
     </div>`;
   }).join('');
 
