@@ -56,7 +56,7 @@
   .subtitle { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:var(--text-muted); margin-top:4px; letter-spacing:2px; }
 
   /* Tabs */
-  .tabs-wrap { width:fit-content; margin:0 auto; }
+  .tabs-wrap { width:fit-content; margin:0 auto; min-width:1112px; }
   header { text-align:center; }
   .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; align-items:flex-end; }
   .tab-btn {
@@ -215,6 +215,8 @@
   .raid-table { width:100%; border-collapse:collapse; font-family:'Crimson Pro',serif; }
   .raid-table th { text-align:left; padding:12px 16px; border-bottom:2px solid var(--border-gold); font-family:'Cinzel',serif; font-size:12px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; }
   .raid-table td { padding:16px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .raid-table td:first-child, .raid-table th:first-child { width:1%; white-space:nowrap; }
+  .raid-table td:nth-child(2), .raid-table th:nth-child(2) { padding-left:32px; }
   .boss-name { font-family:'Cinzel',serif; font-size:14px; font-weight:600; color:var(--text-bright); }
   .talent-icons { display:flex; gap:8px; flex-wrap:wrap; }
   .talent-icon { width:32px; height:32px; border:1px solid var(--gold-dim); border-radius:4px; background:var(--bg-deep); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:help; }
@@ -222,7 +224,7 @@
   .cooldown-list { list-style:none; font-size:13px; color:var(--text-muted); }
   .cooldown-item { margin-bottom:4px; display:flex; gap:8px; }
   .timestamp { color:var(--gold); font-weight:600; min-width:45px; }
-  .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; }
+  .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -258,8 +260,8 @@
   .color-dot.red-dot { background:#c41e3a; }
   .color-dot.green-dot { background:#1eff00; }
   /* Talent grid in table */
-  .talent-grid { display:grid; gap:3px; }
-  .talent-cell { width:52px; height:52px; object-fit:cover; display:block; border:3px solid; }
+  .talent-grid { display:flex; gap:3px; flex-wrap:nowrap; }
+  .talent-cell { width:26px; height:26px; object-fit:cover; display:block; border:2px solid; flex-shrink:0; }
   .talent-cell.tc-red { border-color:#c41e3a; box-shadow:0 0 6px rgba(196,30,58,0.4); }
   .talent-cell.tc-green { border-color:#1eff00; box-shadow:0 0 6px rgba(30,255,0,0.3); }
 
@@ -535,13 +537,6 @@ function renderMyChars(errors = []) {
     g.appendChild(div);
   }
 
-  requestAnimationFrame(() => {
-    const row = document.querySelector('.char-row');
-    if (!row) return;
-    const w = row.offsetWidth;
-    document.querySelector('.tabs-wrap').style.minWidth = w + 'px';
-    console.log('[JDoc] char-row width:', w, 'px  ← report this value to hardcode');
-  });
 
 }
 
@@ -695,8 +690,7 @@ function renderRaidTables() {
 
 function renderTalentGrid(talents) {
   if (!talents.length) return '';
-  const cols = talents.length === 4 ? 2 : Math.min(talents.length, 3);
-  return `<div class="talent-grid" style="grid-template-columns:repeat(${cols},52px)">` +
+  return `<div class="talent-grid">` +
     talents.map(t => `<img src="${t.dataUrl}" class="talent-cell tc-${t.color}">`).join('') +
     '</div>';
 }
@@ -745,7 +739,9 @@ function renderEditModalBody() {
 
       <div class="edit-section-label">Notes (max 100 chars)</div>
       <textarea class="edit-textarea edit-notes" data-bi="${bi}" maxlength="100"
-        placeholder="Notes…">${esc(boss.notes)}</textarea>
+        placeholder="Notes…"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey)event.preventDefault();"
+        >${esc(boss.notes)}</textarea>
 
       <div class="edit-section-label">Talents (up to 6, .tga)</div>
       <div class="talent-chips" id="chips-${bi}">
