@@ -361,15 +361,15 @@ const SEASON_RAIDS = [
 // raider.io only exposes aggregate kill counts, so this order must match
 // their internal encounter sequence for correct per-boss coloring.
 const RAID_BOSS_ORDER = [
-  { short: 'Averzian',       npcId: 240435, gridRow: 1, gridCol: 1 },
-  { short: 'Vorasius',       npcId: 240434, gridRow: 1, gridCol: 2 },
-  { short: 'Salhadaar',      npcId: 240432, gridRow: 1, gridCol: 3 },
-  { short: 'Chimaerus',      npcId: 256116, gridRow: 2, gridCol: 1 },
-  { short: 'Vaelgor',        npcId: 242056, gridRow: 1, gridCol: 4 },
-  { short: 'Vanguard',       npcId: 250588, gridRow: 1, gridCol: 5 },
-  { short: 'Cosmos',         npcId: 244761, gridRow: 1, gridCol: 6 },
-  { short: "Belo'ren",       npcId: 240387, gridRow: 2, gridCol: 3 },
-  { short: 'Midnight Falls', npcId: 214650, gridRow: 2, gridCol: 4 },
+  { short: 'Averzian',       img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-host-general.png',           gridRow: 1, gridCol: 1 },
+  { short: 'Vorasius',       img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kaiju.png',                  gridRow: 1, gridCol: 2 },
+  { short: 'Salhadaar',      img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-salhadaar.png',              gridRow: 1, gridCol: 3 },
+  { short: 'Chimaerus',      img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-malformed-manifestation.png',gridRow: 2, gridCol: 1 },
+  { short: 'Vaelgor',        img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-dragon-duo.png',             gridRow: 1, gridCol: 4 },
+  { short: 'Vanguard',       img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-paladin-trio.png',           gridRow: 1, gridCol: 5 },
+  { short: 'Cosmos',         img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-alleria.png',                gridRow: 1, gridCol: 6 },
+  { short: "Belo'ren",       img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-light-void-phoenix.png',     gridRow: 2, gridCol: 3 },
+  { short: 'Midnight Falls', img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-lura-midnight.png',          gridRow: 2, gridCol: 4 },
 ];
 
 const RAIDS = {
@@ -563,8 +563,8 @@ function buildRaidHTML(rio) {
     else if (i < h) cls = 'b-heroic';
     else if (i < n) cls = 'b-normal';
     else            cls = 'b-uncleared';
-    const img = boss.npcId
-      ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
+    const img = boss.img
+      ? `<img src="${boss.img}" onerror="this.remove()" alt="">`
       : '';
     return `<div class="boss-square ${cls}" style="grid-column:${boss.gridCol};grid-row:${boss.gridRow}" title="${boss.short}">
       ${img}<div class="boss-name-label">${boss.short}</div>
