@@ -130,9 +130,9 @@
   .slot-ilvl.empty { color:var(--text-dim); font-size:10px; }
 
   /* Column: M+ */
-  .col-mplus { border-right:1px solid var(--border); padding:14px 16px; }
-  .col-raids { padding:14px 16px; }
-  .col-header { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:7px; }
+  .col-mplus { border-right:1px solid var(--border); padding:14px 0; }
+  .col-raids { padding:14px 0; }
+  .col-header { font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding:0 16px 7px; }
   .dungeon-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
   .dungeon-square {
     position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
@@ -148,10 +148,14 @@
     font-size:10px; padding:5px 2px 2px;
     text-align:center; color:var(--text-bright); letter-spacing:0.03em;
   }
-  .mplus-score-row { display:flex; align-items:baseline; gap:7px; margin-top:8px; }
+  .mplus-score-row { display:flex; align-items:baseline; gap:7px; margin-top:8px; padding:0 16px; }
   .mplus-score-big { font-family:'Cinzel',serif; font-size:28px; font-weight:700; line-height:1; }
   .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
+
+  .raid-prog-summary { display:flex; align-items:baseline; gap:10px; margin-top:8px; padding:0 16px; }
+  .raid-prog-summary .diff-val { font-family:'Cinzel',serif; font-size:13px; font-weight:700; }
+  .raid-prog-summary .diff-tag { font-size:10px; letter-spacing:1px; }
 
   /* Column: Raids */
   .raid-prog-list { display:flex; flex-direction:column; gap:4px; }
@@ -563,18 +567,29 @@ function buildRaidHTML(rio) {
   }
 
   const [vs, dr, mq] = SEASON_RAIDS;
+  const total = SEASON_RAIDS.reduce((s, r) => s + r.bosses.length, 0);
 
-  // Voidspire: 6 squares auto-placed into grid row 2 (after the row-1 label)
   const vsBosses = vs.bosses.map((b, i) => sq(vs, b, i, '')).join('');
-
-  // Dreamrift: 1 boss at (row 4, col 1); Quel'Danas: 2 bosses at (row 4, cols 3–4)
   const drBoss = sq(dr, dr.bosses[0], 0, 'grid-column:1;grid-row:2');
   const mqBosses = mq.bosses.map((b, i) => sq(mq, b, i, `grid-column:${i+3};grid-row:2`)).join('');
+
+  const killed = (key) => SEASON_RAIDS.reduce((s, r) => {
+    const d = prog && prog[r.slug];
+    return s + (d ? (d[key] || 0) : 0);
+  }, 0);
+  const kM = killed('mythic_bosses_killed');
+  const kH = killed('heroic_bosses_killed');
+  const kN = killed('normal_bosses_killed');
 
   return `<div class="boss-master-grid">
     ${vsBosses}
     ${drBoss}
     ${mqBosses}
+  </div>
+  <div class="raid-prog-summary">
+    <span><span class="diff-val" style="color:#c47dff">${kM}/${total}</span> <span class="diff-tag" style="color:#c47dff">M</span></span>
+    <span><span class="diff-val" style="color:#4da6ff">${kH}/${total}</span> <span class="diff-tag" style="color:#4da6ff">H</span></span>
+    <span><span class="diff-val" style="color:#4ade4a">${kN}/${total}</span> <span class="diff-tag" style="color:#4ade4a">N</span></span>
   </div>`;
 }
 
