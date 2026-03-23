@@ -136,10 +136,11 @@
   .mplus-score-big { font-family:'Cinzel',serif; font-size:38px; font-weight:700; line-height:1; }
   .mplus-score-label { font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:3px; margin-bottom:12px; }
   .dungeon-list { display:flex; flex-direction:column; gap:3px; }
-  .dungeon-row { display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center; padding:3px 6px; border:1px solid var(--border); }
+  .dungeon-row { display:grid; grid-template-columns:1fr auto auto auto; gap:8px; align-items:center; padding:3px 6px; border:1px solid var(--border); }
   .dungeon-name { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .dungeon-key { font-family:'Cinzel',serif; font-size:12px; color:var(--gold); font-weight:600; text-align:right; }
   .dungeon-score { font-size:11px; color:var(--text-dim); text-align:right; min-width:38px; }
+  .dungeon-clears { font-size:11px; color:var(--text-dim); text-align:right; min-width:24px; }
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
 
   /* Column: Raids */
@@ -277,11 +278,7 @@ const INITIAL_CHARS = [
   { name: 'Jeadoom', realm: 'eredar', region: 'eu' },
 ];
 
-const RAID_SLUGS = [
-  { slug: 'voidspire',           name: 'Voidspire',            total: 8 },
-  { slug: 'dreamrift',           name: 'Dreamrift',            total: 8 },
-  { slug: 'march-on-queldanas',  name: "March on Quel'Danas",  total: 8 },
-];
+let seasonDungeons = []; // populated from raider.io static-data on init
 
 const RAIDS = {
   voidspire: [
@@ -311,10 +308,27 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
+// ── Season dungeons ──────────────────────────────────────────
+async function fetchSeasonDungeons() {
+  for (const expId of [10, 9, 11]) {
+    try {
+      const r = await fetch(`https://raider.io/api/v1/mythic-plus/static-data?expansion_id=${expId}`);
+      if (!r.ok) continue;
+      const data = await r.json();
+      const seasons = data.seasons || [];
+      const latest = seasons[seasons.length - 1];
+      if (latest && latest.dungeons && latest.dungeons.length > 0) {
+        seasonDungeons = latest.dungeons;
+        return;
+      }
+    } catch(e) {}
+  }
+}
+
 // ── Data fetch ──────────────────────────────────────────────
 async function fetchAllData(entry) {
   const charUrl = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
-  const rioFields = 'mythic_plus_scores_by_season:current,mythic_plus_best_runs,raid_progression';
+  const rioFields = 'mythic_plus_scores_by_season:current,mythic_plus_best_runs,mythic_plus_recent_runs,raid_progression';
   const rioUrl = `https://raider.io/api/v1/characters/profile?region=${entry.region}&realm=${encodeURIComponent(entry.realm)}&name=${encodeURIComponent(entry.name)}&fields=${rioFields}`;
 
   const [charData, rioData] = await Promise.all([
@@ -421,40 +435,66 @@ function buildMplusHTML(rio) {
   const rawScore = season && season.length ? (season[0].scores?.all ?? 0) : 0;
   const score    = Math.round(rawScore);
   const color    = scoreColor(score);
-  const runs     = (rio.mythic_plus_best_runs || []).sort((a, b) => b.score - a.score);
 
-  const runsHTML = runs.length
-    ? runs.map(r => `
-        <div class="dungeon-row">
-          <span class="dungeon-name">${r.short_name}</span>
-          <span class="dungeon-key">+${r.mythic_level}</span>
-          <span class="dungeon-score">${Math.round(r.score)}</span>
-        </div>`).join('')
-    : '<div class="data-na">Keine Runs gefunden</div>';
+  // Best run per dungeon (keyed by short_name)
+  const bestMap = {};
+  for (const r of (rio.mythic_plus_best_runs || [])) {
+    bestMap[r.short_name] = { key: r.mythic_level, score: Math.round(r.score) };
+  }
+
+  // Clears count from recent runs
+  const clearMap = {};
+  for (const r of (rio.mythic_plus_recent_runs || [])) {
+    clearMap[r.short_name] = (clearMap[r.short_name] || 0) + 1;
+  }
+
+  let runsHTML;
+  if (seasonDungeons.length) {
+    runsHTML = seasonDungeons.map(d => {
+      const best   = bestMap[d.short_name];
+      const clears = clearMap[d.short_name] || 0;
+      return `<div class="dungeon-row">
+        <span class="dungeon-name">${d.short_name}</span>
+        <span class="dungeon-key">${best ? '+' + best.key : '—'}</span>
+        <span class="dungeon-score">${best ? best.score : '—'}</span>
+        <span class="dungeon-clears">${clears}x</span>
+      </div>`;
+    }).join('');
+  } else {
+    const runs = (rio.mythic_plus_best_runs || []).sort((a, b) => b.score - a.score);
+    runsHTML = runs.length
+      ? runs.map(r => {
+          const clears = clearMap[r.short_name] || 0;
+          return `<div class="dungeon-row">
+            <span class="dungeon-name">${r.short_name}</span>
+            <span class="dungeon-key">+${r.mythic_level}</span>
+            <span class="dungeon-score">${Math.round(r.score)}</span>
+            <span class="dungeon-clears">${clears}x</span>
+          </div>`;
+        }).join('')
+      : '<div class="data-na">Season noch nicht gestartet</div>';
+  }
 
   return `
-    <div class="mplus-score-big" style="color:${color}">${score}</div>
+    <div class="mplus-score-big" style="color:${color}">${score || '—'}</div>
     <div class="mplus-score-label">Gesamt-Score</div>
     <div class="dungeon-list">${runsHTML}</div>`;
 }
 
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
+  if (!prog) return '<div class="data-na">Keine Daten verfügbar</div>';
 
-  return RAID_SLUGS.map(raid => {
-    const data = prog && prog[raid.slug];
-    if (!data) {
-      return `<div class="raid-prog-item">
-        <div class="raid-prog-name">${raid.name}</div>
-        <div class="raid-prog-badges"><span class="data-na" style="margin-top:0">N/A</span></div>
-      </div>`;
-    }
+  const entries = Object.entries(prog);
+  if (!entries.length) return '<div class="data-na">Keine Raids gefunden</div>';
+
+  return entries.map(([slug, data]) => {
     const total = data.total_bosses;
     const n = data.normal_bosses_killed;
     const h = data.heroic_bosses_killed;
     const m = data.mythic_bosses_killed;
     return `<div class="raid-prog-item">
-      <div class="raid-prog-name">${raid.name}</div>
+      <div class="raid-prog-name">${raidSlugToName(slug)}</div>
       <div class="raid-prog-badges">
         <span class="diff-badge normal ${n === total ? '' : 'dim'}">${n}/${total} N</span>
         <span class="diff-badge heroic ${h === total ? '' : 'dim'}">${h}/${total} H</span>
@@ -462,6 +502,17 @@ function buildRaidHTML(rio) {
       </div>
     </div>`;
   }).join('');
+}
+
+function raidSlugToName(slug) {
+  const overrides = {
+    'nerub-ar-palace': "Nerub-ar Palace",
+    'liberation-of-undermine': 'Liberation of Undermine',
+    'voidspire': 'Voidspire',
+    'dreamrift': 'Dreamrift',
+    'march-on-queldanas': "March on Quel'Danas",
+  };
+  return overrides[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function scoreColor(score) {
@@ -502,6 +553,7 @@ function loadingHTML(t, s) {
 }
 
 // ── Init ─────────────────────────────────────────────────────
+fetchSeasonDungeons();
 loadMyChars();
 renderRaidTables();
 </script>
