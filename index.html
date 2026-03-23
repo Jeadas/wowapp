@@ -56,6 +56,8 @@
   .subtitle { font-family:'Cinzel',serif; font-size:16px; font-weight:700; color:var(--text-muted); margin-top:4px; letter-spacing:2px; }
 
   /* Tabs */
+  .tabs-wrap { width:fit-content; margin:0 auto; }
+  header { text-align:center; }
   .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; align-items:flex-end; }
   .tab-btn {
     padding:9px 20px;
@@ -241,6 +243,7 @@
     <div class="subtitle">Midnight · Season 1</div>
   </header>
 
+  <div class="tabs-wrap">
   <div class="tabs-nav">
     <button class="tab-btn active" onclick="switchTab('mine', this)">
       My Characters <span class="tab-count" id="myCount">0</span>
@@ -297,6 +300,7 @@
       </table>
     </div>
   </div>
+  </div><!-- end tabs-wrap -->
 </div>
 
 <script>
