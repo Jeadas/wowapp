@@ -181,16 +181,15 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; align-self:end;
   }
   .boss-square {
-    position:relative; border-radius:3px; border:2px solid var(--border);
-    overflow:hidden; cursor:default; display:inline-flex;
+    border-radius:3px; border:2px solid var(--border);
+    overflow:hidden; cursor:default; display:inline-flex; flex-direction:column;
     background:linear-gradient(160deg,#0d0a14,#180f2a);
   }
   .boss-square img { display:block; width:auto; height:auto; max-width:none; }
   .boss-name-label {
-    position:absolute; bottom:0; left:0; right:0;
-    background:linear-gradient(transparent,rgba(0,0,0,0.9));
-    padding:12px 2px 3px; font-family:'Cinzel',serif; font-size:9px;
+    padding:4px 4px 3px; font-family:'Cinzel',serif; font-size:9px;
     text-align:center; color:var(--text-bright); line-height:1.15; letter-spacing:0.03em;
+    background:rgba(0,0,0,0.6); flex-shrink:0;
   }
   .boss-square.b-mythic { border-color:#a335ee; box-shadow:inset 0 0 10px rgba(163,53,238,0.4); }
   .boss-square.b-heroic { border-color:#0070dd; box-shadow:inset 0 0 10px rgba(0,112,221,0.4); }
