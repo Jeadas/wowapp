@@ -134,21 +134,19 @@
   .col-mplus { border-right:1px solid var(--border); padding:14px 0; }
   .col-raids { padding:14px 0; }
   .col-header { display:flex; align-items:baseline; justify-content:space-between; font-family:'Cinzel',serif; font-size:12px; font-weight:700; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; border-bottom:1px solid var(--border); padding:0 16px 7px; }
-  .dungeon-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; padding:0 2px; }
+  .dungeon-grid { display:grid; grid-template-columns:repeat(4,auto); gap:4px; padding:0 2px; justify-content:start; }
   .dungeon-square {
-    position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
+    border-radius:3px; border:2px solid var(--border);
     background:linear-gradient(160deg,#0d0a14,#180f2a);
-    display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:default;
+    display:inline-flex; flex-direction:column; overflow:hidden; cursor:default;
   }
   .dungeon-square.dg-cleared { border-color:var(--gold-dim); box-shadow:inset 0 0 10px rgba(200,168,75,0.2); }
   .dungeon-square.dg-uncleared { filter:brightness(0.35) saturate(0.2); }
-  .dungeon-square img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
-  .dungeon-key-center { font-family:'Cinzel',serif; font-size:20px; font-weight:700; line-height:1; position:relative; text-shadow:0 1px 4px rgba(0,0,0,0.9); }
+  .dungeon-square img { display:block; width:auto; height:auto; max-width:none; }
+  .dungeon-key-center { font-family:'Cinzel',serif; font-size:16px; font-weight:700; line-height:1; text-align:center; padding:4px 0 2px; text-shadow:0 1px 4px rgba(0,0,0,0.9); }
   .dungeon-name-label {
-    position:absolute; bottom:0; left:0; right:0;
-    background:linear-gradient(transparent,rgba(0,0,0,0.9));
-    font-size:10px; padding:5px 2px 2px;
-    text-align:center; color:var(--text-bright); letter-spacing:0.03em;
+    background:rgba(0,0,0,0.6); font-size:9px; padding:3px 4px;
+    text-align:center; color:var(--text-bright); letter-spacing:0.03em; flex-shrink:0;
   }
   .mplus-score-inline { font-family:'Cinzel',serif; font-size:13px; font-weight:700; line-height:1; letter-spacing:0; text-transform:none; }
   .data-na { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:6px; }
@@ -314,17 +312,16 @@ const INITIAL_CHARS = [
   { name: 'Jeadoom', realm: 'eredar', region: 'eu' },
 ];
 
-const FALLBACK_DUNGEONS = [
-  { name: 'Windrunner Spire',        short_name: 'WS',   slug: 'windrunner-spire' },
-  { name: 'Murder Row',              short_name: 'MR',   slug: 'murder-row' },
-  { name: 'Den of Nalorakk',         short_name: 'DoN',  slug: 'den-of-nalorakk' },
-  { name: 'Maisara Caverns',         short_name: 'MC',   slug: 'maisara-caverns' },
-  { name: "Magister's Terrace",      short_name: 'MgT',  slug: 'magisters-terrace' },
-  { name: 'Pit of Saron',            short_name: 'PoS',  slug: 'pit-of-saron' },
-  { name: 'Seat of the Triumvirate', short_name: 'SotT', slug: 'seat-of-the-triumvirate' },
-  { name: 'Skyreach',                short_name: 'Sky',  slug: 'skyreach' },
+const SEASON_DUNGEONS = [
+  { name: "Magister's Terrace",      short_name: 'MgT',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-degentrius.png' },
+  { name: 'Maisara Caverns',         short_name: 'MC',   img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-raktulvesselofsouls.png' },
+  { name: 'Nexus-Point Xenas',       short_name: 'NPX',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-lothraxion.png' },
+  { name: 'Windrunner Spire',        short_name: 'WS',   img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-the-restless-heart.png' },
+  { name: "Algeth'ar Academy",       short_name: 'AA',   img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-echo-of-doragosa.png' },
+  { name: 'Seat of the Triumvirate', short_name: 'SotT', img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-lura-midnight.png' },
+  { name: 'Skyreach',                short_name: 'Sky',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-high-sage-viryx.png' },
+  { name: 'Pit of Saron',            short_name: 'PoS',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-scourgelord-tyrannus.png' },
 ];
-let seasonDungeons = [];
 
 const SEASON_RAIDS = [
   {
@@ -399,23 +396,6 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-// ── Season dungeons ──────────────────────────────────────────
-async function fetchSeasonDungeons() {
-  for (const expId of [10, 9, 11]) {
-    try {
-      const r = await fetch(`https://raider.io/api/v1/mythic-plus/static-data?expansion_id=${expId}`);
-      if (!r.ok) continue;
-      const data = await r.json();
-      const seasons = data.seasons || [];
-      const latest = seasons[seasons.length - 1];
-      if (latest && latest.dungeons && latest.dungeons.length > 0) {
-        seasonDungeons = latest.dungeons;
-        return;
-      }
-    } catch(e) {}
-  }
-  seasonDungeons = FALLBACK_DUNGEONS;
-}
 
 // ── Data fetch ──────────────────────────────────────────────
 async function fetchAllData(entry) {
@@ -531,16 +511,11 @@ function buildMplusHTML(rio) {
     bestMap[r.short_name] = { key: r.mythic_level, score: Math.round(r.score) };
   }
 
-  const dungeons = seasonDungeons.length
-    ? seasonDungeons
-    : (rio.mythic_plus_best_runs || []).map(r => ({ name: r.dungeon, short_name: r.short_name }));
-
-  const squaresHTML = dungeons.map(d => {
+  const squaresHTML = SEASON_DUNGEONS.map(d => {
     const best = bestMap[d.short_name];
     const keyColor = best ? scoreColor(best.score) : 'var(--text-dim)';
-    const slug = d.slug || d.short_name.toLowerCase().replace(/\s+/g,'-');
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
-      <img src="https://cdnassets.raider.io/images/dungeons/icons/season-midnight-1/${slug}.jpg" onerror="this.remove()" alt="">
+      <img src="${d.img}" onerror="this.remove()" alt="">
       <div class="dungeon-key-center" style="color:${keyColor}">${best ? '+' + best.key : '—'}</div>
       <div class="dungeon-name-label">${d.short_name}</div>
     </div>`;
@@ -612,7 +587,6 @@ function loadingHTML(t, s) {
 }
 
 // ── Init ─────────────────────────────────────────────────────
-fetchSeasonDungeons();
 loadMyChars();
 renderRaidTables();
 </script>
