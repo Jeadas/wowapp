@@ -484,7 +484,7 @@ function buildCharRow(char, index) {
         <div class="char-info">
           <div class="char-name">${char.name}${regionTag}</div>
           <div class="char-class">${cls}</div>
-          <div class="char-meta">${char.spec} · Lvl ${char.level} · ${char.realm}</div>
+          <div class="char-meta">${char.spec} · Lvl ${char.level} · ${char.realm.charAt(0).toUpperCase() + char.realm.slice(1)}</div>
         </div>
         <div class="ilvl-badge">
           <div class="ilvl-number">${char.equipped_ilvl}</div>
