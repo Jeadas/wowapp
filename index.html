@@ -333,27 +333,27 @@ const SEASON_RAIDS = [
     slug: 'voidspire', name: 'The Voidspire',
     bg: 'linear-gradient(160deg,#0d0914,#1a0826)',
     bosses: [
-      { name: 'Imperator Averzian',      short: 'Averzian',  npcId: 240435 },
-      { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434 },
-      { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432 },
-      { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056 },
-      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: 250588 },
-      { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: 244761 },
+      { name: 'Imperator Averzian',      short: 'Averzian',  npcId: 240435, ki: 0 },
+      { name: 'Vorasius',                short: 'Vorasius',  npcId: 240434, ki: 1 },
+      { name: 'Fallen-King Salhadaar',   short: 'Salhadaar', npcId: 240432, ki: 2 },
+      { name: 'Vaelgor & Ezzorak',       short: 'Vaelgor',   npcId: 242056, ki: 3 },
+      { name: 'Lightblinded Vanguard',   short: 'Vanguard',  npcId: 250588, ki: 4 },
+      { name: 'Crown of the Cosmos',     short: 'Cosmos',    npcId: 244761, ki: 6 },
     ],
   },
   {
     slug: 'dreamrift', name: 'The Dreamrift',
     bg: 'linear-gradient(160deg,#060d14,#091a1a)',
     bosses: [
-      { name: 'Chimaerus, the Undreamt God', short: 'Chimaerus', npcId: 256116 },
+      { name: 'Chimaerus, the Undreamt God', short: 'Chimaerus', npcId: 256116, ki: 5 },
     ],
   },
   {
     slug: 'march-on-queldanas', name: "March on Quel'Danas",
     bg: 'linear-gradient(160deg,#140c06,#1a1408)',
     bosses: [
-      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: 240387 },
-      { name: 'Midnight Falls',            short: 'Midnight Falls', npcId: 214650 },
+      { name: "Belo'ren, Child of Al'ar", short: "Belo'ren",      npcId: 240387, ki: 7 },
+      { name: 'Midnight Falls',            short: 'Midnight Falls', npcId: 214650, ki: 8 },
     ],
   },
 ];
@@ -563,9 +563,9 @@ function buildRaidHTML(rio) {
   const [vs, dr, mq] = SEASON_RAIDS;
   const total = SEASON_RAIDS.reduce((s, r) => s + r.bosses.length, 0);
 
-  const vsBosses = vs.bosses.map((b, i) => sq(vs, b, i, '')).join('');
-  const drBoss = sq(dr, dr.bosses[0], vs.bosses.length, 'grid-column:1;grid-row:2');
-  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, vs.bosses.length + 1 + i, `grid-column:${i+3};grid-row:2`)).join('');
+  const vsBosses = vs.bosses.map((b, i) => sq(vs, b, b.ki, '')).join('');
+  const drBoss = sq(dr, dr.bosses[0], dr.bosses[0].ki, 'grid-column:1;grid-row:2');
+  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, b.ki, `grid-column:${i+3};grid-row:2`)).join('');
 
   const kM = m;
   const kH = h;
