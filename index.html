@@ -161,9 +161,12 @@
   .diff-badge.dim { opacity:0.45; }
 
   /* Boss Grid */
-  .raid-section + .raid-section { margin-top:8px; }
-  .raid-section-title { font-size:9px; color:var(--text-dim); margin-bottom:4px; letter-spacing:0.08em; text-transform:uppercase; font-family:'Cinzel',serif; }
-  .boss-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:4px; }
+  .boss-master-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:4px; }
+  .rr-label {
+    font-size:9px; color:var(--text-dim); font-family:'Cinzel',serif;
+    text-transform:uppercase; letter-spacing:0.06em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; align-self:end;
+  }
   .boss-square {
     position:relative; aspect-ratio:1; border-radius:3px; border:2px solid var(--border);
     overflow:hidden; cursor:default;
@@ -548,32 +551,44 @@ function buildMplusHTML(rio) {
 function buildRaidHTML(rio) {
   const prog = rio && rio.raid_progression;
 
-  function raidSquares(raids) {
-    return raids.flatMap(raid => {
-      const data = prog && prog[raid.slug];
-      const n = data ? data.normal_bosses_killed : 0;
-      const h = data ? data.heroic_bosses_killed : 0;
-      const m = data ? data.mythic_bosses_killed : 0;
-      return raid.bosses.map((boss, i) => {
-        let cls = 'b-uncleared';
-        if      (i < m) cls = 'b-mythic';
-        else if (i < h) cls = 'b-heroic';
-        else if (i < n) cls = 'b-normal';
-        const imgTag = boss.npcId
-          ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
-          : '';
-        return `<div class="boss-square ${cls}" style="background:${raid.bg}" title="${boss.name}">
-          ${imgTag}
-          <div class="boss-name-label">${boss.short}</div>
-        </div>`;
-      });
-    }).join('');
+  function killClass(raid, i) {
+    const d = prog && prog[raid.slug];
+    const n = d ? d.normal_bosses_killed : 0;
+    const h = d ? d.heroic_bosses_killed : 0;
+    const m = d ? d.mythic_bosses_killed : 0;
+    if (i < m) return 'b-mythic';
+    if (i < h) return 'b-heroic';
+    if (i < n) return 'b-normal';
+    return 'b-uncleared';
   }
 
-  // Row 1: Voidspire (6 bosses), Row 2: Dreamrift + Quel'Danas (3 bosses)
-  return `
-    <div class="boss-row" style="grid-template-columns:repeat(6,1fr)">${raidSquares(SEASON_RAIDS.slice(0,1))}</div>
-    <div class="boss-row" style="grid-template-columns:repeat(3,1fr)">${raidSquares(SEASON_RAIDS.slice(1))}</div>`;
+  function sq(raid, boss, i, gridStyle) {
+    const cls = killClass(raid, i);
+    const img = boss.npcId
+      ? `<img src="https://wow.zamimg.com/uploads/screenshots/normal/npc-${boss.npcId}.jpg" onerror="this.remove()" alt="">`
+      : '';
+    return `<div class="boss-square ${cls}" style="background:${raid.bg};${gridStyle}" title="${boss.name}">
+      ${img}<div class="boss-name-label">${boss.short}</div>
+    </div>`;
+  }
+
+  const [vs, dr, mq] = SEASON_RAIDS;
+
+  // Voidspire: 6 squares auto-placed into grid row 2 (after the row-1 label)
+  const vsBosses = vs.bosses.map((b, i) => sq(vs, b, i, '')).join('');
+
+  // Dreamrift: 1 boss at (row 4, col 1); Quel'Danas: 2 bosses at (row 4, cols 3–4)
+  const drBoss = sq(dr, dr.bosses[0], 0, 'grid-column:1;grid-row:4');
+  const mqBosses = mq.bosses.map((b, i) => sq(mq, b, i, `grid-column:${i+3};grid-row:4`)).join('');
+
+  return `<div class="boss-master-grid">
+    <span class="rr-label" style="grid-column:1/-1;grid-row:1">${vs.name}</span>
+    ${vsBosses}
+    <span class="rr-label" style="grid-column:1;grid-row:3">${dr.name}</span>
+    <span class="rr-label" style="grid-column:3/5;grid-row:3">${mq.name}</span>
+    ${drBoss}
+    ${mqBosses}
+  </div>`;
 }
 
 function scoreColor(score) {
