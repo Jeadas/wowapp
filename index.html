@@ -56,7 +56,7 @@
   .subtitle { font-family:'Crimson Pro',serif; font-size:13px; color:var(--text-muted); margin-top:4px; letter-spacing:2px; font-style:italic; }
 
   /* Tabs */
-  .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; }
+  .tabs-nav { display:flex; gap:0; margin:14px 0 0; border-bottom:1px solid var(--border-gold); flex-wrap:wrap; align-items:flex-end; }
   .tab-btn {
     padding:9px 20px;
     background:transparent;
@@ -238,28 +238,27 @@
 
   <div class="tabs-nav">
     <button class="tab-btn active" onclick="switchTab('mine', this)">
-      Meine Charaktere <span class="tab-count" id="myCount">0</span>
+      My Characters <span class="tab-count" id="myCount">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('voidspire', this)">Voidspire</button>
     <button class="tab-btn" onclick="switchTab('dreamrift', this)">Dreamrift</button>
     <button class="tab-btn" onclick="switchTab('quel-danas', this)">March on Quel'Danas</button>
+    <span class="last-updated" id="lastUpdated" style="margin-left:auto;margin-bottom:8px;padding:0 12px;"></span>
+    <button class="btn" id="refreshBtn" onclick="loadMyChars()" style="margin-bottom:6px;margin-right:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      Reload Characters
+    </button>
   </div>
 
-  <!-- Tab: Meine Charaktere -->
+  <!-- Tab: My Characters -->
   <div id="tab-mine" class="tab-pane active">
-    <div class="controls">
-      <span class="last-updated" id="lastUpdated"></span>
-      <button class="btn" id="refreshBtn" onclick="loadMyChars()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
-        Daten laden
-      </button>
-    </div>
+    <div class="controls" style="display:none;"></div>
     <div id="myGrid">
       <div class="state-container">
-        <div class="state-title">Bereit</div>
-        <div class="state-sub">Klicke auf „Daten laden" um Charakterdaten abzurufen</div>
+        <div class="state-title">Ready</div>
+        <div class="state-sub">Click "Reload Characters" to fetch character data</div>
       </div>
     </div>
   </div>
@@ -308,7 +307,7 @@ const CLASS_ICONS = {
   'Death Knight':'💀','Demon Hunter':'👁','Druid':'🌿','Evoker':'🐉','Hunter':'🏹',
   'Mage':'❄️','Monk':'☯','Paladin':'🌟','Priest':'✨','Rogue':'🗡','Shaman':'⚡','Warlock':'🔮','Warrior':'⚔️',
 };
-const LEFT_SLOTS  = ['Head','Neck','Shoulder','Back','Chest','Wrist','Main Hand','Off Hand'];
+const LEFT_SLOTS  = ['Head','Neck','Shoulders','Back','Chest','Wrist','Main Hand','Off Hand'];
 const RIGHT_SLOTS = ['Hands','Waist','Legs','Feet','Ring 1','Ring 2','Trinket 1','Trinket 2'];
 
 const INITIAL_CHARS = [
@@ -438,7 +437,7 @@ async function fetchAllData(entry) {
 async function loadMyChars() {
   const btn = document.getElementById('refreshBtn');
   btn.disabled = true; btn.classList.add('loading');
-  document.getElementById('myGrid').innerHTML = loadingHTML('Daten werden geladen', 'Rufe Blizzard API und Raider.IO ab …');
+  document.getElementById('myGrid').innerHTML = loadingHTML('Loading characters', 'Fetching Blizzard API and Raider.IO …');
 
   myChars = [];
   const errors = [];
@@ -454,7 +453,7 @@ async function loadMyChars() {
 
   document.getElementById('myCount').textContent = myChars.length;
   renderMyChars(errors);
-  document.getElementById('lastUpdated').textContent = 'Zuletzt: ' + new Date().toLocaleTimeString('de-DE');
+  document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString('en-GB');
   btn.disabled = false; btn.classList.remove('loading');
 }
 
@@ -521,7 +520,7 @@ function buildCharRow(char, index) {
 }
 
 function buildMplusHTML(rio) {
-  if (!rio) return { grid: '<div class="data-na">Keine Daten verfügbar</div>', score: 0, color: 'var(--text-dim)' };
+  if (!rio) return { grid: '<div class="data-na">No data available</div>', score: 0, color: 'var(--text-dim)' };
 
   const season   = rio.mythic_plus_scores_by_season;
   const rawScore = season && season.length ? (season[0].scores?.all ?? 0) : 0;
@@ -586,7 +585,8 @@ function scoreColor(score) {
 }
 
 function slotRow(char, name) {
-  const item = char.slots && char.slots[name];
+  const key = name === 'Shoulders' ? 'Shoulder' : name;
+  const item = char.slots && char.slots[key];
   const cls  = item ? 'q-' + item.quality : 'empty';
   const tip  = item ? ` title="${item.name}"` : '';
   return `<div class="slot-row"><span class="slot-name">${name}</span><span class="slot-ilvl ${cls}"${tip}>${item ? item.ilvl : '—'}</span></div>`;
