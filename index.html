@@ -767,7 +767,8 @@ async function loadFromGitHub() {
   }));
   renderRaidTables();
 
-  // Seed per-player loot states from GitHub if not yet in localStorage
+  // Seed per-player loot states from GitHub if not yet in localStorage.
+  // Files are saved in { lootState, bisState } format by syncLocalToCloud.
   await Promise.all(['harry', 'philipp', 'niklas', 'leon', 'kai'].map(async player => {
     if (localStorage.getItem('lootState_' + player)) return;
     try {
@@ -776,9 +777,17 @@ async function loadFromGitHub() {
         { cache: 'no-store' }
       );
       if (!res.ok) return;
-      const data = await res.json();
-      localStorage.setItem('lootState_' + player, JSON.stringify(data));
-      if (player === currentPlayer) applyLootState(data);
+      const raw = await res.json();
+      // Support both new format { lootState, bisState } and old bare-object format.
+      const lootState = raw.lootState || raw;
+      const bisState  = raw.bisState  || null;
+      localStorage.setItem('lootState_' + player, JSON.stringify(lootState));
+      if (bisState && !localStorage.getItem('bisState_' + player))
+        localStorage.setItem('bisState_' + player, JSON.stringify(bisState));
+      if (player === currentPlayer) {
+        applyLootState(lootState);
+        if (bisState) applyBisState(bisState);
+      }
     } catch(e) {}
   }));
 }
