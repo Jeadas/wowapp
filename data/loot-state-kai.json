@@ -57,7 +57,7 @@
     "feet": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "ring": {
@@ -171,7 +171,7 @@
     "7_hands": false,
     "7_waist": false,
     "7_legs": false,
-    "7_feet": true,
+    "7_feet": false,
     "7_ring": false,
     "7_trinket": false
   }
