@@ -618,14 +618,14 @@
     <div class="modal-header">
       <span>Unsaved changes</span>
     </div>
-    <div class="modal-body" style="padding:16px 20px 10px;font-size:13px;color:var(--text-muted);line-height:1.5;">
+    <div class="modal-body" style="padding:16px 20px 10px;font-size:15px;color:var(--text-muted);line-height:1.5;">
       Your changes haven't been pushed to the cloud yet.
-      <div id="unsavedError" style="margin-top:8px;color:#e06c6c;font-size:12px;min-height:16px;"></div>
+      <div id="unsavedError" style="margin-top:8px;color:#e06c6c;font-size:13px;min-height:16px;"></div>
     </div>
     <div class="modal-footer" style="gap:8px;">
-      <button class="btn-small" id="unsavedUploadBtn" onclick="uploadAndSwitchSummary()">Upload now</button>
-      <button class="btn-small" onclick="closeUnsavedModal(true)">Switch anyway</button>
-      <button class="btn-small" onclick="closeUnsavedModal(false)">Cancel</button>
+      <button class="btn" id="unsavedUploadBtn" onclick="uploadAndSwitchSummary()" style="flex:1;padding:8px;font-size:12px;">Upload now</button>
+      <button class="btn" onclick="closeUnsavedModal(true)" style="flex:1;padding:8px;font-size:12px;">Switch anyway</button>
+      <button class="btn" onclick="closeUnsavedModal(false)" style="flex:1;padding:8px;font-size:12px;">Cancel</button>
     </div>
   </div>
 </div>
@@ -1306,21 +1306,27 @@ function collectLootState() {
 }
 
 function applyLootState(state) {
-  // state may be null (new player with no saved data) — in that case clear all checkboxes
+  // state may be null (new player with no saved data) — in that case clear all checkboxes.
+  // Keep applyingLootState = true for the entire block (including refreshBisDisabled) so that
+  // none of the programmatic change events falsely mark the player's data as dirty.
+  // try/finally guarantees the flag is reset even if an error is thrown.
   applyingLootState = true;
-  document.querySelectorAll('.loot-meta-cell').forEach(cell => {
-    const slot = cell.dataset.slot;
-    const ss = state && state[slot];
-    const checks = cell.querySelectorAll('input[type="checkbox"]');
-    checks[0].checked = !!(ss && ss.hero);
-    checks[0].dispatchEvent(new Event('change'));
-    Array.from(checks).slice(1).forEach((c, i) => {
-      c.checked = !!(ss && ss.bis && ss.bis[i]);
-      c.dispatchEvent(new Event('change'));
+  try {
+    document.querySelectorAll('.loot-meta-cell').forEach(cell => {
+      const slot = cell.dataset.slot;
+      const ss = state && state[slot];
+      const checks = cell.querySelectorAll('input[type="checkbox"]');
+      checks[0].checked = !!(ss && ss.hero);
+      checks[0].dispatchEvent(new Event('change'));
+      Array.from(checks).slice(1).forEach((c, i) => {
+        c.checked = !!(ss && ss.bis && ss.bis[i]);
+        c.dispatchEvent(new Event('change'));
+      });
     });
-  });
-  applyingLootState = false;
-  window.refreshBisDisabled?.();
+    window.refreshBisDisabled?.();
+  } finally {
+    applyingLootState = false;
+  }
 }
 
 function saveLootStateLocal() {
