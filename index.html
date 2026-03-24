@@ -250,6 +250,10 @@
   .loot-tier-a { color:#4fc3f7; }
   .loot-tier-b { color:#81c784; }
   .loot-tier-c { color:var(--text-muted); }
+  .loot-best-1 { box-shadow:inset 0 0 0 2px rgba(200,168,75,0.75); background:rgba(200,168,75,0.08) !important; }
+  .loot-best-2 { border-top:3px solid var(--gold) !important; background:linear-gradient(180deg, rgba(200,168,75,0.2) 0%, transparent 65%) !important; }
+  .loot-best-3 { position:relative; }
+  .loot-best-3::after { content:'◆'; position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); line-height:1; opacity:0.9; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -397,14 +401,14 @@
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Windrunner Spire</td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
+            <td class="loot-cell loot-best-2"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item"><span class="loot-tier loot-tier-s">S</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-c">C</span></div><div class="loot-item"></div></div></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item loot-best-3"><span class="loot-tier loot-tier-s">S</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-c">C</span></div><div class="loot-item"></div></div></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Algeth'ar Academy</td>
