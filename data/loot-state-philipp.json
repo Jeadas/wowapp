@@ -30,7 +30,7 @@
     ]
   },
   "wrist": {
-    "hero": false,
+    "hero": true,
     "bis": [
       false
     ]
@@ -42,7 +42,7 @@
     ]
   },
   "waist": {
-    "hero": false,
+    "hero": true,
     "bis": [
       false
     ]
