@@ -1214,15 +1214,15 @@ function collectLootState() {
 }
 
 function applyLootState(state) {
-  if (!state) return;
+  // state may be null (new player with no saved data) — in that case clear all checkboxes
   document.querySelectorAll('.loot-meta-cell').forEach(cell => {
     const slot = cell.dataset.slot;
-    if (!state[slot]) return;
+    const ss = state && state[slot];
     const checks = cell.querySelectorAll('input[type="checkbox"]');
-    checks[0].checked = !!state[slot].hero;
+    checks[0].checked = !!(ss && ss.hero);
     checks[0].dispatchEvent(new Event('change'));
     Array.from(checks).slice(1).forEach((c, i) => {
-      c.checked = !!(state[slot].bis && state[slot].bis[i]);
+      c.checked = !!(ss && ss.bis && ss.bis[i]);
       c.dispatchEvent(new Event('change'));
     });
   });
@@ -1404,7 +1404,12 @@ function toggleEditBis() {
 function initBisEdit() {
   try {
     const saved = localStorage.getItem(BIS_STATE_KEY);
-    if (saved) applyBisState(JSON.parse(saved));
+    if (saved) {
+      const state = JSON.parse(saved);
+      // Only apply if at least one cell is marked BiS — an all-false state
+      // means it was saved from a stripped/empty table and should be ignored.
+      if (Object.values(state).some(v => v)) applyBisState(state);
+    }
   } catch(e) {}
   const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
   document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
