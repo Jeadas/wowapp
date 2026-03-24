@@ -15,13 +15,13 @@
     "shoulders": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "back": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "chest": {
@@ -63,7 +63,6 @@
     "ring": {
       "hero": false,
       "bis": [
-        true,
         true
       ]
     },
