@@ -1920,9 +1920,12 @@ async function refreshSummary() {
       const bisChecks = Array.from(metaCell.querySelectorAll('input[type="checkbox"]')).slice(1);
       bisChecks.forEach((bisCheck, idx) => {
         const noItem = idx >= bisItems.length;
-        bisCheck.disabled = noItem;
-        if (noItem && !bisCheck.checked) {
-          bisCheck.checked = true;
+        if (noItem) {
+          bisCheck.disabled = true;
+          if (!bisCheck.checked) { bisCheck.checked = true; bisCheck.dispatchEvent(new Event('change')); }
+        } else if (bisCheck.disabled) {
+          bisCheck.disabled = false;
+          bisCheck.checked = false;
           bisCheck.dispatchEvent(new Event('change'));
         }
       });
