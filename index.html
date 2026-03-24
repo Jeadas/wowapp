@@ -2008,7 +2008,17 @@ function initDropChance() {
 }
 
 // ── Init ─────────────────────────────────────────────────────
-(function() {
+// Run all setup first so playerLootHTML['harry'] is populated before
+// URL-hash navigation (which may call renderPlayerCells or renderSummary).
+loadMyChars();
+renderRaidTables();   // instant render from localStorage
+loadFromGitHub();     // fetch from GitHub, re-render when done
+initDropChance();
+initBisEdit();
+initLootCells();      // capture Harry's cells after all init is done
+
+// URL hash navigation — must run after initLootCells so Harry's HTML is ready.
+{
   const hash = location.hash.slice(1);
   if (hash) {
     if (hash.startsWith('loot-')) {
@@ -2023,13 +2033,7 @@ function initDropChance() {
       if (btn) switchTab(id, btn, true);
     }
   }
-})();
-loadMyChars();
-renderRaidTables();   // instant render from localStorage
-loadFromGitHub();     // fetch from GitHub, re-render when done
-initDropChance();
-initBisEdit();
-initLootCells();  // capture Harry's cells after all init is done
+}
 </script>
 </body>
 </html>
