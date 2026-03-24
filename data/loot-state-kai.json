@@ -3,7 +3,7 @@
     "head": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "neck": {
@@ -15,7 +15,7 @@
     "shoulders": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "back": {
@@ -27,7 +27,7 @@
     "chest": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "wrist": {
@@ -39,7 +39,7 @@
     "hands": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "waist": {
@@ -51,19 +51,19 @@
     "legs": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "feet": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "ring": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "trinket": {
@@ -74,7 +74,7 @@
     }
   },
   "bisState": {
-    "0_head": false,
+    "0_head": true,
     "0_neck": false,
     "0_shoulders": false,
     "0_back": false,
@@ -88,7 +88,7 @@
     "0_trinket": false,
     "1_head": false,
     "1_neck": false,
-    "1_shoulders": false,
+    "1_shoulders": true,
     "1_back": false,
     "1_chest": false,
     "1_wrist": false,
@@ -104,18 +104,18 @@
     "2_back": false,
     "2_chest": false,
     "2_wrist": false,
-    "2_hands": false,
+    "2_hands": true,
     "2_waist": false,
     "2_legs": false,
-    "2_feet": false,
-    "2_ring_0": false,
-    "2_ring_1": false,
+    "2_feet": true,
+    "2_ring_0": true,
+    "2_ring_1": true,
     "2_trinket": false,
     "3_head": false,
-    "3_neck": false,
+    "3_neck": true,
     "3_shoulders": false,
     "3_back": false,
-    "3_chest": false,
+    "3_chest": true,
     "3_wrist": false,
     "3_hands": false,
     "3_waist": false,
@@ -129,7 +129,7 @@
     "4_shoulders": false,
     "4_back": false,
     "4_chest": false,
-    "4_wrist": false,
+    "4_wrist": true,
     "4_hands": false,
     "4_waist": false,
     "4_legs": false,
@@ -143,7 +143,7 @@
     "5_chest": false,
     "5_wrist": false,
     "5_hands": false,
-    "5_waist": false,
+    "5_waist": true,
     "5_legs": false,
     "5_feet": false,
     "5_ring": false,
@@ -156,7 +156,7 @@
     "6_wrist": false,
     "6_hands": false,
     "6_waist": false,
-    "6_legs": false,
+    "6_legs": true,
     "6_feet": false,
     "6_ring_0": false,
     "6_ring_1": false,
