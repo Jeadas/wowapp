@@ -129,7 +129,7 @@ async function handleSaveRaid(request, env) {
 
   if (!putRes.ok) {
     const err = await putRes.json().catch(() => ({}));
-    return jsonError(err.message || 'GitHub write failed', putRes.status);
+    return jsonError(`GitHub ${putRes.status}: ${err.message || JSON.stringify(err)}`, putRes.status);
   }
 
   return jsonResponse({ ok: true });
