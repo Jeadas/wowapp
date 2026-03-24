@@ -408,6 +408,11 @@
       <button class="player-tab-btn" onclick="switchPlayer('kai',this)">Kai</button>
       <button class="player-tab-btn" onclick="switchPlayer('summary',this)">Summary</button>
       <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
+      <button class="btn btn-edit-bis" id="refreshSummaryBtn" onclick="refreshSummary()" style="display:none;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;">
+          <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>Refresh
+      </button>
     </div>
     <!-- Player loot view -->
     <div id="playerLootView">
@@ -1408,7 +1413,8 @@ function switchPlayer(player, btn) {
   const isSummary = player === 'summary';
   document.getElementById('playerLootView').style.display = isSummary ? 'none' : '';
   document.getElementById('summaryView').style.display    = isSummary ? '' : 'none';
-  document.getElementById('editBisBtn').style.display     = isSummary ? 'none' : '';
+  document.getElementById('editBisBtn').style.display          = isSummary ? 'none' : '';
+  document.getElementById('refreshSummaryBtn').style.display   = isSummary ? '' : 'none';
   if (editBisMode) {
     editBisMode = false;
     document.getElementById('editBisBtn').classList.remove('bis-active');
@@ -1824,6 +1830,30 @@ function renderSummary() {
   document.getElementById('summaryContent').innerHTML =
     section('Low Keys (diff 1–9)', sortedLow,  'low',  'playerLow') +
     section('High Keys (diff 10+)', sortedHigh, 'high', 'playerHigh');
+}
+
+async function refreshSummary() {
+  const btn = document.getElementById('refreshSummaryBtn');
+  btn.disabled = true; btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Fetching…';
+  try {
+    await Promise.all(PLAYERS.map(async p => {
+      const res = await fetch(`${API_BASE}/api/load-state?tabId=loot-state-${p}`);
+      if (!res.ok) throw new Error(`${p}: ` + ((await res.json().catch(() => ({}))).error || res.status));
+      const raw = await res.json();
+      const lootState = raw.lootState || raw;
+      const bisState  = raw.bisState  || null;
+      localStorage.setItem(getPlayerStateKey(p), JSON.stringify(lootState));
+      if (bisState) localStorage.setItem('bisState_' + p, JSON.stringify(bisState));
+    }));
+    renderSummary();
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh';
+    btn.disabled = false;
+  } catch(e) {
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh';
+    btn.disabled = false;
+    document.getElementById('summaryContent').insertAdjacentHTML('afterbegin',
+      `<div style="color:#c41e3a;font-size:12px;margin-bottom:10px;">Refresh failed: ${e.message}</div>`);
+  }
 }
 
 // ── Loot meta checkboxes ─────────────────────────────────────
