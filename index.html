@@ -254,6 +254,15 @@
   .loot-best-2 { border-top:3px solid var(--gold) !important; background:linear-gradient(180deg, rgba(200,168,75,0.2) 0%, transparent 65%) !important; }
   .loot-best-3 { position:relative; }
   .loot-best-3::after { content:'◆'; position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); line-height:1; opacity:0.9; }
+  .loot-meta-row { background:rgba(0,0,0,0.25); }
+  .loot-meta-spacer { border-top:2px solid var(--border-gold); }
+  .loot-meta-cell { border-top:2px solid var(--border-gold); border-left:1px solid var(--border); padding:8px 4px; vertical-align:middle; text-align:center; }
+  .meta-check { display:flex; align-items:center; justify-content:center; gap:5px; cursor:pointer; margin:4px 0; }
+  .meta-check input[type="checkbox"] { appearance:none; -webkit-appearance:none; width:11px; height:11px; border:1px solid rgba(200,168,75,0.4); background:transparent; cursor:pointer; flex-shrink:0; position:relative; }
+  .meta-check input[type="checkbox"]:checked { background:var(--gold); border-color:var(--gold); }
+  .meta-check input[type="checkbox"]:checked::after { content:'✓'; position:absolute; top:-1px; left:1px; font-size:9px; color:#1a1510; font-weight:700; line-height:1; }
+  .meta-check span { font-family:'Cinzel',serif; font-size:9px; letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
+  .meta-check:has(input:checked) span { color:var(--gold); }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -439,6 +448,23 @@
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr class="loot-meta-row">
+            <td class="loot-meta-spacer"></td>
+            <td class="loot-meta-cell" data-slot="head"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="neck"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="shoulders"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="back"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="chest"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="wrist"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="hands"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="waist"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="legs"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="feet"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="ring"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+            <td class="loot-meta-cell" data-slot="trinket"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
