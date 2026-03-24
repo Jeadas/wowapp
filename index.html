@@ -266,6 +266,7 @@
   .meta-check:has(input:checked) span { color:var(--gold); }
   .meta-bis-pair { display:flex; gap:6px; }
   .meta-bis-pair .meta-check { flex:1; }
+  .loot-greyed { opacity:0.28 !important; filter:grayscale(1) !important; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -402,7 +403,7 @@
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td><td class="loot-cell"></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Nexus-Point Xenas</td>
@@ -415,12 +416,12 @@
             <td class="loot-dungeon">Windrunner Spire</td>
             <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell loot-best-2"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item loot-best-3"><span class="loot-tier loot-tier-s">S</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-c">C</span></div><div class="loot-item"></div></div></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item loot-best-1"><span class="loot-tier loot-tier-s">S</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-c">C</span></div><div class="loot-item"></div></div></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Algeth'ar Academy</td>
@@ -434,7 +435,7 @@
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td><td class="loot-cell"></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Seat of the Triumvirate</td>
@@ -1139,6 +1140,61 @@ function esc(s) {
 function loadingHTML(t, s) {
   return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`;
 }
+
+// ── Loot meta checkboxes ─────────────────────────────────────
+(function() {
+  const SLOTS = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+
+  function getColIndex(slot) { return SLOTS.indexOf(slot) + 1; }
+
+  // Returns all loot-best-1 elements (cell or .loot-item) in a column, top to bottom.
+  function getBisItems(colIdx) {
+    const results = [];
+    document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
+      const cell = row.cells[colIdx];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item.loot-best-1').forEach(el => results.push(el));
+      } else if (cell.classList.contains('loot-best-1')) {
+        results.push(cell);
+      }
+    });
+    return results;
+  }
+
+  document.querySelectorAll('.loot-meta-cell').forEach(metaCell => {
+    const slot = metaCell.dataset.slot;
+    const colIdx = getColIndex(slot);
+    const checks = metaCell.querySelectorAll('input[type="checkbox"]');
+    const heroCheck = checks[0];
+    const bisChecks = Array.from(checks).slice(1);
+
+    // Hero 3/6: grey all non-BiS cells/items in column
+    heroCheck.addEventListener('change', function() {
+      document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
+        const cell = row.cells[colIdx];
+        if (!cell) return;
+        if (cell.classList.contains('loot-cell-multi')) {
+          cell.querySelectorAll('.loot-item').forEach(item => {
+            if (!item.classList.contains('loot-best-1'))
+              item.classList.toggle('loot-greyed', heroCheck.checked);
+          });
+        } else if (!cell.classList.contains('loot-best-1') && cell.textContent.trim() !== '') {
+          cell.classList.toggle('loot-greyed', heroCheck.checked);
+        }
+      });
+    });
+
+    // BiS: grey the Nth highlighted item in the column (N = checkbox index)
+    bisChecks.forEach((bisCheck, idx) => {
+      bisCheck.addEventListener('change', function() {
+        const bisItems = getBisItems(colIdx);
+        if (idx >= bisItems.length) return;
+        bisItems[idx].classList.toggle('loot-greyed', bisCheck.checked);
+      });
+    });
+  });
+})();
 
 // ── Init ─────────────────────────────────────────────────────
 loadMyChars();
