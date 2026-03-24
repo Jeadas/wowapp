@@ -7,7 +7,7 @@
       ]
     },
     "neck": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
@@ -19,7 +19,7 @@
       ]
     },
     "back": {
-      "hero": true,
+      "hero": false,
       "bis": [
         false
       ]
@@ -31,7 +31,7 @@
       ]
     },
     "wrist": {
-      "hero": true,
+      "hero": false,
       "bis": [
         false
       ]
@@ -43,13 +43,13 @@
       ]
     },
     "waist": {
-      "hero": true,
+      "hero": false,
       "bis": [
         false
       ]
     },
     "legs": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
@@ -75,21 +75,21 @@
     }
   },
   "bisState": {
-    "0_head": false,
+    "0_head": true,
     "0_neck": false,
     "0_shoulders": false,
     "0_back": false,
     "0_chest": false,
     "0_wrist": false,
-    "0_hands": false,
+    "0_hands": true,
     "0_waist": false,
     "0_legs": false,
-    "0_feet": false,
-    "0_ring": false,
+    "0_feet": true,
+    "0_ring": true,
     "0_trinket": false,
-    "1_head": false,
+    "1_head": true,
     "1_neck": false,
-    "1_shoulders": false,
+    "1_shoulders": true,
     "1_back": false,
     "1_chest": false,
     "1_wrist": false,
@@ -98,24 +98,24 @@
     "1_legs": false,
     "1_feet": false,
     "1_ring": false,
-    "1_trinket_0": false,
+    "1_trinket_0": true,
     "1_trinket_1": false,
     "2_head": false,
     "2_neck": false,
     "2_shoulders": false,
     "2_back": false,
-    "2_chest": false,
+    "2_chest": true,
     "2_wrist": false,
     "2_hands": true,
     "2_waist": false,
     "2_legs": false,
-    "2_feet": false,
+    "2_feet": true,
     "2_ring_0": false,
-    "2_ring_1": false,
+    "2_ring_1": true,
     "2_trinket": false,
     "3_head": false,
     "3_neck": false,
-    "3_shoulders": false,
+    "3_shoulders": true,
     "3_back": false,
     "3_chest": true,
     "3_wrist": false,
@@ -124,15 +124,15 @@
     "3_legs": false,
     "3_feet": false,
     "3_ring": false,
-    "3_trinket_0": false,
+    "3_trinket_0": true,
     "3_trinket_1": false,
     "4_head": false,
     "4_neck": false,
     "4_shoulders": false,
     "4_back": false,
     "4_chest": false,
-    "4_wrist": false,
-    "4_hands": false,
+    "4_wrist": true,
+    "4_hands": true,
     "4_waist": false,
     "4_legs": false,
     "4_feet": false,
@@ -150,29 +150,29 @@
     "5_feet": false,
     "5_ring": false,
     "5_trinket": false,
-    "6_head": false,
+    "6_head": true,
     "6_neck": false,
-    "6_shoulders": false,
+    "6_shoulders": true,
     "6_back": false,
-    "6_chest": false,
+    "6_chest": true,
     "6_wrist": false,
-    "6_hands": false,
+    "6_hands": true,
     "6_waist": false,
     "6_legs": false,
-    "6_feet": false,
+    "6_feet": true,
     "6_ring_0": false,
     "6_ring_1": false,
     "6_trinket": false,
     "7_head": false,
     "7_neck": false,
-    "7_shoulders": false,
-    "7_back": false,
-    "7_chest": false,
+    "7_shoulders": true,
+    "7_back": true,
+    "7_chest": true,
     "7_wrist": false,
     "7_hands": false,
     "7_waist": false,
     "7_legs": false,
-    "7_feet": false,
+    "7_feet": true,
     "7_ring": false,
     "7_trinket": false
   }
