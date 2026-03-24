@@ -727,6 +727,9 @@ function openEditModal() {
   editState = getRaidData(currentRaidTab);
   document.getElementById('editModalTitle').textContent = TAB_NAMES[currentRaidTab] || currentRaidTab;
   renderEditModalBody();
+  const saveBtn = document.querySelector('.modal-footer .btn');
+  saveBtn.textContent = 'Save';
+  saveBtn.disabled = false;
   document.getElementById('editModal').classList.remove('hidden');
 }
 
