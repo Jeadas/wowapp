@@ -262,6 +262,7 @@
   .meta-check input[type="checkbox"] { appearance:none; -webkit-appearance:none; width:14px; height:14px; border:1px solid rgba(200,168,75,0.4); background:transparent; cursor:pointer; flex-shrink:0; position:relative; }
   .meta-check input[type="checkbox"]:checked { background:var(--gold); border-color:var(--gold); }
   .meta-check input[type="checkbox"]:checked::after { content:'✓'; position:absolute; top:-1px; left:1px; font-size:11px; color:#1a1510; font-weight:700; line-height:1; }
+  .meta-check input[type="checkbox"]:disabled { cursor:not-allowed; opacity:0.45; }
   .meta-check span { font-family:'Cinzel',serif; font-size:11px; letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
   .meta-check:has(input:checked) span { color:var(--gold); }
   .meta-bis-pair { display:flex; gap:6px; }
@@ -1297,6 +1298,7 @@ function applyLootState(state) {
       c.dispatchEvent(new Event('change'));
     });
   });
+  window.refreshBisDisabled?.();
 }
 
 function saveLootStateLocal() {
@@ -1909,6 +1911,24 @@ async function refreshSummary() {
       });
     });
   });
+
+  function refreshBisDisabled() {
+    document.querySelectorAll('.loot-meta-cell').forEach(metaCell => {
+      const slot = metaCell.dataset.slot;
+      const colIdx = getColIndex(slot);
+      const bisItems = getBisItems(colIdx);
+      const bisChecks = Array.from(metaCell.querySelectorAll('input[type="checkbox"]')).slice(1);
+      bisChecks.forEach((bisCheck, idx) => {
+        const noItem = idx >= bisItems.length;
+        bisCheck.disabled = noItem;
+        if (noItem && !bisCheck.checked) {
+          bisCheck.checked = true;
+          bisCheck.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  }
+  window.refreshBisDisabled = refreshBisDisabled;
 
   // Load Harry's state on init (or migrate from old single-player key)
   try {
