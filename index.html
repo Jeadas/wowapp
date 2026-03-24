@@ -1759,31 +1759,18 @@ function computePlayerContribution(playerName, dungeon, mode) {
   if (!pSlots) return 0;
   const state = loadPlayerState(playerName);
   if (!state) return 0;
-  // For non-Harry players use their own per-dungeon BIS markings so that:
-  // (a) class-specific BIS items are counted correctly, and
-  // (b) shared-slot BIS items from *other* dungeons don't bleed into this dungeon's score.
   let playerBisState = null;
-  if (playerName !== 'harry') {
-    try { playerBisState = JSON.parse(localStorage.getItem('bisState_' + playerName)); } catch(e) {}
-  }
+  try { playerBisState = JSON.parse(localStorage.getItem('bisState_' + playerName)); } catch(e) {}
   let count = 0;
-  Object.entries(dungeon.slots).forEach(([slot, { has_any: harryHasAny, bis_count }]) => {
+  Object.entries(dungeon.slots).forEach(([slot, { has_any: harryHasAny }]) => {
     if (!pSlots.has(slot)) return;
     const ss = state[slot];
     if (!ss) return;
-    let effective_bis_count, has_any;
-    if (playerName === 'harry') {
-      effective_bis_count = bis_count;
-      has_any = harryHasAny;
-    } else {
-      // Derive BIS count for this player's slot in this specific dungeon from their saved bisState.
-      const bisVal = playerBisState?.[dungeon.ri + '_' + slot];
-      effective_bis_count = Array.isArray(bisVal) ? bisVal.filter(v => v).length : (bisVal ? 1 : 0);
-      // has_any: shared slots follow Harry's DOM data; class-specific slots use PLAYER_TABLE_DATA.
-      has_any = SHARED_SLOTS.has(slot)
-        ? harryHasAny
-        : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
-    }
+    const bisVal = playerBisState?.[dungeon.ri + '_' + slot];
+    const effective_bis_count = Array.isArray(bisVal) ? bisVal.filter(v => v).length : (bisVal ? 1 : 0);
+    const has_any = (playerName === 'harry' || SHARED_SLOTS.has(slot))
+      ? harryHasAny
+      : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
     count += Math.min((ss.bis || []).filter(b => !b).length, effective_bis_count);
     if (mode === 'high' && !ss.hero && has_any) count += 1;
   });
