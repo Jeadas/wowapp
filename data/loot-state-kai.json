@@ -57,7 +57,7 @@
     "feet": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "ring": {
