@@ -226,14 +226,14 @@
   .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; text-align:left; }
 
   /* M+ Loot Table */
-  .loot-table-container { overflow-x:auto; background:var(--bg-card); border:1px solid var(--border-gold); padding:20px; }
-  .loot-table { border-collapse:collapse; font-family:'Crimson Pro',serif; min-width:1300px; width:100%; }
-  .loot-th-dungeon { text-align:left; padding:10px 14px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; min-width:180px; }
-  .loot-th-slot { text-align:center; padding:10px 8px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; min-width:90px; border-left:1px solid var(--border); }
+  .loot-table-container { background:var(--bg-card); border:1px solid var(--border-gold); padding:20px; width:calc(100vw - 48px); position:relative; left:50%; transform:translateX(-50%); }
+  .loot-table { border-collapse:collapse; table-layout:fixed; font-family:'Crimson Pro',serif; width:100%; }
+  .loot-th-dungeon { text-align:left; padding:10px 14px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; width:200px; }
+  .loot-th-slot { text-align:center; padding:10px 8px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; width:100px; border-left:1px solid var(--border); }
   .loot-row:nth-child(even) { background:rgba(255,255,255,0.02); }
   .loot-row:hover { background:rgba(200,168,75,0.04); }
   .loot-dungeon { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); padding:14px 14px; white-space:nowrap; border-bottom:1px solid var(--border); vertical-align:middle; }
-  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:top; min-height:70px; height:70px; text-align:center; }
+  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:top; height:70px; text-align:center; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -359,6 +359,48 @@
         </thead>
         <tbody>
           <tr class="loot-row">
+            <td class="loot-dungeon">Magister's Terrace</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Maisara Caverns</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Nexus-Point Xenas</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Windrunner Spire</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Algeth'ar Academy</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Seat of the Triumvirate</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
             <td class="loot-dungeon">Skyreach</td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
@@ -367,48 +409,6 @@
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Pit of Saron</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">The Nexus</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">Darkflame Cleft</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">The Rookery</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">Operation: Floodgate</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">Priory of the Sacred Flame</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row">
-            <td class="loot-dungeon">Cinderbrew Meadery</td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
