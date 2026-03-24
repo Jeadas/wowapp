@@ -1745,22 +1745,29 @@ function computeDungeonData() {
     S.forEach((slot, si) => {
       const cell = row.cells[si + 1];
       if (!cell) return;
-      let has_any = false, bis_count = 0;
+      // items: one entry per non-empty item in this cell.
+      // ii = DOM index within .loot-item list (used to build bisState keys); null for single-item cells.
+      const items = [];
       if (cell.classList.contains('loot-cell-multi')) {
-        cell.querySelectorAll('.loot-item').forEach(item => {
-          if (item.children.length > 0) { has_any = true; if (item.classList.contains('loot-best-1')) bis_count++; }
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          if (item.children.length > 0)
+            items.push({ ii, isBis: item.classList.contains('loot-best-1') });
         });
       } else {
-        has_any = cell.children.length > 0;
-        if (cell.classList.contains('loot-best-1')) bis_count = 1;
+        if (cell.children.length > 0)
+          items.push({ ii: null, isBis: cell.classList.contains('loot-best-1') });
       }
-      if (has_any || bis_count > 0) slots[slot] = { has_any, bis_count };
+      if (items.length > 0) slots[slot] = { items };
     });
     return { name, item_count, slots, ri };
   });
 }
 
 // dungeon: full object from computeDungeonData (needs .slots and .ri)
+// Returns a raw item-check count; caller multiplies by dropChance/itemCount.
+// Logic: for every item in the dungeon's loot pool for this player:
+//   +1 if the item is BiS-designated AND the slot's BiS checkbox is not yet complete
+//   +1 (high mode only) if the slot's Hero 3/6 checkbox is not yet checked
 function computePlayerContribution(playerName, dungeon, mode) {
   const pSlots = playerSlots[playerName];
   if (!pSlots) return 0;
@@ -1769,18 +1776,46 @@ function computePlayerContribution(playerName, dungeon, mode) {
   let playerBisState = null;
   try { playerBisState = JSON.parse(localStorage.getItem('bisState_' + playerName)); } catch(e) {}
   let count = 0;
-  Object.entries(dungeon.slots).forEach(([slot, { has_any: harryHasAny }]) => {
+
+  ALL_SLOTS.forEach(slot => {
     if (!pSlots.has(slot)) return;
     const ss = state[slot];
     if (!ss) return;
-    const bisVal = playerBisState?.[dungeon.ri + '_' + slot];
-    const effective_bis_count = Array.isArray(bisVal) ? bisVal.filter(v => v).length : (bisVal ? 1 : 0);
-    const has_any = playerName === 'harry'
-      ? harryHasAny
-      : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
-    count += Math.min((ss.bis || []).filter(b => !b).length, effective_bis_count);
-    if (mode === 'high' && !ss.hero && has_any) count += 1;
+
+    const bis_complete = !(ss.bis || []).some(b => !b);
+
+    // Build the list of items for this player in this dungeon slot.
+    // Each entry is the bisState key for that specific item.
+    let bisKeys;
+    if (playerName === 'harry' || SHARED_SLOTS.has(slot)) {
+      // Shared slots (neck/back/ring) and Harry use the DOM-derived item list.
+      const slotData = dungeon.slots[slot];
+      if (!slotData) return;
+      bisKeys = slotData.items.map(({ ii }) =>
+        ii === null ? `${dungeon.ri}_${slot}` : `${dungeon.ri}_${slot}_${ii}`
+      );
+    } else {
+      // Non-shared slots for non-Harry players come from PLAYER_TABLE_DATA.
+      const rowVal = PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot];
+      if (!rowVal) return;
+      if (typeof rowVal === 'number') {
+        // Multi-item slot (e.g. trinket: 2) — keys are ri_slot_0, ri_slot_1, …
+        bisKeys = Array.from({ length: rowVal }, (_, i) => `${dungeon.ri}_${slot}_${i}`);
+      } else {
+        // Single item with stat array — key is ri_slot
+        bisKeys = [`${dungeon.ri}_${slot}`];
+      }
+    }
+
+    bisKeys.forEach(bisKey => {
+      const bisDesignated = !!(playerBisState?.[bisKey]);
+      let value = 0;
+      if (bisDesignated && !bis_complete) value += 1; // contributes to BiS checkbox
+      if (mode === 'high' && !ss.hero)    value += 1; // contributes to Hero 3/6 checkbox
+      count += value;
+    });
   });
+
   return count;
 }
 
