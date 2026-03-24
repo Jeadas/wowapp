@@ -161,6 +161,30 @@ function jsonError(message, status = 500) {
   });
 }
 
+async function handleLoadState(request, env) {
+  const url   = new URL(request.url);
+  const tabId = url.searchParams.get('tabId');
+  const path  = GH_DATA[tabId];
+  if (!path) return jsonError('Unknown tabId', 400);
+
+  const headers = {
+    'Authorization': 'Bearer ' + env.GH_PAT,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'User-Agent': 'jdoc-api/1.0',
+  };
+
+  const res = await fetch(
+    `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`,
+    { headers }
+  );
+  if (!res.ok) return jsonError('GitHub ' + res.status, res.status);
+
+  const meta    = await res.json();
+  const content = atob(meta.content.replace(/\s/g, ''));
+  return jsonResponse(JSON.parse(content));
+}
+
 // ── Entry point ───────────────────────────────────────────────
 export default {
   async fetch(request, env) {
@@ -169,6 +193,7 @@ export default {
     const { pathname } = new URL(request.url);
     try {
       if (pathname === '/api/character')                              return await handleCharacter(request, env);
+      if (pathname === '/api/load-state'  && request.method === 'GET')  return await handleLoadState(request, env);
       if (pathname === '/api/save-raid' && request.method === 'POST') return await handleSaveRaid(request, env);
 
       return jsonError('Not found', 404);

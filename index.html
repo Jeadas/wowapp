@@ -1350,23 +1350,9 @@ async function syncCloudToLocal() {
   btn.disabled = true; btn.textContent = 'Fetching…';
   status.textContent = '';
   try {
-    const res = await fetch(
-      'https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state-' + player + '.json',
-      { cache: 'no-store' }
-    );
-    if (!res.ok) {
-      // Fallback: try legacy loot-state.json (harry only)
-      if (player === 'harry') {
-        const res2 = await fetch('https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state.json', { cache: 'no-store' });
-        if (!res2.ok) throw new Error('HTTP ' + res2.status);
-        const state = await res2.json();
-        // Old format has head/neck etc at top level
-        const data = state.head !== undefined ? state : (state[player] || null);
-        if (data) { localStorage.setItem(getPlayerStateKey(player), JSON.stringify(data)); applyLootState(data); }
-        btn.textContent = 'Applied ✓'; status.textContent = 'Loaded from repo.'; return;
-      }
-      throw new Error('HTTP ' + res.status);
-    }
+    // Read via worker → GitHub API to bypass CDN caching on raw.githubusercontent.com
+    const res = await fetch(`${API_BASE}/api/load-state?tabId=loot-state-${player}`);
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     const state = await res.json();
     localStorage.setItem(getPlayerStateKey(player), JSON.stringify(state));
     if (currentPlayer === player) applyLootState(state);
