@@ -1763,10 +1763,12 @@ function computeSummaryScores() {
   return computeDungeonData().map(d => {
     let totalLow = 0, totalHigh = 0;
     const playerLow = {}, playerHigh = {};
+    // 2 of 5 players receive loot per run, so each player's per-run drop chance is 2/N.
+    const dropChance = 2 / PLAYERS.length;
     PLAYERS.forEach(p => {
       // Use per-player item pool size for accurate drop-chance weighting.
       const itemCount = PLAYER_TABLE_DATA[p]?.item_counts?.[d.ri] || d.item_count;
-      const w = 1 / itemCount;
+      const w = dropChance / itemCount;
       const lo = computePlayerContribution(p, d, 'low')  * w;
       const hi = computePlayerContribution(p, d, 'high') * w;
       playerLow[p] = lo; playerHigh[p] = hi;
