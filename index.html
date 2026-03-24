@@ -1763,7 +1763,11 @@ function computePlayerContribution(playerName, dungeon, mode) {
     const has_any = (playerName === 'harry' || SHARED_SLOTS.has(slot))
       ? harryHasAny
       : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
-    count += Math.min((ss.bis || []).filter(b => !b).length, bis_count);
+    // For non-Harry class-specific slots, PLAYER_TABLE_DATA never marks items as BiS,
+    // so effective bis_count is 0 — otherwise Harry's bis_count would be applied to
+    // slots where the player has no BiS items.
+    const effective_bis_count = (playerName === 'harry' || SHARED_SLOTS.has(slot)) ? bis_count : 0;
+    count += Math.min((ss.bis || []).filter(b => !b).length, effective_bis_count);
     if (mode === 'high' && !ss.hero && has_any) count += 1;
   });
   return count;
