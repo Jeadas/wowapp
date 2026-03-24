@@ -3,19 +3,19 @@
     "head": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "neck": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "shoulders": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "back": {
@@ -27,50 +27,50 @@
     "chest": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "wrist": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "hands": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "waist": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "legs": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "feet": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "ring": {
       "hero": false,
       "bis": [
-        true,
-        true
+        false,
+        false
       ]
     },
     "trinket": {
       "hero": false,
       "bis": [
-        true
+        false
       ]
     }
   },
