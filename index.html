@@ -254,10 +254,6 @@
   .loot-best-2 { border-top:3px solid var(--gold) !important; background:linear-gradient(180deg, rgba(200,168,75,0.2) 0%, transparent 65%) !important; }
   .loot-best-3 { position:relative; }
   .loot-best-3::after { content:'◆'; position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); line-height:1; opacity:0.9; }
-  .loot-bis { background:rgba(100,220,120,0.07) !important; box-shadow:inset 0 0 0 2px rgba(100,220,120,0.55); }
-  .loot-bis::before { content:'BiS'; position:absolute; top:3px; left:4px; font-size:7px; font-family:'Cinzel',serif; letter-spacing:0.5px; color:#64dc78; line-height:1; opacity:0.9; }
-  .loot-item-bis { background:rgba(100,220,120,0.1); box-shadow:inset 0 0 0 1px rgba(100,220,120,0.55); border-radius:3px; position:relative; }
-  .loot-item-bis::before { content:'BiS'; position:absolute; top:2px; left:3px; font-size:6px; font-family:'Cinzel',serif; letter-spacing:0.5px; color:#64dc78; line-height:1; opacity:0.9; }
   .loot-meta-row { background:rgba(0,0,0,0.25); }
   .loot-meta-spacer { border-top:2px solid var(--border-gold); }
   .loot-meta-cell { border-top:2px solid var(--border-gold); border-left:1px solid var(--border); padding:8px 8px; vertical-align:middle; }
@@ -403,8 +399,8 @@
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td>
           </tr>
@@ -414,7 +410,7 @@
             <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell"></td>
@@ -430,7 +426,7 @@
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item loot-item-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
             <td class="loot-cell"><span class="loot-tier loot-tier-c">C</span></td>
           </tr>
           <tr class="loot-row" data-item-count="9">
@@ -453,14 +449,14 @@
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-tier loot-tier-a">A</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div></div></td>
           </tr>
           <tr class="loot-row" data-item-count="8">
             <td class="loot-dungeon">Pit of Saron</td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
@@ -471,14 +467,14 @@
           </tr>
           <tr class="loot-row" data-item-count="10">
             <td class="loot-dungeon">Seat of the Triumvirate</td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></div><div class="loot-item"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></div></div></td>
@@ -489,11 +485,11 @@
             <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Versa</span></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell loot-bis"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell loot-bis"><span class="loot-tier loot-tier-a">A</span></td>
+            <td class="loot-cell loot-best-1"><span class="loot-tier loot-tier-a">A</span></td>
           </tr>
         </tbody>
         <tfoot>
