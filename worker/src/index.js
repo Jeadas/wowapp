@@ -103,6 +103,7 @@ async function handleSaveRaid(request, env) {
     'Accept': 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
     'Content-Type': 'application/json',
+    'User-Agent': 'jdoc-api/1.0',
   };
 
   // Always fetch current SHA so we never send a stale one
