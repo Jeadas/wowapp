@@ -1574,6 +1574,9 @@ function computeSummaryScores() {
 }
 
 function renderSummary() {
+  // Always restore Harry's cells so computeDungeonData() reads the correct slot/BiS structure.
+  // Visiting another player tab clears the tbody; without this every score would be 0.
+  renderPlayerCells('harry');
   const scores = computeSummaryScores();
   const sortedLow  = [...scores].sort((a, b) => b.low  - a.low);
   const sortedHigh = [...scores].sort((a, b) => b.high - a.high);
