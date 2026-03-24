@@ -1,0 +1,75 @@
+{
+  "head": {
+    "hero": false,
+    "bis": [
+      true
+    ]
+  },
+  "neck": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "shoulders": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "back": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "chest": {
+    "hero": false,
+    "bis": [
+      true
+    ]
+  },
+  "wrist": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "hands": {
+    "hero": false,
+    "bis": [
+      true
+    ]
+  },
+  "waist": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "legs": {
+    "hero": false,
+    "bis": [
+      true
+    ]
+  },
+  "feet": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  },
+  "ring": {
+    "hero": false,
+    "bis": [
+      false,
+      false
+    ]
+  },
+  "trinket": {
+    "hero": false,
+    "bis": [
+      false
+    ]
+  }
+}

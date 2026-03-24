@@ -721,6 +721,21 @@ async function loadFromGitHub() {
     } catch(e) { /* fall back to localStorage */ }
   }));
   renderRaidTables();
+
+  // Seed per-player loot states from GitHub if not yet in localStorage
+  await Promise.all(['harry', 'philipp', 'niklas', 'leon', 'kai'].map(async player => {
+    if (localStorage.getItem('lootState_' + player)) return;
+    try {
+      const res = await fetch(
+        `https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state-${player}.json`,
+        { cache: 'no-store' }
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      localStorage.setItem('lootState_' + player, JSON.stringify(data));
+      if (player === currentPlayer) applyLootState(data);
+    } catch(e) {}
+  }));
 }
 
 // ── Tabs ────────────────────────────────────────────────────
