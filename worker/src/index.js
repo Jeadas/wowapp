@@ -2,10 +2,15 @@ const GH_OWNER  = 'Jeadas';
 const GH_REPO   = 'wowapp';
 const GH_BRANCH = 'main';
 const GH_DATA   = {
-  'voidspire':   'data/voidspire.json',
-  'dreamrift':   'data/dreamrift.json',
-  'quel-danas':  'data/quel-danas.json',
-  'loot-state':  'data/loot-state.json',
+  'voidspire':          'data/voidspire.json',
+  'dreamrift':          'data/dreamrift.json',
+  'quel-danas':         'data/quel-danas.json',
+  'loot-state':         'data/loot-state.json',
+  'loot-state-harry':   'data/loot-state-harry.json',
+  'loot-state-philipp': 'data/loot-state-philipp.json',
+  'loot-state-niklas':  'data/loot-state-niklas.json',
+  'loot-state-leon':    'data/loot-state-leon.json',
+  'loot-state-kai':     'data/loot-state-kai.json',
 };
 
 const SLOT_MAP = {
