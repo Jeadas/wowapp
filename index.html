@@ -1381,7 +1381,10 @@ function savePlayerState(player) {
 }
 
 function switchPlayer(player, btn) {
-  if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
+  if (currentPlayer !== 'summary') {
+    savePlayerState(currentPlayer);
+    saveBisState();
+  }
   document.querySelectorAll('.player-tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const isSummary = player === 'summary';
@@ -1396,11 +1399,61 @@ function switchPlayer(player, btn) {
   }
   currentPlayer = player;
   if (isSummary) { renderSummary(); }
-  else           { applyLootState(loadPlayerState(player)); }
+  else           { renderPlayerCells(player); applyLootState(loadPlayerState(player)); }
+}
+
+// ── Per-player loot cells ─────────────────────────────────────
+// Cell content (item stats) differs per player (armor class).
+// Harry's HTML is captured after init; other players start empty.
+let playerLootHTML = {};
+
+function initLootCells() {
+  playerLootHTML['harry'] = document.querySelector('.loot-table tbody').innerHTML;
+}
+
+function attachBisClickHandlers() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); });
+        });
+      } else {
+        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); });
+      }
+    });
+  });
+}
+
+function renderPlayerCells(player) {
+  const tbody = document.querySelector('.loot-table tbody');
+  const html = playerLootHTML[player];
+  if (html) {
+    tbody.innerHTML = html;
+  } else {
+    // Empty cells — preserve row structure and item-count for future use
+    tbody.querySelectorAll('.loot-row').forEach(row => {
+      Array.from(row.cells).slice(1).forEach(cell => {
+        cell.innerHTML = '';
+        cell.className = 'loot-cell';
+      });
+    });
+  }
+  attachBisClickHandlers();
+  // Apply saved BiS state for this player
+  try {
+    const saved = localStorage.getItem('bisState_' + player);
+    if (saved) {
+      const state = JSON.parse(saved);
+      if (Object.values(state).some(v => v)) applyBisState(state);
+    }
+  } catch(e) {}
 }
 
 // ── Edit BiS ─────────────────────────────────────────────────
-const BIS_STATE_KEY = 'bisState';
 
 function applyBisState(state) {
   const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
@@ -1437,7 +1490,7 @@ function saveBisState() {
       }
     });
   });
-  localStorage.setItem(BIS_STATE_KEY, JSON.stringify(state));
+  localStorage.setItem('bisState_' + currentPlayer, JSON.stringify(state));
 }
 
 function toggleEditBis() {
@@ -1450,28 +1503,13 @@ function toggleEditBis() {
 
 function initBisEdit() {
   try {
-    const saved = localStorage.getItem(BIS_STATE_KEY);
+    const saved = localStorage.getItem('bisState_harry');
     if (saved) {
       const state = JSON.parse(saved);
-      // Only apply if at least one cell is marked BiS — an all-false state
-      // means it was saved from a stripped/empty table and should be ignored.
       if (Object.values(state).some(v => v)) applyBisState(state);
     }
   } catch(e) {}
-  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
-  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
-    S.forEach((slot, si) => {
-      const cell = row.cells[si + 1];
-      if (!cell) return;
-      if (cell.classList.contains('loot-cell-multi')) {
-        cell.querySelectorAll('.loot-item').forEach(item => {
-          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); });
-        });
-      } else {
-        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); });
-      }
-    });
-  });
+  attachBisClickHandlers();
 }
 
 // ── Summary ───────────────────────────────────────────────────
@@ -1661,6 +1699,7 @@ renderRaidTables();   // instant render from localStorage
 loadFromGitHub();     // fetch from GitHub, re-render when done
 initDropChance();
 initBisEdit();
+initLootCells();  // capture Harry's cells after all init is done
 </script>
 </body>
 </html>
