@@ -33,7 +33,7 @@
     "wrist": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "hands": {
