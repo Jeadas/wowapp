@@ -233,7 +233,9 @@
   .loot-row:nth-child(even) { background:rgba(255,255,255,0.02); }
   .loot-row:hover { background:rgba(200,168,75,0.04); }
   .loot-dungeon { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); padding:14px 14px; white-space:nowrap; border-bottom:1px solid var(--border); vertical-align:middle; }
-  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:top; height:70px; text-align:center; }
+  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; }
+  .loot-stat { display:block; font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; color:var(--text-bright); line-height:1.7; text-transform:uppercase; }
+  .loot-stat:first-child { color:var(--gold); }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -381,10 +383,14 @@
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Windrunner Spire</td>
+            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td>
+            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
+            <td class="loot-cell"></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Algeth'ar Academy</td>
