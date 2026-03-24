@@ -233,41 +233,9 @@
   .loot-row:nth-child(even) { background:rgba(255,255,255,0.02); }
   .loot-row:hover { background:rgba(200,168,75,0.04); }
   .loot-dungeon { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); padding:14px 14px; white-space:nowrap; border-bottom:1px solid var(--border); vertical-align:middle; }
-  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; position:relative; }
+  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; }
   .loot-stat { display:block; font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; color:var(--text-bright); line-height:1.7; text-transform:uppercase; }
   .loot-stat:first-child { color:var(--gold); }
-  .loot-cell-multi { padding:0; height:auto; }
-  .loot-items-2 { display:flex; min-height:70px; align-items:stretch; }
-  .loot-items-2 .loot-item { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:6px 4px; position:relative; }
-  .loot-items-2 .loot-item + .loot-item { border-left:1px solid var(--border); }
-  .loot-items-3 { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; min-height:80px; }
-  .loot-items-3 .loot-item { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; position:relative; }
-  .loot-items-3 .loot-item:nth-child(1) { border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
-  .loot-items-3 .loot-item:nth-child(2) { border-bottom:1px solid var(--border); }
-  .loot-items-3 .loot-item:nth-child(3) { border-right:1px solid var(--border); }
-  .loot-tier { font-family:'Cinzel',serif; font-size:16px; font-weight:700; letter-spacing:1px; }
-  .loot-tier-s { color:#ff8000; text-shadow:0 0 8px rgba(255,128,0,0.4); }
-  .loot-tier-a { color:#a335ee; }
-  .loot-tier-b { color:#0070dd; }
-  .loot-tier-c { color:#1eff00; }
-  .loot-best-1 { box-shadow:inset 0 0 0 2px rgba(200,168,75,0.75); background:rgba(200,168,75,0.08) !important; }
-  .loot-best-2 { border-top:3px solid var(--gold) !important; background:linear-gradient(180deg, rgba(200,168,75,0.2) 0%, transparent 65%) !important; }
-  .loot-best-3 { position:relative; }
-  .loot-best-3::after { content:'◆'; position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); line-height:1; opacity:0.9; }
-  .loot-meta-row { background:rgba(0,0,0,0.25); }
-  .loot-meta-spacer { border-top:2px solid var(--border-gold); }
-  .loot-meta-cell { border-top:2px solid var(--border-gold); border-left:1px solid var(--border); padding:8px 8px; vertical-align:middle; }
-  .meta-cell-inner { display:flex; flex-direction:column; align-items:stretch; gap:6px; }
-  .meta-check { display:flex; align-items:center; gap:7px; cursor:pointer; }
-  .meta-check input[type="checkbox"] { appearance:none; -webkit-appearance:none; width:14px; height:14px; border:1px solid rgba(200,168,75,0.4); background:transparent; cursor:pointer; flex-shrink:0; position:relative; }
-  .meta-check input[type="checkbox"]:checked { background:var(--gold); border-color:var(--gold); }
-  .meta-check input[type="checkbox"]:checked::after { content:'✓'; position:absolute; top:-1px; left:1px; font-size:11px; color:#1a1510; font-weight:700; line-height:1; }
-  .meta-check span { font-family:'Cinzel',serif; font-size:11px; letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
-  .meta-check:has(input:checked) span { color:var(--gold); }
-  .meta-bis-pair { display:flex; gap:6px; }
-  .meta-bis-pair .meta-check { flex:1; }
-  .loot-greyed { opacity:0.28 !important; filter:grayscale(1) !important; }
-  .drop-chance { position:absolute; bottom:3px; right:4px; font-family:'Cinzel',serif; font-size:12px; font-weight:700; color:var(--text-dim); line-height:1; pointer-events:none; user-select:none; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -314,6 +282,33 @@
   .talent-cell.tc-red { border-color:#c41e3a; box-shadow:0 0 6px rgba(196,30,58,0.4); }
   .talent-cell.tc-green { border-color:#1eff00; box-shadow:0 0 6px rgba(30,255,0,0.3); }
 
+  /* Player sub-tabs */
+  .player-tabs-nav { display:flex; gap:0; align-items:stretch; border-bottom:1px solid var(--border-gold); margin-bottom:18px; flex-wrap:wrap; }
+  .player-tab-btn { padding:7px 16px; background:transparent; border:1px solid transparent; border-bottom:none; color:var(--text-dim); font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .25s; position:relative; bottom:-1px; }
+  .player-tab-btn:hover { color:var(--text-muted); }
+  .player-tab-btn.active { color:var(--gold); border-color:var(--border-gold); border-bottom-color:var(--bg-deep); background:var(--bg-deep); }
+  .btn-edit-bis { margin-left:auto; padding:5px 14px !important; font-size:10px !important; align-self:flex-end; margin-bottom:1px; }
+  .btn-edit-bis.bis-active { border-color:var(--gold) !important; color:var(--gold-bright) !important; background:rgba(200,168,75,0.1) !important; }
+  .edit-bis-active .loot-cell:not(.loot-cell-multi) { cursor:crosshair; }
+  .edit-bis-active .loot-item { cursor:crosshair; }
+  .edit-bis-active .loot-cell:not(.loot-cell-multi):hover,
+  .edit-bis-active .loot-item:hover { outline:1px dashed rgba(200,168,75,0.5); }
+
+  /* Summary */
+  .summary-container { padding:4px 0 20px; }
+  .summary-section { margin-bottom:28px; }
+  .summary-section-title { font-family:'Cinzel',serif; font-size:13px; font-weight:700; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border-gold); }
+  .summary-card { background:var(--bg-card); border:1px solid var(--border); padding:12px 16px; margin-bottom:6px; display:grid; grid-template-columns:200px 1fr; gap:12px; align-items:center; }
+  .summary-card.recommended { border-color:var(--gold-dim); background:rgba(200,168,75,0.05); }
+  .summary-dungeon-name { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); }
+  .summary-card.recommended .summary-dungeon-name { color:var(--gold); }
+  .summary-score { font-size:11px; color:var(--text-muted); margin-top:3px; }
+  .summary-score strong { font-family:'Cinzel',serif; font-size:14px; color:var(--gold); }
+  .summary-rec-badge { display:inline-block; margin-left:8px; font-size:9px; padding:1px 6px; background:var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; letter-spacing:1px; text-transform:uppercase; vertical-align:middle; }
+  .summary-breakdown { display:flex; gap:8px; flex-wrap:wrap; }
+  .summary-player-chip { font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; padding:2px 8px; border:1px solid var(--border); color:var(--text-dim); white-space:nowrap; }
+  .summary-player-chip.has-value { border-color:var(--gold-dim); color:var(--gold); }
+
   @media (max-width:1100px) {
     .char-row { grid-template-columns:2fr 3fr; }
     .col-armory { grid-column:1/-1; border-right:none; border-bottom:1px solid var(--border); }
@@ -350,11 +345,11 @@
         </svg>
         Reload
       </button>
-      <button class="btn" id="editBtn" onclick="handleEditBtn()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
+      <button class="btn" id="editBtn" onclick="openEditModal()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
-        <span id="editBtnLabel">Edit</span>
+        Edit
       </button>
     </div>
   </div>
@@ -372,6 +367,18 @@
 
   <!-- Tab: M+ Loot -->
   <div id="tab-mplus-loot" class="tab-pane">
+    <!-- Player sub-tab bar -->
+    <div class="player-tabs-nav" id="playerTabsNav">
+      <button class="player-tab-btn active" onclick="switchPlayer('harry',this)">Harry</button>
+      <button class="player-tab-btn" onclick="switchPlayer('philipp',this)">Philipp</button>
+      <button class="player-tab-btn" onclick="switchPlayer('niklas',this)">Niklas</button>
+      <button class="player-tab-btn" onclick="switchPlayer('leon',this)">Leon</button>
+      <button class="player-tab-btn" onclick="switchPlayer('kai',this)">Kai</button>
+      <button class="player-tab-btn" onclick="switchPlayer('summary',this)">Summary</button>
+      <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
+    </div>
+    <!-- Player loot view -->
+    <div id="playerLootView">
     <div class="loot-table-container">
       <table class="loot-table">
         <thead>
@@ -392,124 +399,73 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="loot-row" data-item-count="7">
+          <tr class="loot-row">
             <td class="loot-dungeon">Magister's Terrace</td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row" data-item-count="6">
-            <td class="loot-dungeon">Maisara Caverns</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-tier loot-tier-b">B</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
-          <tr class="loot-row" data-item-count="7">
+          <tr class="loot-row">
+            <td class="loot-dungeon">Maisara Caverns</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
             <td class="loot-dungeon">Nexus-Point Xenas</td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
-            <td class="loot-cell"><span class="loot-tier loot-tier-c">C</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
-          <tr class="loot-row" data-item-count="9">
+          <tr class="loot-row">
             <td class="loot-dungeon">Windrunner Spire</td>
+            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item"><span class="loot-tier loot-tier-a">A</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div></div></td>
           </tr>
-          <tr class="loot-row" data-item-count="7">
+          <tr class="loot-row">
             <td class="loot-dungeon">Algeth'ar Academy</td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-tier loot-tier-a">A</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div></div></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
-          <tr class="loot-row" data-item-count="8">
-            <td class="loot-dungeon">Pit of Saron</td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td>
-          </tr>
-          <tr class="loot-row" data-item-count="10">
+          <tr class="loot-row">
             <td class="loot-dungeon">Seat of the Triumvirate</td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Crit</span></td>
-            <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Versa</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></div><div class="loot-item"><span class="loot-stat">Versa</span><span class="loot-stat">Crit</span></div></div></td>
-            <td class="loot-cell"><span class="loot-tier loot-tier-c">C</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
-          <tr class="loot-row" data-item-count="6">
+          <tr class="loot-row">
             <td class="loot-dungeon">Skyreach</td>
-            <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Versa</span></td>
-            <td class="loot-cell"></td>
-            <td class="loot-cell"><span class="loot-stat">Mastery</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell loot-best-1"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
-            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
-            <td class="loot-cell loot-best-1"><span class="loot-tier loot-tier-a">A</span></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Pit of Saron</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
           </tr>
         </tbody>
-        <tfoot>
-          <tr class="loot-meta-row">
-            <td class="loot-meta-spacer"></td>
-            <td class="loot-meta-cell" data-slot="head"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="neck"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="shoulders"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="back"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="chest"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="wrist"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="hands"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="waist"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="legs"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="feet"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="ring"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><div class="meta-bis-pair"><label class="meta-check"><input type="checkbox"><span>BiS</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></div></td>
-            <td class="loot-meta-cell" data-slot="trinket"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-          </tr>
-        </tfoot>
       </table>
+    </div>
+    </div><!-- end playerLootView -->
+    <!-- Summary view -->
+    <div id="summaryView" style="display:none">
+      <div class="summary-container" id="summaryContent"></div>
     </div>
   </div>
 
@@ -560,21 +516,6 @@
   </div>
 </div>
 
-<!-- Sync Modal -->
-<div id="syncModal" class="modal-overlay hidden">
-  <div class="modal-box" style="max-width:320px;">
-    <div class="modal-header">
-      <span>Sync Loot State</span>
-      <button class="modal-close" onclick="closeSyncModal()">×</button>
-    </div>
-    <div class="modal-body" style="padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
-      <button class="btn" id="syncUpBtn" onclick="syncLocalToCloud()" style="width:100%;justify-content:center;padding:10px;">Local → Cloud</button>
-      <button class="btn" id="syncDownBtn" onclick="syncCloudToLocal()" style="width:100%;justify-content:center;padding:10px;">Cloud → Local</button>
-      <div id="syncStatus" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.5px;color:var(--text-muted);text-align:center;min-height:16px;"></div>
-    </div>
-  </div>
-</div>
-
 <script>
 // ── Config ──────────────────────────────────────────────────
 const API_BASE = 'https://jdoc-api.jeadascoding.workers.dev';
@@ -602,9 +543,9 @@ const SEASON_DUNGEONS = [
   { name: 'Nexus-Point Xenas',       short_name: 'NPX',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-lothraxion.png' },
   { name: 'Windrunner Spire',        short_name: 'WS',   img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-the-restless-heart.png' },
   { name: "Algeth'ar Academy",       short_name: 'AA',   img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-echo-of-doragosa.png' },
-  { name: 'Pit of Saron',            short_name: 'PoS',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-scourgelord-tyrannus.png' },
   { name: 'Seat of the Triumvirate', short_name: 'SotT', img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-lura-midnight.png' },
   { name: 'Skyreach',                short_name: 'Sky',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-high-sage-viryx.png' },
+  { name: 'Pit of Saron',            short_name: 'PoS',  img: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-scourgelord-tyrannus.png' },
 ];
 
 const SEASON_RAIDS = [
@@ -699,6 +640,7 @@ const TAB_TO_HASH = { 'mine': 'characters', 'mplus-loot': 'loot', 'quel-danas': 
 const HASH_TO_TAB = { 'characters': 'mine', 'loot': 'mplus-loot', 'queldanas': 'quel-danas' };
 
 function switchTab(id, btn, skipHistory) {
+  if (id !== 'mplus-loot' && currentPlayer !== 'summary') savePlayerState(currentPlayer);
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
@@ -1231,7 +1173,8 @@ function applyLootState(state) {
 }
 
 function saveLootStateLocal() {
-  localStorage.setItem(LOOT_STATE_KEY, JSON.stringify(collectLootState()));
+  if (currentPlayer !== 'summary')
+    localStorage.setItem(getPlayerStateKey(currentPlayer), JSON.stringify(collectLootState()));
 }
 
 // ── Sync modal ────────────────────────────────────────────────
@@ -1259,14 +1202,16 @@ async function syncLocalToCloud() {
   btn.disabled = true; btn.textContent = 'Saving…';
   status.textContent = '';
   try {
+    if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
+    const playerData = loadPlayerState(currentPlayer !== 'summary' ? currentPlayer : 'harry');
     const res = await fetch(`${API_BASE}/api/save-raid`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tabId: 'loot-state', data: collectLootState() }),
+      body: JSON.stringify({ tabId: 'loot-state-' + (currentPlayer !== 'summary' ? currentPlayer : 'harry'), data: playerData }),
     });
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     btn.textContent = 'Saved ✓';
-    status.textContent = 'Pushed to repo.';
+    status.textContent = 'Pushed ' + (currentPlayer !== 'summary' ? currentPlayer : '') + ' to repo.';
   } catch(e) {
     btn.disabled = false; btn.textContent = 'Local → Cloud';
     status.textContent = 'Error: ' + e.message;
@@ -1276,23 +1221,233 @@ async function syncLocalToCloud() {
 async function syncCloudToLocal() {
   const btn = document.getElementById('syncDownBtn');
   const status = document.getElementById('syncStatus');
+  const player = currentPlayer !== 'summary' ? currentPlayer : 'harry';
   btn.disabled = true; btn.textContent = 'Fetching…';
   status.textContent = '';
   try {
     const res = await fetch(
-      'https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state.json',
+      'https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state-' + player + '.json',
       { cache: 'no-store' }
     );
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) {
+      // Fallback: try legacy loot-state.json (harry only)
+      if (player === 'harry') {
+        const res2 = await fetch('https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state.json', { cache: 'no-store' });
+        if (!res2.ok) throw new Error('HTTP ' + res2.status);
+        const state = await res2.json();
+        // Old format has head/neck etc at top level
+        const data = state.head !== undefined ? state : (state[player] || null);
+        if (data) { localStorage.setItem(getPlayerStateKey(player), JSON.stringify(data)); applyLootState(data); }
+        btn.textContent = 'Applied ✓'; status.textContent = 'Loaded from repo.'; return;
+      }
+      throw new Error('HTTP ' + res.status);
+    }
     const state = await res.json();
-    applyLootState(state);
-    saveLootStateLocal();
+    localStorage.setItem(getPlayerStateKey(player), JSON.stringify(state));
+    if (currentPlayer === player) applyLootState(state);
     btn.textContent = 'Applied ✓';
-    status.textContent = 'Loaded from repo.';
+    status.textContent = 'Loaded ' + player + ' from repo.';
   } catch(e) {
     btn.disabled = false; btn.textContent = 'Cloud → Local';
     status.textContent = 'Error: ' + e.message;
   }
+}
+
+// ── Players ──────────────────────────────────────────────────
+const PLAYERS = ['harry', 'philipp', 'niklas', 'leon', 'kai'];
+let currentPlayer = 'harry';
+let editBisMode = false;
+
+function getPlayerStateKey(p) { return 'lootState_' + p; }
+
+function loadPlayerState(player) {
+  try {
+    const saved = localStorage.getItem(getPlayerStateKey(player));
+    if (saved) return JSON.parse(saved);
+    // Migration: use old single-player key for harry
+    if (player === 'harry') {
+      const old = localStorage.getItem(LOOT_STATE_KEY);
+      if (old) return JSON.parse(old);
+    }
+  } catch(e) {}
+  return null;
+}
+
+function savePlayerState(player) {
+  localStorage.setItem(getPlayerStateKey(player), JSON.stringify(collectLootState()));
+}
+
+function switchPlayer(player, btn) {
+  if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
+  document.querySelectorAll('.player-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isSummary = player === 'summary';
+  document.getElementById('playerLootView').style.display = isSummary ? 'none' : '';
+  document.getElementById('summaryView').style.display    = isSummary ? '' : 'none';
+  document.getElementById('editBisBtn').style.display     = isSummary ? 'none' : '';
+  if (editBisMode) {
+    editBisMode = false;
+    document.getElementById('editBisBtn').classList.remove('bis-active');
+    document.getElementById('editBisBtn').textContent = 'Edit BiS';
+    document.querySelector('.loot-table-container').classList.remove('edit-bis-active');
+  }
+  currentPlayer = player;
+  if (isSummary) { renderSummary(); }
+  else           { applyLootState(loadPlayerState(player)); }
+}
+
+// ── Edit BiS ─────────────────────────────────────────────────
+const BIS_STATE_KEY = 'bisState';
+
+function applyBisState(state) {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          const k = ri + '_' + slot + '_' + ii;
+          if (k in state) item.classList.toggle('loot-best-1', !!state[k]);
+        });
+      } else {
+        const k = ri + '_' + slot;
+        if (k in state) cell.classList.toggle('loot-best-1', !!state[k]);
+      }
+    });
+  });
+}
+
+function saveBisState() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  const state = {};
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          state[ri + '_' + slot + '_' + ii] = item.classList.contains('loot-best-1');
+        });
+      } else {
+        state[ri + '_' + slot] = cell.classList.contains('loot-best-1');
+      }
+    });
+  });
+  localStorage.setItem(BIS_STATE_KEY, JSON.stringify(state));
+}
+
+function toggleEditBis() {
+  editBisMode = !editBisMode;
+  const btn = document.getElementById('editBisBtn');
+  btn.classList.toggle('bis-active', editBisMode);
+  btn.textContent = editBisMode ? 'Done' : 'Edit BiS';
+  document.querySelector('.loot-table-container').classList.toggle('edit-bis-active', editBisMode);
+}
+
+function initBisEdit() {
+  try {
+    const saved = localStorage.getItem(BIS_STATE_KEY);
+    if (saved) applyBisState(JSON.parse(saved));
+  } catch(e) {}
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); });
+        });
+      } else {
+        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); });
+      }
+    });
+  });
+}
+
+// ── Summary ───────────────────────────────────────────────────
+function computeDungeonData() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  return Array.from(document.querySelectorAll('.loot-table tbody .loot-row')).map(row => {
+    const name = row.querySelector('.loot-dungeon').textContent.trim();
+    const item_count = parseInt(row.dataset.itemCount, 10) || 1;
+    const slots = {};
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      let has_any = false, bis_count = 0;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          if (item.children.length > 0) { has_any = true; if (item.classList.contains('loot-best-1')) bis_count++; }
+        });
+      } else {
+        has_any = cell.children.length > 0;
+        if (cell.classList.contains('loot-best-1')) bis_count = 1;
+      }
+      if (has_any || bis_count > 0) slots[slot] = { has_any, bis_count };
+    });
+    return { name, item_count, slots };
+  });
+}
+
+function computePlayerContribution(playerName, dungeonSlots, mode) {
+  const state = loadPlayerState(playerName);
+  if (!state) return 0;
+  let count = 0;
+  Object.entries(dungeonSlots).forEach(([slot, { has_any, bis_count }]) => {
+    const ss = state[slot];
+    if (!ss) return;
+    count += Math.min((ss.bis || []).filter(b => !b).length, bis_count);
+    if (mode === 'high' && !ss.hero && has_any) count += 1;
+  });
+  return count;
+}
+
+function computeSummaryScores() {
+  return computeDungeonData().map(d => {
+    const w = 1 / d.item_count;
+    let totalLow = 0, totalHigh = 0;
+    const playerLow = {}, playerHigh = {};
+    PLAYERS.forEach(p => {
+      const lo = computePlayerContribution(p, d.slots, 'low')  * w;
+      const hi = computePlayerContribution(p, d.slots, 'high') * w;
+      playerLow[p] = lo; playerHigh[p] = hi;
+      totalLow += lo; totalHigh += hi;
+    });
+    return { name: d.name, low: totalLow, high: totalHigh, playerLow, playerHigh };
+  });
+}
+
+function renderSummary() {
+  const scores = computeSummaryScores();
+  const sortedLow  = [...scores].sort((a, b) => b.low  - a.low);
+  const sortedHigh = [...scores].sort((a, b) => b.high - a.high);
+
+  function section(title, sorted, scoreKey, playerKey) {
+    return `<div class="summary-section">
+      <div class="summary-section-title">${title}</div>
+      ${sorted.map((d, i) => {
+        const isRec = i === 0;
+        const score = d[scoreKey];
+        const chips = PLAYERS.map(p => {
+          const v = d[playerKey][p];
+          return `<div class="summary-player-chip${v > 0 ? ' has-value' : ''}">${p[0].toUpperCase()+p.slice(1)}: ${v.toFixed(2)}</div>`;
+        }).join('');
+        return `<div class="summary-card${isRec ? ' recommended' : ''}">
+          <div>
+            <div class="summary-dungeon-name">${esc(d.name)}${isRec ? '<span class="summary-rec-badge">Best</span>' : ''}</div>
+            <div class="summary-score">Expected checks: <strong>${score.toFixed(2)}</strong></div>
+          </div>
+          <div class="summary-breakdown">${chips}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  document.getElementById('summaryContent').innerHTML =
+    section('Low Keys (diff 1–9)', sortedLow,  'low',  'playerLow') +
+    section('High Keys (diff 10+)', sortedHigh, 'high', 'playerHigh');
 }
 
 // ── Loot meta checkboxes ─────────────────────────────────────
@@ -1351,10 +1506,10 @@ async function syncCloudToLocal() {
     });
   });
 
-  // Load saved state from localStorage on init
+  // Load Harry's state on init (or migrate from old single-player key)
   try {
-    const saved = localStorage.getItem(LOOT_STATE_KEY);
-    if (saved) applyLootState(JSON.parse(saved));
+    const state = loadPlayerState('harry');
+    if (state) applyLootState(state);
   } catch(e) {}
 })();
 
@@ -1397,6 +1552,7 @@ loadMyChars();
 renderRaidTables();   // instant render from localStorage
 loadFromGitHub();     // fetch from GitHub, re-render when done
 initDropChance();
+initBisEdit();
 </script>
 </body>
 </html>
