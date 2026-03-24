@@ -166,7 +166,7 @@
     "7_neck": false,
     "7_shoulders": false,
     "7_back": false,
-    "7_chest": false,
+    "7_chest": true,
     "7_wrist": false,
     "7_hands": false,
     "7_waist": false,
