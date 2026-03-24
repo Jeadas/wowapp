@@ -9,7 +9,7 @@
     "neck": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "shoulders": {
@@ -43,15 +43,15 @@
       ]
     },
     "waist": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "legs": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "feet": {
