@@ -695,7 +695,7 @@ async function loadFromGitHub() {
 }
 
 // ── Tabs ────────────────────────────────────────────────────
-function switchTab(id, btn) {
+function switchTab(id, btn, skipHistory) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
@@ -710,6 +710,7 @@ function switchTab(id, btn) {
   edit.style.pointerEvents   = isRaid ? ''        : 'none';
   document.getElementById('editBtnLabel').textContent = isLoot ? 'Sync' : 'Edit';
   if (isRaid && !isLoot) currentRaidTab = id;
+  if (!skipHistory) history.pushState(null, '', '#' + id);
 }
 
 
@@ -1381,6 +1382,13 @@ function initDropChance() {
 }
 
 // ── Init ─────────────────────────────────────────────────────
+(function() {
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const btn = document.querySelector(`.tab-btn[onclick*="'${hash}'"]`);
+    if (btn) switchTab(hash, btn, true);
+  }
+})();
 loadMyChars();
 renderRaidTables();   // instant render from localStorage
 loadFromGitHub();     // fetch from GitHub, re-render when done
