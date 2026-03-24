@@ -1,6 +1,6 @@
 const GH_OWNER  = 'Jeadas';
 const GH_REPO   = 'wowapp';
-const GH_BRANCH = 'main'; // v2
+const GH_BRANCH = 'main';
 const GH_DATA   = {
   'voidspire':  'data/voidspire.json',
   'dreamrift':  'data/dreamrift.json',
@@ -164,23 +164,7 @@ export default {
     try {
       if (pathname === '/api/character')                              return await handleCharacter(request, env);
       if (pathname === '/api/save-raid' && request.method === 'POST') return await handleSaveRaid(request, env);
-      if (pathname === '/api/debug-gh') {
-        const ghHeaders = {
-          'Authorization': 'Bearer ' + env.GH_PAT,
-          'User-Agent': 'jdoc-api/1.0',
-          'Accept': 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json',
-        };
-        const getRes = await fetch('https://api.github.com/repos/Jeadas/wowapp/contents/data/voidspire.json?ref=main', { headers: ghHeaders });
-        const getMeta = await getRes.json();
-        const putRes = await fetch('https://api.github.com/repos/Jeadas/wowapp/contents/data/voidspire.json', {
-          method: 'PUT', headers: ghHeaders,
-          body: JSON.stringify({ message: 'debug test', content: getMeta.content?.replace(/\n/g,''), sha: getMeta.sha, branch: 'main' }),
-        });
-        const putBody = await putRes.text();
-        return jsonResponse({ getStatus: getRes.status, putStatus: putRes.status, putBody });
-      }
+
       return jsonError('Not found', 404);
     } catch (e) {
       return jsonError(e.message, 500);
