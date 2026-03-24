@@ -164,6 +164,13 @@ export default {
     try {
       if (pathname === '/api/character')                              return await handleCharacter(request, env);
       if (pathname === '/api/save-raid' && request.method === 'POST') return await handleSaveRaid(request, env);
+      if (pathname === '/api/debug-gh') {
+        const res = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': 'Bearer ' + env.GH_PAT, 'User-Agent': 'jdoc-api/1.0' }
+        });
+        const body = await res.text();
+        return jsonResponse({ status: res.status, pat_prefix: (env.GH_PAT || '').slice(0, 8), body });
+      }
       return jsonError('Not found', 404);
     } catch (e) {
       return jsonError(e.message, 500);
