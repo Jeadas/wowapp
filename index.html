@@ -1768,7 +1768,7 @@ function computePlayerContribution(playerName, dungeon, mode) {
     if (!ss) return;
     const bisVal = playerBisState?.[dungeon.ri + '_' + slot];
     const effective_bis_count = Array.isArray(bisVal) ? bisVal.filter(v => v).length : (bisVal ? 1 : 0);
-    const has_any = (playerName === 'harry' || SHARED_SLOTS.has(slot))
+    const has_any = playerName === 'harry'
       ? harryHasAny
       : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
     count += Math.min((ss.bis || []).filter(b => !b).length, effective_bis_count);
