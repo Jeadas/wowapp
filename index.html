@@ -350,11 +350,11 @@
         </svg>
         Reload
       </button>
-      <button class="btn" id="editBtn" onclick="openEditModal()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
+      <button class="btn" id="editBtn" onclick="handleEditBtn()" style="grid-area:1/1;visibility:hidden;pointer-events:none;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
         </svg>
-        Edit
+        <span id="editBtnLabel">Edit</span>
       </button>
     </div>
   </div>
@@ -560,6 +560,21 @@
   </div>
 </div>
 
+<!-- Sync Modal -->
+<div id="syncModal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:320px;">
+    <div class="modal-header">
+      <span>Sync Loot State</span>
+      <button class="modal-close" onclick="closeSyncModal()">×</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px;display:flex;flex-direction:column;gap:10px;">
+      <button class="btn" id="syncUpBtn" onclick="syncLocalToCloud()" style="width:100%;justify-content:center;padding:10px;">Local → Cloud</button>
+      <button class="btn" id="syncDownBtn" onclick="syncCloudToLocal()" style="width:100%;justify-content:center;padding:10px;">Cloud → Local</button>
+      <div id="syncStatus" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.5px;color:var(--text-muted);text-align:center;min-height:16px;"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── Config ──────────────────────────────────────────────────
 const API_BASE = 'https://jdoc-api.jeadascoding.workers.dev';
@@ -685,6 +700,7 @@ function switchTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
+  const isLoot = id === 'mplus-loot';
   const isRaid = id !== 'mine';
   const refresh = document.getElementById('refreshBtn');
   const edit    = document.getElementById('editBtn');
@@ -692,7 +708,8 @@ function switchTab(id, btn) {
   refresh.style.pointerEvents = isRaid ? 'none'   : '';
   edit.style.visibility      = isRaid ? 'visible' : 'hidden';
   edit.style.pointerEvents   = isRaid ? ''        : 'none';
-  if (isRaid) currentRaidTab = id;
+  document.getElementById('editBtnLabel').textContent = isLoot ? 'Sync' : 'Edit';
+  if (isRaid && !isLoot) currentRaidTab = id;
 }
 
 
@@ -1181,6 +1198,99 @@ function loadingHTML(t, s) {
   return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`;
 }
 
+// ── Loot state persistence ────────────────────────────────────
+const LOOT_STATE_KEY = 'lootState';
+
+function collectLootState() {
+  const state = {};
+  document.querySelectorAll('.loot-meta-cell').forEach(cell => {
+    const slot = cell.dataset.slot;
+    const checks = cell.querySelectorAll('input[type="checkbox"]');
+    state[slot] = { hero: checks[0].checked, bis: Array.from(checks).slice(1).map(c => c.checked) };
+  });
+  return state;
+}
+
+function applyLootState(state) {
+  if (!state) return;
+  document.querySelectorAll('.loot-meta-cell').forEach(cell => {
+    const slot = cell.dataset.slot;
+    if (!state[slot]) return;
+    const checks = cell.querySelectorAll('input[type="checkbox"]');
+    checks[0].checked = !!state[slot].hero;
+    checks[0].dispatchEvent(new Event('change'));
+    Array.from(checks).slice(1).forEach((c, i) => {
+      c.checked = !!(state[slot].bis && state[slot].bis[i]);
+      c.dispatchEvent(new Event('change'));
+    });
+  });
+}
+
+function saveLootStateLocal() {
+  localStorage.setItem(LOOT_STATE_KEY, JSON.stringify(collectLootState()));
+}
+
+// ── Sync modal ────────────────────────────────────────────────
+function handleEditBtn() {
+  if (document.getElementById('editBtnLabel').textContent === 'Sync') openSyncModal();
+  else openEditModal();
+}
+
+function openSyncModal() {
+  document.getElementById('syncStatus').textContent = '';
+  document.getElementById('syncUpBtn').disabled = false;
+  document.getElementById('syncUpBtn').textContent = 'Local → Cloud';
+  document.getElementById('syncDownBtn').disabled = false;
+  document.getElementById('syncDownBtn').textContent = 'Cloud → Local';
+  document.getElementById('syncModal').classList.remove('hidden');
+}
+
+function closeSyncModal() {
+  document.getElementById('syncModal').classList.add('hidden');
+}
+
+async function syncLocalToCloud() {
+  const btn = document.getElementById('syncUpBtn');
+  const status = document.getElementById('syncStatus');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  status.textContent = '';
+  try {
+    const res = await fetch(`${API_BASE}/api/save-raid`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tabId: 'loot-state', data: collectLootState() }),
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
+    btn.textContent = 'Saved ✓';
+    status.textContent = 'Pushed to repo.';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Local → Cloud';
+    status.textContent = 'Error: ' + e.message;
+  }
+}
+
+async function syncCloudToLocal() {
+  const btn = document.getElementById('syncDownBtn');
+  const status = document.getElementById('syncStatus');
+  btn.disabled = true; btn.textContent = 'Fetching…';
+  status.textContent = '';
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state.json',
+      { cache: 'no-store' }
+    );
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const state = await res.json();
+    applyLootState(state);
+    saveLootStateLocal();
+    btn.textContent = 'Applied ✓';
+    status.textContent = 'Loaded from repo.';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Cloud → Local';
+    status.textContent = 'Error: ' + e.message;
+  }
+}
+
 // ── Loot meta checkboxes ─────────────────────────────────────
 (function() {
   const SLOTS = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
@@ -1223,6 +1333,7 @@ function loadingHTML(t, s) {
           cell.classList.toggle('loot-greyed', heroCheck.checked);
         }
       });
+      saveLootStateLocal();
     });
 
     // BiS: grey the Nth highlighted item in the column (N = checkbox index)
@@ -1231,9 +1342,16 @@ function loadingHTML(t, s) {
         const bisItems = getBisItems(colIdx);
         if (idx >= bisItems.length) return;
         bisItems[idx].classList.toggle('loot-greyed', bisCheck.checked);
+        saveLootStateLocal();
       });
     });
   });
+
+  // Load saved state from localStorage on init
+  try {
+    const saved = localStorage.getItem(LOOT_STATE_KEY);
+    if (saved) applyLootState(JSON.parse(saved));
+  } catch(e) {}
 })();
 
 // ── Drop chance badges ───────────────────────────────────────
