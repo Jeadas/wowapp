@@ -1408,7 +1408,7 @@ function savePlayerState(player) {
   localStorage.setItem(getPlayerStateKey(player), JSON.stringify(collectLootState()));
 }
 
-function switchPlayer(player, btn) {
+function switchPlayer(player, btn, skipHistory) {
   if (currentPlayer !== 'summary') {
     savePlayerState(currentPlayer);
     saveBisState();
@@ -1427,6 +1427,7 @@ function switchPlayer(player, btn) {
     document.querySelector('.loot-table-container').classList.remove('edit-bis-active');
   }
   currentPlayer = player;
+  if (!skipHistory) history.pushState(null, '', '#loot-' + player);
   if (isSummary) { renderSummary(); }
   else           { renderPlayerCells(player); applyLootState(loadPlayerState(player)); }
 }
@@ -1975,9 +1976,17 @@ function initDropChance() {
 (function() {
   const hash = location.hash.slice(1);
   if (hash) {
-    const id = HASH_TO_TAB[hash] || hash;
-    const btn = document.querySelector(`.tab-btn[onclick*="'${id}'"]`);
-    if (btn) switchTab(id, btn, true);
+    if (hash.startsWith('loot-')) {
+      const player = hash.slice(5);
+      const tabBtn = document.querySelector(`.tab-btn[onclick*="'mplus-loot'"]`);
+      if (tabBtn) switchTab('mplus-loot', tabBtn, true);
+      const playerBtn = document.querySelector(`.player-tab-btn[onclick*="'${player}'"]`);
+      if (playerBtn) switchPlayer(player, playerBtn, true);
+    } else {
+      const id = HASH_TO_TAB[hash] || hash;
+      const btn = document.querySelector(`.tab-btn[onclick*="'${id}'"]`);
+      if (btn) switchTab(id, btn, true);
+    }
   }
 })();
 loadMyChars();
