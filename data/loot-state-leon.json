@@ -31,7 +31,7 @@
       ]
     },
     "wrist": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
@@ -63,7 +63,6 @@
     "ring": {
       "hero": false,
       "bis": [
-        false,
         false
       ]
     },
@@ -95,7 +94,7 @@
     "1_wrist": false,
     "1_hands": false,
     "1_waist": false,
-    "1_legs": false,
+    "1_legs": true,
     "1_feet": false,
     "1_ring": false,
     "1_trinket_0": true,
@@ -119,7 +118,7 @@
     "3_back": false,
     "3_chest": false,
     "3_wrist": false,
-    "3_hands": false,
+    "3_hands": true,
     "3_waist": false,
     "3_legs": false,
     "3_feet": false,
@@ -140,7 +139,7 @@
     "4_trinket": false,
     "5_head": true,
     "5_neck": true,
-    "5_shoulders": false,
+    "5_shoulders": true,
     "5_back": false,
     "5_chest": false,
     "5_wrist": false,
@@ -167,7 +166,7 @@
     "7_neck": false,
     "7_shoulders": false,
     "7_back": false,
-    "7_chest": false,
+    "7_chest": true,
     "7_wrist": false,
     "7_hands": false,
     "7_waist": false,
