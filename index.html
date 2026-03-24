@@ -268,6 +268,7 @@
   .meta-bis-pair { display:flex; gap:6px; }
   .meta-bis-pair .meta-check { flex:1; }
   .loot-greyed { opacity:0.28 !important; filter:grayscale(1) !important; }
+  .loot-bis-greyed { box-shadow:none !important; background:transparent !important; }
   .drop-chance { position:absolute; bottom:3px; right:4px; font-family:'Cinzel',serif; font-size:12px; font-weight:700; color:var(--text-dim); line-height:1; pointer-events:none; user-select:none; }
 
   /* Edit Modal */
@@ -550,7 +551,7 @@
             <td class="loot-meta-cell" data-slot="waist"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
             <td class="loot-meta-cell" data-slot="legs"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
             <td class="loot-meta-cell" data-slot="feet"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
-            <td class="loot-meta-cell" data-slot="ring"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><div class="meta-bis-pair"><label class="meta-check"><input type="checkbox"><span>BiS</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></div></td>
+            <td class="loot-meta-cell" data-slot="ring"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
             <td class="loot-meta-cell" data-slot="trinket"><div class="meta-cell-inner"><label class="meta-check"><input type="checkbox"><span>Hero 3/6</span></label><label class="meta-check"><input type="checkbox"><span>BiS</span></label></div></td>
           </tr>
         </tfoot>
@@ -1560,7 +1561,7 @@ function initLootCells() {
       const cell = row.cells[si + 1];
       if (!cell) return;
       if (SHARED_SLOTS.has(slot)) {
-        cell.className = cell.className.replace(/\bloot-best-1\b|\bloot-greyed\b/g, '').replace(/\s+/g, ' ').trim();
+        cell.className = cell.className.replace(/\bloot-best-1\b|\bloot-greyed\b|\bloot-bis-greyed\b/g, '').replace(/\s+/g, ' ').trim();
         cell.querySelectorAll('.drop-chance').forEach(s => s.remove());
       } else {
         cell.innerHTML = '';
@@ -1901,12 +1902,10 @@ async function refreshSummary() {
       saveLootStateLocal();
     });
 
-    // BiS: grey the Nth highlighted item in the column (N = checkbox index)
-    bisChecks.forEach((bisCheck, idx) => {
+    // BiS: grey the highlight of all loot-best-1 items in the column
+    bisChecks.forEach(bisCheck => {
       bisCheck.addEventListener('change', function() {
-        const bisItems = getBisItems(colIdx);
-        if (idx >= bisItems.length) return;
-        bisItems[idx].classList.toggle('loot-greyed', bisCheck.checked);
+        getBisItems(colIdx).forEach(item => item.classList.toggle('loot-bis-greyed', bisCheck.checked));
         saveLootStateLocal();
       });
     });
