@@ -236,6 +236,20 @@
   .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; }
   .loot-stat { display:block; font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; color:var(--text-bright); line-height:1.7; text-transform:uppercase; }
   .loot-stat:first-child { color:var(--gold); }
+  .loot-cell-multi { padding:0; height:auto; }
+  .loot-items-2 { display:flex; min-height:70px; align-items:stretch; }
+  .loot-items-2 .loot-item { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:6px 4px; }
+  .loot-items-2 .loot-item + .loot-item { border-left:1px solid var(--border); }
+  .loot-items-3 { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; min-height:80px; }
+  .loot-items-3 .loot-item { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; }
+  .loot-items-3 .loot-item:nth-child(1) { border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .loot-items-3 .loot-item:nth-child(2) { border-bottom:1px solid var(--border); }
+  .loot-items-3 .loot-item:nth-child(3) { border-right:1px solid var(--border); }
+  .loot-tier { font-family:'Cinzel',serif; font-size:16px; font-weight:700; letter-spacing:1px; }
+  .loot-tier-s { color:var(--gold); text-shadow:0 0 8px rgba(200,168,75,0.5); }
+  .loot-tier-a { color:#4fc3f7; }
+  .loot-tier-b { color:#81c784; }
+  .loot-tier-c { color:var(--text-muted); }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
@@ -383,14 +397,14 @@
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Windrunner Spire</td>
-            <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-2"><div class="loot-item"><span class="loot-stat">Crit</span><span class="loot-stat">Mastery</span></div><div class="loot-item"><span class="loot-stat">Haste</span><span class="loot-stat">Mastery</span></div></div></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Haste</span><span class="loot-stat">Versa</span></td>
             <td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
             <td class="loot-cell"></td>
             <td class="loot-cell"><span class="loot-stat">Crit</span><span class="loot-stat">Haste</span></td>
-            <td class="loot-cell"></td>
+            <td class="loot-cell loot-cell-multi"><div class="loot-items-3"><div class="loot-item"><span class="loot-tier loot-tier-s">S</span></div><div class="loot-item"><span class="loot-tier loot-tier-b">B</span></div><div class="loot-item"><span class="loot-tier loot-tier-c">C</span></div><div class="loot-item"></div></div></td>
           </tr>
           <tr class="loot-row">
             <td class="loot-dungeon">Algeth'ar Academy</td>
