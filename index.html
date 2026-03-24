@@ -1608,10 +1608,10 @@ function attachBisClickHandlers() {
       if (!cell) return;
       if (cell.classList.contains('loot-cell-multi')) {
         cell.querySelectorAll('.loot-item').forEach(item => {
-          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); });
+          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); window.refreshBisDisabled?.(); });
         });
       } else {
-        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); });
+        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); window.refreshBisDisabled?.(); });
       }
     });
   });
