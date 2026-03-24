@@ -1332,6 +1332,14 @@ function applyLootState(state) {
         c.dispatchEvent(new Event('change'));
       });
     });
+    // Reset bis-checkbox disabled flags before refreshBisDisabled re-computes them.
+    // Without this, stale disabled=true flags from a previous player (set when that
+    // player had no BiS items in a column) cause refreshBisDisabled to uncheck the
+    // current player's correctly-applied bis values via the "else if (disabled)" branch.
+    document.querySelectorAll('.loot-meta-cell').forEach(mc =>
+      Array.from(mc.querySelectorAll('input[type="checkbox"]')).slice(1)
+        .forEach(c => { c.disabled = false; })
+    );
     window.refreshBisDisabled?.();
   } finally {
     applyingLootState = false;
