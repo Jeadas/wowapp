@@ -312,18 +312,6 @@
         Edit
       </button>
     </div>
-    <button class="btn" onclick="toggleSettings()" style="align-self:flex-end;margin-bottom:6px;padding:9px 12px;" title="GitHub Token">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51 1v.1a2 2 0 0 1-4 0v-.1A1.65 1.65 0 0 0 8.1 16.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.78 12a1.65 1.65 0 0 0-1-1.51h-.1a2 2 0 0 1 0-4h.1A1.65 1.65 0 0 0 4.34 5.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.66 1.28a1.65 1.65 0 0 0 1-1.51v-.1a2 2 0 0 1 4 0v.1a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.22 5.6a1.65 1.65 0 0 0 1.51 1h.1a2 2 0 0 1 0 4h-.1A1.65 1.65 0 0 0 20.22 12z"/>
-      </svg>
-    </button>
-  </div>
-  <div id="settingsBar" style="display:none;padding:8px 14px;border:1px solid var(--border-gold);border-top:none;background:var(--bg-card);align-items:center;gap:10px;flex-wrap:wrap;">
-    <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;">GitHub Token</span>
-    <input type="password" id="patInput" class="edit-input" style="width:260px;font-family:monospace;font-size:12px;" placeholder="ghp_…">
-    <button class="btn-small" onclick="savePatSetting()">Save</button>
-    <button class="btn-small" onclick="clearPatSetting()">Clear</button>
-    <span id="patStatus" style="font-size:11px;font-style:italic;color:var(--text-dim);"></span>
   </div>
 
   <!-- Tab: My Characters -->
@@ -487,128 +475,20 @@ const SAVED_ICONS = ['Blightburst','Ghoulish Frenzy','Menacing Magus','Morbidity
 const iconCache = {};
 const iconPickerData = {};
 
-// ── GitHub sync ──────────────────────────────────────────────
-const GH_OWNER  = 'Jeadas';
-const GH_REPO   = 'wowapp';
-const GH_BRANCH = 'main';
-const GH_DATA   = {
-  'voidspire':  'data/voidspire.json',
-  'dreamrift':  'data/dreamrift.json',
-  'quel-danas': 'data/quel-danas.json',
-};
-const raidSHAs = {};
-
-function getPAT() { return localStorage.getItem('gh_pat') || ''; }
-function setPAT(v) { v ? localStorage.setItem('gh_pat', v) : localStorage.removeItem('gh_pat'); }
-
-function ghHeaders(withAuth = true) {
-  const h = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
-  const pat = getPAT();
-  if (withAuth && pat) h['Authorization'] = 'Bearer ' + pat;
-  return h;
-}
-
-function jsonToBase64(obj) {
-  const bytes = new TextEncoder().encode(JSON.stringify(obj, null, 2));
-  let s = '';
-  bytes.forEach(b => s += String.fromCharCode(b));
-  return btoa(s);
-}
-
-function base64ToJson(b64) {
-  const bytes = Uint8Array.from(atob(b64.replace(/\s/g, '')), c => c.charCodeAt(0));
-  return JSON.parse(new TextDecoder().decode(bytes));
-}
-
+// ── GitHub sync (read-only — writes go through the worker) ────
 async function loadFromGitHub() {
-  await Promise.all(Object.entries(GH_DATA).map(async ([tabId, path]) => {
+  await Promise.all(['voidspire', 'dreamrift', 'quel-danas'].map(async tabId => {
     try {
       const res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`,
-        { headers: ghHeaders() }
+        `https://raw.githubusercontent.com/Jeadas/wowapp/main/data/${tabId}.json`,
+        { cache: 'no-store' }
       );
       if (!res.ok) return;
-      const meta = await res.json();
-      raidSHAs[tabId] = meta.sha;
-      const data = base64ToJson(meta.content);
+      const data = await res.json();
       localStorage.setItem('raidNotes_' + tabId, JSON.stringify(data));
     } catch(e) { /* fall back to localStorage */ }
   }));
   renderRaidTables();
-}
-
-async function saveToGitHub(tabId, data) {
-  let pat = getPAT();
-  if (!pat) {
-    toggleSettings();
-    alert('Enter your GitHub token in the settings bar, then save again.');
-    return false;
-  }
-  const path = GH_DATA[tabId];
-  const body = {
-    message: `Update ${tabId} raid data`,
-    content: jsonToBase64(data),
-    branch: GH_BRANCH,
-  };
-  if (raidSHAs[tabId]) body.sha = raidSHAs[tabId];
-
-  let res = await fetch(
-    `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-    { method: 'PUT', headers: { ...ghHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-  );
-
-  // 409 = stale SHA — re-fetch and retry once
-  if (res.status === 409) {
-    const fresh = await fetch(
-      `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`,
-      { headers: ghHeaders() }
-    );
-    if (fresh.ok) {
-      const meta = await fresh.json();
-      raidSHAs[tabId] = meta.sha;
-      body.sha = meta.sha;
-      res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        { method: 'PUT', headers: { ...ghHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-      );
-    }
-  }
-
-  if (res.ok) {
-    const result = await res.json();
-    raidSHAs[tabId] = result.content.sha;
-    return true;
-  }
-  const err = await res.json().catch(() => ({}));
-  console.error('GitHub save failed:', err);
-  return false;
-}
-
-// ── Settings bar ─────────────────────────────────────────────
-function toggleSettings() {
-  const bar = document.getElementById('settingsBar');
-  const open = bar.style.display === 'flex';
-  bar.style.display = open ? 'none' : 'flex';
-  if (!open) {
-    const pat = getPAT();
-    document.getElementById('patInput').value = pat ? '●'.repeat(24) : '';
-    document.getElementById('patStatus').textContent = pat ? '✓ Token saved' : 'No token set';
-  }
-}
-
-function savePatSetting() {
-  const val = document.getElementById('patInput').value.trim();
-  if (val && !val.startsWith('●')) {
-    setPAT(val);
-    document.getElementById('patInput').value = '●'.repeat(24);
-    document.getElementById('patStatus').textContent = '✓ Token saved';
-  }
-}
-
-function clearPatSetting() {
-  setPAT('');
-  document.getElementById('patInput').value = '';
-  document.getElementById('patStatus').textContent = 'Token cleared';
 }
 
 // ── Tabs ────────────────────────────────────────────────────
@@ -870,18 +750,23 @@ async function saveEditModal() {
   saveRaidData(currentRaidTab, editState);
   renderRaidTables();
 
-  // Save to GitHub
+  // Save to GitHub via worker
   const saveBtn = document.querySelector('.modal-footer .btn');
   saveBtn.disabled = true;
   saveBtn.textContent = 'Saving…';
 
-  const ok = await saveToGitHub(currentRaidTab, editState);
-
-  if (ok) {
+  try {
+    const res = await fetch(`${API_BASE}/api/save-raid`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tabId: currentRaidTab, data: editState }),
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     saveBtn.textContent = 'Saved ✓';
     setTimeout(closeEditModal, 900);
-  } else {
-    saveBtn.textContent = 'GitHub Error';
+  } catch(e) {
+    console.error('Save failed:', e);
+    saveBtn.textContent = 'Error – try again';
     saveBtn.disabled = false;
     setTimeout(() => { saveBtn.textContent = 'Save'; }, 3000);
   }
