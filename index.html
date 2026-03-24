@@ -282,6 +282,33 @@
   .talent-cell.tc-red { border-color:#c41e3a; box-shadow:0 0 6px rgba(196,30,58,0.4); }
   .talent-cell.tc-green { border-color:#1eff00; box-shadow:0 0 6px rgba(30,255,0,0.3); }
 
+  /* Player sub-tabs */
+  .player-tabs-nav { display:flex; gap:0; align-items:stretch; border-bottom:1px solid var(--border-gold); margin-bottom:18px; flex-wrap:wrap; }
+  .player-tab-btn { padding:7px 16px; background:transparent; border:1px solid transparent; border-bottom:none; color:var(--text-dim); font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .25s; position:relative; bottom:-1px; }
+  .player-tab-btn:hover { color:var(--text-muted); }
+  .player-tab-btn.active { color:var(--gold); border-color:var(--border-gold); border-bottom-color:var(--bg-deep); background:var(--bg-deep); }
+  .btn-edit-bis { margin-left:auto; padding:5px 14px !important; font-size:10px !important; align-self:flex-end; margin-bottom:1px; }
+  .btn-edit-bis.bis-active { border-color:var(--gold) !important; color:var(--gold-bright) !important; background:rgba(200,168,75,0.1) !important; }
+  .edit-bis-active .loot-cell:not(.loot-cell-multi) { cursor:crosshair; }
+  .edit-bis-active .loot-item { cursor:crosshair; }
+  .edit-bis-active .loot-cell:not(.loot-cell-multi):hover,
+  .edit-bis-active .loot-item:hover { outline:1px dashed rgba(200,168,75,0.5); }
+
+  /* Summary */
+  .summary-container { padding:4px 0 20px; }
+  .summary-section { margin-bottom:28px; }
+  .summary-section-title { font-family:'Cinzel',serif; font-size:13px; font-weight:700; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border-gold); }
+  .summary-card { background:var(--bg-card); border:1px solid var(--border); padding:12px 16px; margin-bottom:6px; display:grid; grid-template-columns:200px 1fr; gap:12px; align-items:center; }
+  .summary-card.recommended { border-color:var(--gold-dim); background:rgba(200,168,75,0.05); }
+  .summary-dungeon-name { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); }
+  .summary-card.recommended .summary-dungeon-name { color:var(--gold); }
+  .summary-score { font-size:11px; color:var(--text-muted); margin-top:3px; }
+  .summary-score strong { font-family:'Cinzel',serif; font-size:14px; color:var(--gold); }
+  .summary-rec-badge { display:inline-block; margin-left:8px; font-size:9px; padding:1px 6px; background:var(--gold-dim); color:var(--gold); font-family:'Cinzel',serif; letter-spacing:1px; text-transform:uppercase; vertical-align:middle; }
+  .summary-breakdown { display:flex; gap:8px; flex-wrap:wrap; }
+  .summary-player-chip { font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; padding:2px 8px; border:1px solid var(--border); color:var(--text-dim); white-space:nowrap; }
+  .summary-player-chip.has-value { border-color:var(--gold-dim); color:var(--gold); }
+
   @media (max-width:1100px) {
     .char-row { grid-template-columns:2fr 3fr; }
     .col-armory { grid-column:1/-1; border-right:none; border-bottom:1px solid var(--border); }
@@ -340,6 +367,18 @@
 
   <!-- Tab: M+ Loot -->
   <div id="tab-mplus-loot" class="tab-pane">
+    <!-- Player sub-tab bar -->
+    <div class="player-tabs-nav" id="playerTabsNav">
+      <button class="player-tab-btn active" onclick="switchPlayer('harry',this)">Harry</button>
+      <button class="player-tab-btn" onclick="switchPlayer('philipp',this)">Philipp</button>
+      <button class="player-tab-btn" onclick="switchPlayer('niklas',this)">Niklas</button>
+      <button class="player-tab-btn" onclick="switchPlayer('leon',this)">Leon</button>
+      <button class="player-tab-btn" onclick="switchPlayer('kai',this)">Kai</button>
+      <button class="player-tab-btn" onclick="switchPlayer('summary',this)">Summary</button>
+      <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
+    </div>
+    <!-- Player loot view -->
+    <div id="playerLootView">
     <div class="loot-table-container">
       <table class="loot-table">
         <thead>
@@ -422,6 +461,11 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    </div><!-- end playerLootView -->
+    <!-- Summary view -->
+    <div id="summaryView" style="display:none">
+      <div class="summary-container" id="summaryContent"></div>
     </div>
   </div>
 
@@ -592,11 +636,16 @@ async function loadFromGitHub() {
 }
 
 // ── Tabs ────────────────────────────────────────────────────
-function switchTab(id, btn) {
+const TAB_TO_HASH = { 'mine': 'characters', 'mplus-loot': 'loot', 'quel-danas': 'queldanas' };
+const HASH_TO_TAB = { 'characters': 'mine', 'loot': 'mplus-loot', 'queldanas': 'quel-danas' };
+
+function switchTab(id, btn, skipHistory) {
+  if (id !== 'mplus-loot' && currentPlayer !== 'summary') savePlayerState(currentPlayer);
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
+  const isLoot = id === 'mplus-loot';
   const isRaid = id !== 'mine';
   const refresh = document.getElementById('refreshBtn');
   const edit    = document.getElementById('editBtn');
@@ -604,7 +653,9 @@ function switchTab(id, btn) {
   refresh.style.pointerEvents = isRaid ? 'none'   : '';
   edit.style.visibility      = isRaid ? 'visible' : 'hidden';
   edit.style.pointerEvents   = isRaid ? ''        : 'none';
-  if (isRaid) currentRaidTab = id;
+  document.getElementById('editBtnLabel').textContent = isLoot ? 'Sync' : 'Edit';
+  if (isRaid && !isLoot) currentRaidTab = id;
+  if (!skipHistory) history.pushState(null, '', '#' + (TAB_TO_HASH[id] || id));
 }
 
 
@@ -1093,10 +1144,415 @@ function loadingHTML(t, s) {
   return `<div class="state-container"><div class="loading-ring"></div><div class="state-title">${t}</div><div class="state-sub">${s}</div></div>`;
 }
 
+// ── Loot state persistence ────────────────────────────────────
+const LOOT_STATE_KEY = 'lootState';
+
+function collectLootState() {
+  const state = {};
+  document.querySelectorAll('.loot-meta-cell').forEach(cell => {
+    const slot = cell.dataset.slot;
+    const checks = cell.querySelectorAll('input[type="checkbox"]');
+    state[slot] = { hero: checks[0].checked, bis: Array.from(checks).slice(1).map(c => c.checked) };
+  });
+  return state;
+}
+
+function applyLootState(state) {
+  if (!state) return;
+  document.querySelectorAll('.loot-meta-cell').forEach(cell => {
+    const slot = cell.dataset.slot;
+    if (!state[slot]) return;
+    const checks = cell.querySelectorAll('input[type="checkbox"]');
+    checks[0].checked = !!state[slot].hero;
+    checks[0].dispatchEvent(new Event('change'));
+    Array.from(checks).slice(1).forEach((c, i) => {
+      c.checked = !!(state[slot].bis && state[slot].bis[i]);
+      c.dispatchEvent(new Event('change'));
+    });
+  });
+}
+
+function saveLootStateLocal() {
+  if (currentPlayer !== 'summary')
+    localStorage.setItem(getPlayerStateKey(currentPlayer), JSON.stringify(collectLootState()));
+}
+
+// ── Sync modal ────────────────────────────────────────────────
+function handleEditBtn() {
+  if (document.getElementById('editBtnLabel').textContent === 'Sync') openSyncModal();
+  else openEditModal();
+}
+
+function openSyncModal() {
+  document.getElementById('syncStatus').textContent = '';
+  document.getElementById('syncUpBtn').disabled = false;
+  document.getElementById('syncUpBtn').textContent = 'Local → Cloud';
+  document.getElementById('syncDownBtn').disabled = false;
+  document.getElementById('syncDownBtn').textContent = 'Cloud → Local';
+  document.getElementById('syncModal').classList.remove('hidden');
+}
+
+function closeSyncModal() {
+  document.getElementById('syncModal').classList.add('hidden');
+}
+
+async function syncLocalToCloud() {
+  const btn = document.getElementById('syncUpBtn');
+  const status = document.getElementById('syncStatus');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  status.textContent = '';
+  try {
+    if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
+    const playerData = loadPlayerState(currentPlayer !== 'summary' ? currentPlayer : 'harry');
+    const res = await fetch(`${API_BASE}/api/save-raid`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tabId: 'loot-state-' + (currentPlayer !== 'summary' ? currentPlayer : 'harry'), data: playerData }),
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
+    btn.textContent = 'Saved ✓';
+    status.textContent = 'Pushed ' + (currentPlayer !== 'summary' ? currentPlayer : '') + ' to repo.';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Local → Cloud';
+    status.textContent = 'Error: ' + e.message;
+  }
+}
+
+async function syncCloudToLocal() {
+  const btn = document.getElementById('syncDownBtn');
+  const status = document.getElementById('syncStatus');
+  const player = currentPlayer !== 'summary' ? currentPlayer : 'harry';
+  btn.disabled = true; btn.textContent = 'Fetching…';
+  status.textContent = '';
+  try {
+    const res = await fetch(
+      'https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state-' + player + '.json',
+      { cache: 'no-store' }
+    );
+    if (!res.ok) {
+      // Fallback: try legacy loot-state.json (harry only)
+      if (player === 'harry') {
+        const res2 = await fetch('https://raw.githubusercontent.com/Jeadas/wowapp/main/data/loot-state.json', { cache: 'no-store' });
+        if (!res2.ok) throw new Error('HTTP ' + res2.status);
+        const state = await res2.json();
+        // Old format has head/neck etc at top level
+        const data = state.head !== undefined ? state : (state[player] || null);
+        if (data) { localStorage.setItem(getPlayerStateKey(player), JSON.stringify(data)); applyLootState(data); }
+        btn.textContent = 'Applied ✓'; status.textContent = 'Loaded from repo.'; return;
+      }
+      throw new Error('HTTP ' + res.status);
+    }
+    const state = await res.json();
+    localStorage.setItem(getPlayerStateKey(player), JSON.stringify(state));
+    if (currentPlayer === player) applyLootState(state);
+    btn.textContent = 'Applied ✓';
+    status.textContent = 'Loaded ' + player + ' from repo.';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Cloud → Local';
+    status.textContent = 'Error: ' + e.message;
+  }
+}
+
+// ── Players ──────────────────────────────────────────────────
+const PLAYERS = ['harry', 'philipp', 'niklas', 'leon', 'kai'];
+let currentPlayer = 'harry';
+let editBisMode = false;
+
+function getPlayerStateKey(p) { return 'lootState_' + p; }
+
+function loadPlayerState(player) {
+  try {
+    const saved = localStorage.getItem(getPlayerStateKey(player));
+    if (saved) return JSON.parse(saved);
+    // Migration: use old single-player key for harry
+    if (player === 'harry') {
+      const old = localStorage.getItem(LOOT_STATE_KEY);
+      if (old) return JSON.parse(old);
+    }
+  } catch(e) {}
+  return null;
+}
+
+function savePlayerState(player) {
+  localStorage.setItem(getPlayerStateKey(player), JSON.stringify(collectLootState()));
+}
+
+function switchPlayer(player, btn) {
+  if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
+  document.querySelectorAll('.player-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isSummary = player === 'summary';
+  document.getElementById('playerLootView').style.display = isSummary ? 'none' : '';
+  document.getElementById('summaryView').style.display    = isSummary ? '' : 'none';
+  document.getElementById('editBisBtn').style.display     = isSummary ? 'none' : '';
+  if (editBisMode) {
+    editBisMode = false;
+    document.getElementById('editBisBtn').classList.remove('bis-active');
+    document.getElementById('editBisBtn').textContent = 'Edit BiS';
+    document.querySelector('.loot-table-container').classList.remove('edit-bis-active');
+  }
+  currentPlayer = player;
+  if (isSummary) { renderSummary(); }
+  else           { applyLootState(loadPlayerState(player)); }
+}
+
+// ── Edit BiS ─────────────────────────────────────────────────
+const BIS_STATE_KEY = 'bisState';
+
+function applyBisState(state) {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          const k = ri + '_' + slot + '_' + ii;
+          if (k in state) item.classList.toggle('loot-best-1', !!state[k]);
+        });
+      } else {
+        const k = ri + '_' + slot;
+        if (k in state) cell.classList.toggle('loot-best-1', !!state[k]);
+      }
+    });
+  });
+}
+
+function saveBisState() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  const state = {};
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          state[ri + '_' + slot + '_' + ii] = item.classList.contains('loot-best-1');
+        });
+      } else {
+        state[ri + '_' + slot] = cell.classList.contains('loot-best-1');
+      }
+    });
+  });
+  localStorage.setItem(BIS_STATE_KEY, JSON.stringify(state));
+}
+
+function toggleEditBis() {
+  editBisMode = !editBisMode;
+  const btn = document.getElementById('editBisBtn');
+  btn.classList.toggle('bis-active', editBisMode);
+  btn.textContent = editBisMode ? 'Done' : 'Edit BiS';
+  document.querySelector('.loot-table-container').classList.toggle('edit-bis-active', editBisMode);
+}
+
+function initBisEdit() {
+  try {
+    const saved = localStorage.getItem(BIS_STATE_KEY);
+    if (saved) applyBisState(JSON.parse(saved));
+  } catch(e) {}
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); });
+        });
+      } else {
+        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); });
+      }
+    });
+  });
+}
+
+// ── Summary ───────────────────────────────────────────────────
+function computeDungeonData() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  return Array.from(document.querySelectorAll('.loot-table tbody .loot-row')).map(row => {
+    const name = row.querySelector('.loot-dungeon').textContent.trim();
+    const item_count = parseInt(row.dataset.itemCount, 10) || 1;
+    const slots = {};
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      let has_any = false, bis_count = 0;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          if (item.children.length > 0) { has_any = true; if (item.classList.contains('loot-best-1')) bis_count++; }
+        });
+      } else {
+        has_any = cell.children.length > 0;
+        if (cell.classList.contains('loot-best-1')) bis_count = 1;
+      }
+      if (has_any || bis_count > 0) slots[slot] = { has_any, bis_count };
+    });
+    return { name, item_count, slots };
+  });
+}
+
+function computePlayerContribution(playerName, dungeonSlots, mode) {
+  const state = loadPlayerState(playerName);
+  if (!state) return 0;
+  let count = 0;
+  Object.entries(dungeonSlots).forEach(([slot, { has_any, bis_count }]) => {
+    const ss = state[slot];
+    if (!ss) return;
+    count += Math.min((ss.bis || []).filter(b => !b).length, bis_count);
+    if (mode === 'high' && !ss.hero && has_any) count += 1;
+  });
+  return count;
+}
+
+function computeSummaryScores() {
+  return computeDungeonData().map(d => {
+    const w = 1 / d.item_count;
+    let totalLow = 0, totalHigh = 0;
+    const playerLow = {}, playerHigh = {};
+    PLAYERS.forEach(p => {
+      const lo = computePlayerContribution(p, d.slots, 'low')  * w;
+      const hi = computePlayerContribution(p, d.slots, 'high') * w;
+      playerLow[p] = lo; playerHigh[p] = hi;
+      totalLow += lo; totalHigh += hi;
+    });
+    return { name: d.name, low: totalLow, high: totalHigh, playerLow, playerHigh };
+  });
+}
+
+function renderSummary() {
+  const scores = computeSummaryScores();
+  const sortedLow  = [...scores].sort((a, b) => b.low  - a.low);
+  const sortedHigh = [...scores].sort((a, b) => b.high - a.high);
+
+  function section(title, sorted, scoreKey, playerKey) {
+    return `<div class="summary-section">
+      <div class="summary-section-title">${title}</div>
+      ${sorted.map((d, i) => {
+        const isRec = i === 0;
+        const score = d[scoreKey];
+        const chips = PLAYERS.map(p => {
+          const v = d[playerKey][p];
+          return `<div class="summary-player-chip${v > 0 ? ' has-value' : ''}">${p[0].toUpperCase()+p.slice(1)}: ${v.toFixed(2)}</div>`;
+        }).join('');
+        return `<div class="summary-card${isRec ? ' recommended' : ''}">
+          <div>
+            <div class="summary-dungeon-name">${esc(d.name)}${isRec ? '<span class="summary-rec-badge">Best</span>' : ''}</div>
+            <div class="summary-score">Expected checks: <strong>${score.toFixed(2)}</strong></div>
+          </div>
+          <div class="summary-breakdown">${chips}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  document.getElementById('summaryContent').innerHTML =
+    section('Low Keys (diff 1–9)', sortedLow,  'low',  'playerLow') +
+    section('High Keys (diff 10+)', sortedHigh, 'high', 'playerHigh');
+}
+
+// ── Loot meta checkboxes ─────────────────────────────────────
+(function() {
+  const SLOTS = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+
+  function getColIndex(slot) { return SLOTS.indexOf(slot) + 1; }
+
+  // Returns all loot-best-1 elements (cell or .loot-item) in a column, top to bottom.
+  function getBisItems(colIdx) {
+    const results = [];
+    document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
+      const cell = row.cells[colIdx];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item.loot-best-1').forEach(el => results.push(el));
+      } else if (cell.classList.contains('loot-best-1')) {
+        results.push(cell);
+      }
+    });
+    return results;
+  }
+
+  document.querySelectorAll('.loot-meta-cell').forEach(metaCell => {
+    const slot = metaCell.dataset.slot;
+    const colIdx = getColIndex(slot);
+    const checks = metaCell.querySelectorAll('input[type="checkbox"]');
+    const heroCheck = checks[0];
+    const bisChecks = Array.from(checks).slice(1);
+
+    // Hero 3/6: grey all non-BiS cells/items in column
+    heroCheck.addEventListener('change', function() {
+      document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
+        const cell = row.cells[colIdx];
+        if (!cell) return;
+        if (cell.classList.contains('loot-cell-multi')) {
+          cell.querySelectorAll('.loot-item').forEach(item => {
+            if (!item.classList.contains('loot-best-1'))
+              item.classList.toggle('loot-greyed', heroCheck.checked);
+          });
+        } else if (!cell.classList.contains('loot-best-1') && cell.textContent.trim() !== '') {
+          cell.classList.toggle('loot-greyed', heroCheck.checked);
+        }
+      });
+      saveLootStateLocal();
+    });
+
+    // BiS: grey the Nth highlighted item in the column (N = checkbox index)
+    bisChecks.forEach((bisCheck, idx) => {
+      bisCheck.addEventListener('change', function() {
+        const bisItems = getBisItems(colIdx);
+        if (idx >= bisItems.length) return;
+        bisItems[idx].classList.toggle('loot-greyed', bisCheck.checked);
+        saveLootStateLocal();
+      });
+    });
+  });
+
+  // Load Harry's state on init (or migrate from old single-player key)
+  try {
+    const state = loadPlayerState('harry');
+    if (state) applyLootState(state);
+  } catch(e) {}
+})();
+
+// ── Drop chance badges ───────────────────────────────────────
+function initDropChance() {
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
+    const count = parseInt(row.dataset.itemCount, 10);
+    if (!count) return;
+    const chance = Math.floor(100 / count);
+    row.querySelectorAll('.loot-cell').forEach(cell => {
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          if (item.children.length > 0) {
+            const s = document.createElement('span');
+            s.className = 'drop-chance';
+            s.textContent = chance;
+            item.appendChild(s);
+          }
+        });
+      } else if (cell.children.length > 0) {
+        const s = document.createElement('span');
+        s.className = 'drop-chance';
+        s.textContent = chance;
+        cell.appendChild(s);
+      }
+    });
+  });
+}
+
 // ── Init ─────────────────────────────────────────────────────
+(function() {
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const id = HASH_TO_TAB[hash] || hash;
+    const btn = document.querySelector(`.tab-btn[onclick*="'${id}'"]`);
+    if (btn) switchTab(id, btn, true);
+  }
+})();
 loadMyChars();
 renderRaidTables();   // instant render from localStorage
 loadFromGitHub();     // fetch from GitHub, re-render when done
+initDropChance();
+initBisEdit();
 </script>
 </body>
 </html>
