@@ -329,12 +329,12 @@
   .edit-bis-active .loot-item:hover { outline:1px dashed rgba(200,168,75,0.5); }
 
   /* Summary */
-  .summary-container { padding:4px 0 20px; width:calc(100vw - 48px); position:relative; left:50%; transform:translateX(-50%); }
+  .summary-container { padding:4px 0 20px; display:flex; justify-content:center; }
   .summary-columns { display:flex; gap:20px; align-items:flex-start; }
-  .summary-columns .summary-section { flex:1; min-width:0; margin-bottom:0; }
+  .summary-columns .summary-section { margin-bottom:0; }
   .summary-section { margin-bottom:28px; }
   .summary-section-title { font-family:'Cinzel',serif; font-size:13px; font-weight:700; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border-gold); }
-  .summary-card { background:var(--bg-card); border:1px solid var(--border); padding:12px 16px; margin-bottom:6px; display:grid; grid-template-columns:200px 1fr; gap:12px; align-items:center; }
+  .summary-card { background:var(--bg-card); border:1px solid var(--border); padding:12px 16px; margin-bottom:6px; display:grid; grid-template-columns:200px auto; gap:12px; align-items:center; }
   .summary-card.recommended { border-color:var(--gold-dim); background:rgba(200,168,75,0.05); }
   .summary-dungeon-name { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); }
   .summary-card.recommended .summary-dungeon-name { color:var(--gold); }
