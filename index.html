@@ -1886,30 +1886,31 @@ async function refreshSummary() {
     const heroCheck = checks[0];
     const bisChecks = Array.from(checks).slice(1);
 
-    // Hero 3/6: grey all non-BiS cells/items in column
-    heroCheck.addEventListener('change', function() {
+    function applyGreying() {
+      const heroed = heroCheck.checked;
+      const bised  = bisChecks[0]?.checked ?? false;
       document.querySelectorAll('.loot-table tbody .loot-row').forEach(row => {
         const cell = row.cells[colIdx];
         if (!cell) return;
         if (cell.classList.contains('loot-cell-multi')) {
           cell.querySelectorAll('.loot-item').forEach(item => {
-            if (!item.classList.contains('loot-best-1'))
-              item.classList.toggle('loot-greyed', heroCheck.checked);
+            const isBis = item.classList.contains('loot-best-1');
+            item.classList.toggle('loot-greyed',     heroed && (!isBis || bised));
+            item.classList.toggle('loot-bis-greyed', bised  && isBis);
           });
-        } else if (!cell.classList.contains('loot-best-1') && cell.textContent.trim() !== '') {
-          cell.classList.toggle('loot-greyed', heroCheck.checked);
+        } else {
+          const isBis = cell.classList.contains('loot-best-1');
+          if (isBis || cell.textContent.trim() !== '') {
+            cell.classList.toggle('loot-greyed',     heroed && (!isBis || bised));
+            cell.classList.toggle('loot-bis-greyed', bised  && isBis);
+          }
         }
       });
       saveLootStateLocal();
-    });
+    }
 
-    // BiS: grey the highlight of all loot-best-1 items in the column
-    bisChecks.forEach(bisCheck => {
-      bisCheck.addEventListener('change', function() {
-        getBisItems(colIdx).forEach(item => item.classList.toggle('loot-bis-greyed', bisCheck.checked));
-        saveLootStateLocal();
-      });
-    });
+    heroCheck.addEventListener('change', applyGreying);
+    bisChecks.forEach(bisCheck => bisCheck.addEventListener('change', applyGreying));
   });
 
   function refreshBisDisabled() {
