@@ -18,13 +18,13 @@
     ]
   },
   "back": {
-    "hero": true,
+    "hero": false,
     "bis": [
       false
     ]
   },
   "chest": {
-    "hero": true,
+    "hero": false,
     "bis": [
       false
     ]
