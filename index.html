@@ -1327,12 +1327,15 @@ async function syncLocalToCloud() {
   btn.disabled = true; btn.textContent = 'Saving…';
   status.textContent = '';
   try {
-    if (currentPlayer !== 'summary') savePlayerState(currentPlayer);
-    const playerData = loadPlayerState(currentPlayer !== 'summary' ? currentPlayer : 'harry');
+    const player = currentPlayer !== 'summary' ? currentPlayer : 'harry';
+    if (currentPlayer !== 'summary') { savePlayerState(currentPlayer); saveBisState(); }
+    const lootState = loadPlayerState(player);
+    let bisState = null;
+    try { bisState = JSON.parse(localStorage.getItem('bisState_' + player)); } catch(e) {}
     const res = await fetch(`${API_BASE}/api/save-raid`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tabId: 'loot-state-' + (currentPlayer !== 'summary' ? currentPlayer : 'harry'), data: playerData }),
+      body: JSON.stringify({ tabId: 'loot-state-' + player, data: { lootState, bisState } }),
     });
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     btn.textContent = 'Saved ✓';
@@ -1353,9 +1356,16 @@ async function syncCloudToLocal() {
     // Read via worker → GitHub API to bypass CDN caching on raw.githubusercontent.com
     const res = await fetch(`${API_BASE}/api/load-state?tabId=loot-state-${player}`);
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
-    const state = await res.json();
-    localStorage.setItem(getPlayerStateKey(player), JSON.stringify(state));
-    if (currentPlayer === player) applyLootState(state);
+    const raw = await res.json();
+    // Support both new format { lootState, bisState } and old format (bare lootState object)
+    const lootState = raw.lootState || raw;
+    const bisState = raw.bisState || null;
+    localStorage.setItem(getPlayerStateKey(player), JSON.stringify(lootState));
+    if (bisState) localStorage.setItem('bisState_' + player, JSON.stringify(bisState));
+    if (currentPlayer === player) {
+      applyLootState(lootState);
+      if (bisState) applyBisState(bisState);
+    }
     btn.textContent = 'Applied ✓';
     status.textContent = 'Loaded ' + player + ' from repo.';
   } catch(e) {
