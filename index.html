@@ -233,9 +233,41 @@
   .loot-row:nth-child(even) { background:rgba(255,255,255,0.02); }
   .loot-row:hover { background:rgba(200,168,75,0.04); }
   .loot-dungeon { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); padding:14px 14px; white-space:nowrap; border-bottom:1px solid var(--border); vertical-align:middle; }
-  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; }
+  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:middle; height:70px; text-align:center; position:relative; }
   .loot-stat { display:block; font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; color:var(--text-bright); line-height:1.7; text-transform:uppercase; }
   .loot-stat:first-child { color:var(--gold); }
+  .loot-cell-multi { padding:0; height:auto; }
+  .loot-items-2 { display:flex; min-height:70px; align-items:stretch; }
+  .loot-items-2 .loot-item { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:6px 4px; position:relative; }
+  .loot-items-2 .loot-item + .loot-item { border-left:1px solid var(--border); }
+  .loot-items-3 { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; min-height:80px; }
+  .loot-items-3 .loot-item { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:4px; position:relative; }
+  .loot-items-3 .loot-item:nth-child(1) { border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+  .loot-items-3 .loot-item:nth-child(2) { border-bottom:1px solid var(--border); }
+  .loot-items-3 .loot-item:nth-child(3) { border-right:1px solid var(--border); }
+  .loot-tier { font-family:'Cinzel',serif; font-size:16px; font-weight:700; letter-spacing:1px; }
+  .loot-tier-s { color:#ff8000; text-shadow:0 0 8px rgba(255,128,0,0.4); }
+  .loot-tier-a { color:#a335ee; }
+  .loot-tier-b { color:#0070dd; }
+  .loot-tier-c { color:#1eff00; }
+  .loot-best-1 { box-shadow:inset 0 0 0 2px rgba(200,168,75,0.75); background:rgba(200,168,75,0.08) !important; }
+  .loot-best-2 { border-top:3px solid var(--gold) !important; background:linear-gradient(180deg, rgba(200,168,75,0.2) 0%, transparent 65%) !important; }
+  .loot-best-3 { position:relative; }
+  .loot-best-3::after { content:'◆'; position:absolute; top:3px; right:4px; font-size:7px; color:var(--gold); line-height:1; opacity:0.9; }
+  .loot-meta-row { background:rgba(0,0,0,0.25); }
+  .loot-meta-spacer { border-top:2px solid var(--border-gold); }
+  .loot-meta-cell { border-top:2px solid var(--border-gold); border-left:1px solid var(--border); padding:8px 8px; vertical-align:middle; }
+  .meta-cell-inner { display:flex; flex-direction:column; align-items:stretch; gap:6px; }
+  .meta-check { display:flex; align-items:center; gap:7px; cursor:pointer; }
+  .meta-check input[type="checkbox"] { appearance:none; -webkit-appearance:none; width:14px; height:14px; border:1px solid rgba(200,168,75,0.4); background:transparent; cursor:pointer; flex-shrink:0; position:relative; }
+  .meta-check input[type="checkbox"]:checked { background:var(--gold); border-color:var(--gold); }
+  .meta-check input[type="checkbox"]:checked::after { content:'✓'; position:absolute; top:-1px; left:1px; font-size:11px; color:#1a1510; font-weight:700; line-height:1; }
+  .meta-check span { font-family:'Cinzel',serif; font-size:11px; letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase; white-space:nowrap; }
+  .meta-check:has(input:checked) span { color:var(--gold); }
+  .meta-bis-pair { display:flex; gap:6px; }
+  .meta-bis-pair .meta-check { flex:1; }
+  .loot-greyed { opacity:0.28 !important; filter:grayscale(1) !important; }
+  .drop-chance { position:absolute; bottom:3px; right:4px; font-family:'Cinzel',serif; font-size:12px; font-weight:700; color:var(--text-dim); line-height:1; pointer-events:none; user-select:none; }
 
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
