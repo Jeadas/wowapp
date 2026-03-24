@@ -1421,30 +1421,101 @@ let playerSlots = {};
 const SHARED_SLOTS = new Set(['neck', 'back', 'ring']);
 const ALL_SLOTS    = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
 
+// ── Per-player loot definitions ───────────────────────────────
+// rows: one entry per dungeon row (same order as HTML tbody).
+//   slot → [stat1, stat2]   single cell with stat spans
+//   slot → n (integer)      n-item multi-cell (no stat text, e.g. trinkets)
+//   omitted                 empty cell
+// item_counts: total-item-pool size per dungeon for this player's armor class
+//   (used for drop-chance % and summary weighting; differs from Harry's plate pool)
+const PLAYER_TABLE_DATA = {
+  niklas: {
+    item_counts: [7, 6, 7, 7, 8, 9, 14, 8],
+    rows: [
+      // 0 Magister's Terrace
+      { chest: ['Versa','Crit'], wrist: ['Mastery','Versa'], waist: ['Versa','Haste'], trinket: 1 },
+      // 1 Maisara Caverns
+      { hands: ['Crit','Haste'], feet: ['Crit','Versa'], trinket: 2 },
+      // 2 Nexus-Point Xenas
+      { shoulders: ['Haste','Mastery'], hands: ['Crit','Versa'], legs: ['Crit','Versa'] },
+      // 3 Windrunner Spire
+      { head: ['Crit','Mastery'], shoulders: ['Mastery','Crit'], legs: ['Versa','Mastery'], trinket: 2 },
+      // 4 Algeth'ar Academy
+      { head: ['Crit','Haste'], chest: ['Mastery','Crit'], hands: ['Versa','Crit'] },
+      // 5 Pit of Saron
+      { chest: ['Haste','Crit'], wrist: ['Versa','Haste'], waist: ['Versa','Haste'], feet: ['Crit','Haste'], trinket: 1 },
+      // 6 Seat of the Triumvirate
+      { head: ['Mastery','Crit'], shoulders: ['Haste','Mastery'], chest: ['Crit','Haste'], wrist: ['Mastery','Haste'], hands: ['Crit','Mastery'], waist: ['Mastery','Versa'], feet: ['Versa','Haste'], trinket: 1 },
+      // 7 Skyreach
+      { shoulders: ['Haste','Mastery'], wrist: ['Mastery','Versa'], legs: ['Haste','Versa'], feet: ['Haste','Mastery'] },
+    ],
+  },
+};
+
+// Build innerHTML for a single loot cell from a PLAYER_TABLE_DATA slot value.
+function makeCellData(val) {
+  if (val == null) return null;
+  if (Array.isArray(val)) {
+    return { cls: 'loot-cell', html: val.map(s => `<span class="loot-stat">${s}</span>`).join('') };
+  }
+  if (val === 1) {
+    return { cls: 'loot-cell', html: '<span class="loot-stat">—</span>' };
+  }
+  // val is an integer > 1 → multi-cell
+  const items = Array.from({ length: val }, () => '<div class="loot-item"><span class="loot-stat">—</span></div>').join('');
+  return { cls: 'loot-cell loot-cell-multi', html: `<div class="loot-items-${val}">${items}</div>` };
+}
+
 function initLootCells() {
   playerLootHTML['harry'] = document.querySelector('.loot-table tbody').innerHTML;
   playerSlots['harry']    = new Set(ALL_SLOTS);
 
-  // Build a template for non-Harry players: neck/back/ring content from Harry,
-  // all other cells emptied and stripped of per-player state classes.
-  const tmp = document.createElement('tbody');
-  tmp.innerHTML = playerLootHTML['harry'];
-  Array.from(tmp.querySelectorAll('.loot-row')).forEach(row => {
+  // Build a shared base template: keep neck/back/ring from Harry (strip BiS/greyed
+  // and drop-chance spans so each player starts clean), empty all other slots.
+  const base = document.createElement('tbody');
+  base.innerHTML = playerLootHTML['harry'];
+  Array.from(base.querySelectorAll('.loot-row')).forEach(row => {
     ALL_SLOTS.forEach((slot, si) => {
       const cell = row.cells[si + 1];
       if (!cell) return;
       if (SHARED_SLOTS.has(slot)) {
         cell.className = cell.className.replace(/\bloot-best-1\b|\bloot-greyed\b/g, '').replace(/\s+/g, ' ').trim();
+        cell.querySelectorAll('.drop-chance').forEach(s => s.remove());
       } else {
         cell.innerHTML = '';
         cell.className = 'loot-cell';
       }
     });
   });
-  const sharedHTML = tmp.innerHTML;
+  const sharedHTML = base.innerHTML;
+
+  // Build per-player HTML by applying PLAYER_TABLE_DATA on top of the shared base.
   ['philipp', 'niklas', 'leon', 'kai'].forEach(p => {
-    playerLootHTML[p] = sharedHTML;
-    playerSlots[p]    = new Set(SHARED_SLOTS);
+    const data = PLAYER_TABLE_DATA[p];
+    if (!data) {
+      playerLootHTML[p] = sharedHTML;
+      playerSlots[p]    = new Set(SHARED_SLOTS);
+      return;
+    }
+    const tmp = document.createElement('tbody');
+    tmp.innerHTML = sharedHTML;
+    const rows = Array.from(tmp.querySelectorAll('.loot-row'));
+    data.rows.forEach((rowData, ri) => {
+      const row = rows[ri];
+      if (!row) return;
+      ALL_SLOTS.forEach((slot, si) => {
+        if (SHARED_SLOTS.has(slot)) return; // already filled from Harry
+        const cell = row.cells[si + 1];
+        if (!cell) return;
+        const cd = makeCellData(rowData[slot]);
+        if (cd) { cell.className = cd.cls; cell.innerHTML = cd.html; }
+      });
+    });
+    playerLootHTML[p] = tmp.innerHTML;
+    // playerSlots: shared + any slot that appears in at least one dungeon row
+    const used = new Set(SHARED_SLOTS);
+    data.rows.forEach(r => ALL_SLOTS.forEach(s => { if (r[s] != null) used.add(s); }));
+    playerSlots[p] = used;
   });
 }
 
@@ -1465,13 +1536,40 @@ function attachBisClickHandlers() {
   });
 }
 
+// Add drop-chance % badges for a non-Harry player using their own item_counts.
+// Harry's badges are baked into playerLootHTML['harry'] by initDropChance().
+function addDropChances(player) {
+  const counts = PLAYER_TABLE_DATA[player]?.item_counts;
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    const n = (counts?.[ri]) || parseInt(row.dataset.itemCount, 10);
+    if (!n) return;
+    const pct = Math.floor(100 / n);
+    row.querySelectorAll('.loot-cell').forEach(cell => {
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach(item => {
+          item.querySelectorAll('.drop-chance').forEach(s => s.remove());
+          if (item.children.length > 0) {
+            const s = document.createElement('span');
+            s.className = 'drop-chance'; s.textContent = pct; item.appendChild(s);
+          }
+        });
+      } else {
+        cell.querySelectorAll('.drop-chance').forEach(s => s.remove());
+        if (cell.children.length > 0) {
+          const s = document.createElement('span');
+          s.className = 'drop-chance'; s.textContent = pct; cell.appendChild(s);
+        }
+      }
+    });
+  });
+}
+
 function renderPlayerCells(player) {
   const tbody = document.querySelector('.loot-table tbody');
   const html = playerLootHTML[player];
   if (html) {
     tbody.innerHTML = html;
   } else {
-    // Empty cells — preserve row structure and item-count for future use
     tbody.querySelectorAll('.loot-row').forEach(row => {
       Array.from(row.cells).slice(1).forEach(cell => {
         cell.innerHTML = '';
@@ -1479,6 +1577,8 @@ function renderPlayerCells(player) {
       });
     });
   }
+  // Non-Harry players have no baked-in drop-chance spans; add them now.
+  if (player !== 'harry') addDropChances(player);
   attachBisClickHandlers();
   // Apply saved BiS state for this player
   try {
@@ -1552,7 +1652,7 @@ function initBisEdit() {
 // ── Summary ───────────────────────────────────────────────────
 function computeDungeonData() {
   const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
-  return Array.from(document.querySelectorAll('.loot-table tbody .loot-row')).map(row => {
+  return Array.from(document.querySelectorAll('.loot-table tbody .loot-row')).map((row, ri) => {
     const name = row.querySelector('.loot-dungeon').textContent.trim();
     const item_count = parseInt(row.dataset.itemCount, 10) || 1;
     const slots = {};
@@ -1570,20 +1670,26 @@ function computeDungeonData() {
       }
       if (has_any || bis_count > 0) slots[slot] = { has_any, bis_count };
     });
-    return { name, item_count, slots };
+    return { name, item_count, slots, ri };
   });
 }
 
-function computePlayerContribution(playerName, dungeonSlots, mode) {
-  const slots = playerSlots[playerName];
-  if (!slots) return 0; // player has no loot table at all
+// dungeon: full object from computeDungeonData (needs .slots and .ri)
+function computePlayerContribution(playerName, dungeon, mode) {
+  const pSlots = playerSlots[playerName];
+  if (!pSlots) return 0;
   const state = loadPlayerState(playerName);
   if (!state) return 0;
   let count = 0;
-  Object.entries(dungeonSlots).forEach(([slot, { has_any, bis_count }]) => {
-    if (!slots.has(slot)) return; // this player has no items in this slot
+  Object.entries(dungeon.slots).forEach(([slot, { has_any: harryHasAny, bis_count }]) => {
+    if (!pSlots.has(slot)) return;
     const ss = state[slot];
     if (!ss) return;
+    // has_any per player: shared slots use Harry's DOM data; class-specific slots
+    // use PLAYER_TABLE_DATA so we don't credit players for items they don't have.
+    const has_any = (playerName === 'harry' || SHARED_SLOTS.has(slot))
+      ? harryHasAny
+      : !!(PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot]);
     count += Math.min((ss.bis || []).filter(b => !b).length, bis_count);
     if (mode === 'high' && !ss.hero && has_any) count += 1;
   });
@@ -1592,12 +1698,14 @@ function computePlayerContribution(playerName, dungeonSlots, mode) {
 
 function computeSummaryScores() {
   return computeDungeonData().map(d => {
-    const w = 1 / d.item_count;
     let totalLow = 0, totalHigh = 0;
     const playerLow = {}, playerHigh = {};
     PLAYERS.forEach(p => {
-      const lo = computePlayerContribution(p, d.slots, 'low')  * w;
-      const hi = computePlayerContribution(p, d.slots, 'high') * w;
+      // Use per-player item pool size for accurate drop-chance weighting.
+      const itemCount = PLAYER_TABLE_DATA[p]?.item_counts?.[d.ri] || d.item_count;
+      const w = 1 / itemCount;
+      const lo = computePlayerContribution(p, d, 'low')  * w;
+      const hi = computePlayerContribution(p, d, 'high') * w;
       playerLow[p] = lo; playerHigh[p] = hi;
       totalLow += lo; totalHigh += hi;
     });
