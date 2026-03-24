@@ -1635,10 +1635,10 @@ function makeCellData(val) {
     return { cls: 'loot-cell', html: val.map(s => `<span class="loot-stat">${s}</span>`).join('') };
   }
   if (val === 1) {
-    return { cls: 'loot-cell', html: '<span class="loot-stat">—</span>' };
+    return { cls: 'loot-cell', html: '<span class="loot-stat">T</span>' };
   }
   // val is an integer > 1 → multi-cell
-  const items = Array.from({ length: val }, () => '<div class="loot-item"><span class="loot-stat">—</span></div>').join('');
+  const items = Array.from({ length: val }, () => '<div class="loot-item"><span class="loot-stat">T</span></div>').join('');
   return { cls: 'loot-cell loot-cell-multi', html: `<div class="loot-items-${val}">${items}</div>` };
 }
 
