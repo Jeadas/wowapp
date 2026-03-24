@@ -618,8 +618,8 @@
     <div class="modal-body" style="padding:18px 20px 8px;">
       <div id="syncStatus" style="font-size:12px;color:var(--text-muted);min-height:18px;margin-bottom:14px;"></div>
       <div style="display:flex;gap:10px;">
-        <button class="btn" id="syncUpBtn" onclick="syncLocalToCloud()" style="flex:1;padding:8px;font-size:11px;">Local → Cloud</button>
-        <button class="btn" id="syncDownBtn" onclick="syncCloudToLocal()" style="flex:1;padding:8px;font-size:11px;">Cloud → Local</button>
+        <button class="btn" id="syncUpBtn" onclick="syncLocalToCloud()" style="flex:1;padding:8px;font-size:11px;">Upload</button>
+        <button class="btn" id="syncDownBtn" onclick="syncCloudToLocal()" style="flex:1;padding:8px;font-size:11px;">Download</button>
       </div>
     </div>
     <div class="modal-footer">
@@ -1316,9 +1316,9 @@ function openSyncModal() {
   document.getElementById('syncModalTitle').textContent = 'Sync — ' + name;
   document.getElementById('syncStatus').textContent = '';
   document.getElementById('syncUpBtn').disabled = false;
-  document.getElementById('syncUpBtn').textContent = 'Local → Cloud';
+  document.getElementById('syncUpBtn').textContent = 'Upload';
   document.getElementById('syncDownBtn').disabled = false;
-  document.getElementById('syncDownBtn').textContent = 'Cloud → Local';
+  document.getElementById('syncDownBtn').textContent = 'Download';
   document.getElementById('syncModal').classList.remove('hidden');
 }
 
@@ -1346,7 +1346,7 @@ async function syncLocalToCloud() {
     btn.textContent = 'Saved ✓';
     status.textContent = 'Pushed ' + (currentPlayer !== 'summary' ? currentPlayer : '') + ' to repo.';
   } catch(e) {
-    btn.disabled = false; btn.textContent = 'Local → Cloud';
+    btn.disabled = false; btn.textContent = 'Upload';
     status.textContent = 'Error: ' + e.message;
   }
 }
@@ -1374,7 +1374,7 @@ async function syncCloudToLocal() {
     btn.textContent = 'Applied ✓';
     status.textContent = 'Loaded ' + player + ' from repo.';
   } catch(e) {
-    btn.disabled = false; btn.textContent = 'Cloud → Local';
+    btn.disabled = false; btn.textContent = 'Download';
     status.textContent = 'Error: ' + e.message;
   }
 }
