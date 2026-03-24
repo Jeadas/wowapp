@@ -225,6 +225,16 @@
   .timestamp { color:var(--gold); font-weight:600; min-width:32px; text-align:right; }
   .notes-text { font-size:13px; color:var(--text-muted); line-height:1.5; font-style:italic; white-space:pre-wrap; text-align:left; }
 
+  /* M+ Loot Table */
+  .loot-table-container { overflow-x:auto; background:var(--bg-card); border:1px solid var(--border-gold); padding:20px; }
+  .loot-table { border-collapse:collapse; font-family:'Crimson Pro',serif; min-width:1300px; width:100%; }
+  .loot-th-dungeon { text-align:left; padding:10px 14px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; min-width:180px; }
+  .loot-th-slot { text-align:center; padding:10px 8px; font-family:'Cinzel',serif; font-size:11px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase; border-bottom:2px solid var(--border-gold); white-space:nowrap; min-width:90px; border-left:1px solid var(--border); }
+  .loot-row:nth-child(even) { background:rgba(255,255,255,0.02); }
+  .loot-row:hover { background:rgba(200,168,75,0.04); }
+  .loot-dungeon { font-family:'Cinzel',serif; font-size:12px; font-weight:600; color:var(--text-bright); padding:14px 14px; white-space:nowrap; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .loot-cell { padding:10px 8px; border-bottom:1px solid var(--border); border-left:1px solid var(--border); vertical-align:top; min-height:70px; height:70px; text-align:center; }
+
   /* Edit Modal */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; align-items:center; justify-content:center; }
   .modal-overlay.hidden { display:none; }
@@ -294,6 +304,7 @@
     <button class="tab-btn active" onclick="switchTab('mine', this)">
       My Characters <span class="tab-count" id="myCount">0</span>
     </button>
+    <button class="tab-btn" onclick="switchTab('mplus-loot', this)">M+ Loot</button>
     <button class="tab-btn" onclick="switchTab('voidspire', this)">Voidspire</button>
     <button class="tab-btn" onclick="switchTab('dreamrift', this)">Dreamrift</button>
     <button class="tab-btn" onclick="switchTab('quel-danas', this)">March on Quel'Danas</button>
@@ -322,6 +333,89 @@
         <div class="state-title">Ready</div>
         <div class="state-sub">Click "Reload" to fetch character data</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Tab: M+ Loot -->
+  <div id="tab-mplus-loot" class="tab-pane">
+    <div class="loot-table-container">
+      <table class="loot-table">
+        <thead>
+          <tr>
+            <th class="loot-th-dungeon">Dungeon</th>
+            <th class="loot-th-slot">Head</th>
+            <th class="loot-th-slot">Neck</th>
+            <th class="loot-th-slot">Shoulders</th>
+            <th class="loot-th-slot">Back</th>
+            <th class="loot-th-slot">Chest</th>
+            <th class="loot-th-slot">Wrist</th>
+            <th class="loot-th-slot">Hands</th>
+            <th class="loot-th-slot">Waist</th>
+            <th class="loot-th-slot">Legs</th>
+            <th class="loot-th-slot">Feet</th>
+            <th class="loot-th-slot">Ring</th>
+            <th class="loot-th-slot">Trinket</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Skyreach</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Pit of Saron</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">The Nexus</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Darkflame Cleft</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">The Rookery</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Operation: Floodgate</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Priory of the Sacred Flame</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+          <tr class="loot-row">
+            <td class="loot-dungeon">Cinderbrew Meadery</td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+            <td class="loot-cell"></td><td class="loot-cell"></td><td class="loot-cell"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
