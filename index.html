@@ -1412,11 +1412,40 @@ function switchPlayer(player, btn) {
 
 // ── Per-player loot cells ─────────────────────────────────────
 // Cell content (item stats) differs per player (armor class).
-// Harry's HTML is captured after init; other players start empty.
+// Harry's full table is captured at init. Other players share the
+// armor-neutral slots (neck / back / ring) and have empty cells elsewhere.
 let playerLootHTML = {};
+// Which slots each player has items in (used by computePlayerContribution)
+let playerSlots = {};
+
+const SHARED_SLOTS = new Set(['neck', 'back', 'ring']);
+const ALL_SLOTS    = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
 
 function initLootCells() {
   playerLootHTML['harry'] = document.querySelector('.loot-table tbody').innerHTML;
+  playerSlots['harry']    = new Set(ALL_SLOTS);
+
+  // Build a template for non-Harry players: neck/back/ring content from Harry,
+  // all other cells emptied and stripped of per-player state classes.
+  const tmp = document.createElement('tbody');
+  tmp.innerHTML = playerLootHTML['harry'];
+  Array.from(tmp.querySelectorAll('.loot-row')).forEach(row => {
+    ALL_SLOTS.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (SHARED_SLOTS.has(slot)) {
+        cell.className = cell.className.replace(/\bloot-best-1\b|\bloot-greyed\b/g, '').replace(/\s+/g, ' ').trim();
+      } else {
+        cell.innerHTML = '';
+        cell.className = 'loot-cell';
+      }
+    });
+  });
+  const sharedHTML = tmp.innerHTML;
+  ['philipp', 'niklas', 'leon', 'kai'].forEach(p => {
+    playerLootHTML[p] = sharedHTML;
+    playerSlots[p]    = new Set(SHARED_SLOTS);
+  });
 }
 
 function attachBisClickHandlers() {
@@ -1546,11 +1575,13 @@ function computeDungeonData() {
 }
 
 function computePlayerContribution(playerName, dungeonSlots, mode) {
-  if (!playerLootHTML[playerName]) return 0; // no loot table populated for this player yet
+  const slots = playerSlots[playerName];
+  if (!slots) return 0; // player has no loot table at all
   const state = loadPlayerState(playerName);
   if (!state) return 0;
   let count = 0;
   Object.entries(dungeonSlots).forEach(([slot, { has_any, bis_count }]) => {
+    if (!slots.has(slot)) return; // this player has no items in this slot
     const ss = state[slot];
     if (!ss) return;
     count += Math.min((ss.bis || []).filter(b => !b).length, bis_count);
