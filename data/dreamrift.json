@@ -2,16 +2,7 @@
   {
     "name": "Chimaerus, the Undreamt God",
     "talents": [],
-    "cooldowns": [
-      {
-        "time": "1:30",
-        "label": "Army of the Dead"
-      },
-      {
-        "time": "4:00",
-        "label": "Empower Rune Weapon"
-      }
-    ],
+    "cooldowns": [],
     "notes": ""
   }
 ]
