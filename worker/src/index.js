@@ -1,6 +1,6 @@
 const GH_OWNER  = 'Jeadas';
 const GH_REPO   = 'wowapp';
-const GH_BRANCH = 'main';
+const GH_BRANCH = 'main'; // v2
 const GH_DATA   = {
   'voidspire':  'data/voidspire.json',
   'dreamrift':  'data/dreamrift.json',
