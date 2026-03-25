@@ -1,7 +1,7 @@
 {
   "lootState": {
     "head": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -13,7 +13,7 @@
       ]
     },
     "shoulders": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
