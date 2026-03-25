@@ -31,7 +31,7 @@
       ]
     },
     "wrist": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -57,7 +57,7 @@
     "feet": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "ring": {
