@@ -43,13 +43,13 @@
       ]
     },
     "waist": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "legs": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
