@@ -1,73 +1,73 @@
 {
   "lootState": {
     "head": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "neck": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "shoulders": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "back": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "chest": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "wrist": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "hands": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "waist": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "legs": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "feet": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "ring": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "trinket": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
