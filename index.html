@@ -814,7 +814,7 @@ function switchTab(id, btn, skipHistory) {
 // ── Data fetch ──────────────────────────────────────────────
 async function fetchAllData(entry) {
   const charUrl = `${API_BASE}/api/character?name=${encodeURIComponent(entry.name)}&realm=${encodeURIComponent(entry.realm)}&region=${entry.region}`;
-  const rioFields = 'mythic_plus_scores_by_season:current,mythic_plus_best_runs,mythic_plus_recent_runs,raid_progression';
+  const rioFields = 'mythic_plus_scores_by_season:season-mn-1,mythic_plus_best_runs,mythic_plus_recent_runs,raid_progression';
   const rioUrl = `https://raider.io/api/v1/characters/profile?region=${entry.region}&realm=${encodeURIComponent(entry.realm)}&name=${encodeURIComponent(entry.name)}&fields=${rioFields}`;
 
   const [charData, rioData] = await Promise.all([
