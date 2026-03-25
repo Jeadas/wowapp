@@ -7,7 +7,7 @@
       ]
     },
     "neck": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
