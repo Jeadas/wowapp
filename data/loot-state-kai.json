@@ -31,15 +31,15 @@
       ]
     },
     "wrist": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "hands": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "waist": {
@@ -104,7 +104,7 @@
     "2_back": false,
     "2_chest": false,
     "2_wrist": false,
-    "2_hands": true,
+    "2_hands": false,
     "2_waist": false,
     "2_legs": false,
     "2_feet": true,
@@ -141,7 +141,7 @@
     "5_shoulders": false,
     "5_back": false,
     "5_chest": false,
-    "5_wrist": true,
+    "5_wrist": false,
     "5_hands": false,
     "5_waist": true,
     "5_legs": false,
