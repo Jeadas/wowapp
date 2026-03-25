@@ -13,7 +13,7 @@
       ]
     },
     "shoulders": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
