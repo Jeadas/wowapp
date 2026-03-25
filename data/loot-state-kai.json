@@ -45,7 +45,7 @@
     "waist": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "legs": {
@@ -118,7 +118,7 @@
     "3_chest": false,
     "3_wrist": false,
     "3_hands": false,
-    "3_waist": false,
+    "3_waist": true,
     "3_legs": false,
     "3_feet": false,
     "3_ring": false,
