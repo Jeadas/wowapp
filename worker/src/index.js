@@ -185,19 +185,6 @@ async function handleLoadState(request, env) {
   return jsonResponse(JSON.parse(content));
 }
 
-async function handleRaiderIO(request) {
-  const url    = new URL(request.url);
-  const region = url.searchParams.get('region') || 'eu';
-  const realm  = url.searchParams.get('realm')  || '';
-  const name   = url.searchParams.get('name')   || '';
-  const fields = url.searchParams.get('fields') || 'mythic_plus_best_runs,mythic_plus_scores_by_season:current';
-
-  const rioUrl = `https://raider.io/api/v1/characters/profile?region=${encodeURIComponent(region)}&realm=${encodeURIComponent(realm)}&name=${encodeURIComponent(name)}&fields=${encodeURIComponent(fields)}`;
-  const res = await fetch(rioUrl, { headers: { 'User-Agent': 'jdoc-api/1.0' } });
-  const data = await res.json();
-  return jsonResponse(data, res.status);
-}
-
 // ── Entry point ───────────────────────────────────────────────
 export default {
   async fetch(request, env) {
@@ -208,7 +195,6 @@ export default {
       if (pathname === '/api/character')                              return await handleCharacter(request, env);
       if (pathname === '/api/load-state'  && request.method === 'GET')  return await handleLoadState(request, env);
       if (pathname === '/api/save-raid' && request.method === 'POST') return await handleSaveRaid(request, env);
-      if (pathname === '/api/raiderio'    && request.method === 'GET')  return await handleRaiderIO(request);
 
       return jsonError('Not found', 404);
     } catch (e) {
