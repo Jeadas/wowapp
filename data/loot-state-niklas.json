@@ -9,7 +9,7 @@
     "neck": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "shoulders": {
