@@ -149,7 +149,7 @@
   .dungeon-key-overlay {
     position:absolute; top:0; left:0; right:0; bottom:22px;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Cinzel',serif; font-size:16px; font-weight:700; line-height:1;
+    font-family:'Cinzel',serif; font-size:22px; font-weight:700; line-height:1;
     text-shadow:0 0 6px rgba(0,0,0,1), 0 1px 4px rgba(0,0,0,0.9);
     pointer-events:none;
   }
@@ -929,7 +929,7 @@ function buildMplusHTML(rio) {
 
   const squaresHTML = SEASON_DUNGEONS.map(d => {
     const best = bestMap[d.short_name];
-    const keyColor = best ? scoreColor(best.score) : 'var(--text-dim)';
+    const keyColor = best ? keyLevelColor(best.key) : 'var(--text-dim)';
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
       <img src="${d.img}" onerror="this.remove()" alt="">
       ${best ? `<div class="dungeon-key-overlay" style="color:${keyColor}">+${best.key}</div>` : ''}
@@ -972,6 +972,14 @@ function scoreColor(score) {
   if (score >= 1000) return '#1eff00';
   if (score > 0)     return '#aaa';
   return 'var(--text-dim)';
+}
+
+function keyLevelColor(level) {
+  if (level >= 20) return '#ff8000';
+  if (level >= 15) return '#a335ee';
+  if (level >= 10) return '#0070dd';
+  if (level >=  5) return '#1eff00';
+  return '#aaa';
 }
 
 function slotRow(char, name) {
