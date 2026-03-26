@@ -2027,11 +2027,11 @@ function computePlayerContribution(playerName, dungeon, mode) {
       // Non-shared slots for non-Harry players come from PLAYER_TABLE_DATA.
       const rowVal = PLAYER_TABLE_DATA[playerName]?.rows?.[dungeon.ri]?.[slot];
       if (!rowVal) return;
-      if (typeof rowVal === 'number') {
-        // Multi-item slot (e.g. trinket: 2) — keys are ri_slot_0, ri_slot_1, …
+      if (typeof rowVal === 'number' && rowVal > 1) {
+        // Multi-cell slot (e.g. trinket: 2) — makeCellData creates .loot-item divs, keys are ri_slot_N
         bisKeys = Array.from({ length: rowVal }, (_, i) => `${dungeon.ri}_${slot}_${i}`);
       } else {
-        // Single item with stat array — key is ri_slot
+        // Single item — either a stat array or trinket:1 (both render as plain loot-cell), key is ri_slot
         bisKeys = [`${dungeon.ri}_${slot}`];
       }
     }
