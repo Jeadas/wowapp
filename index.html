@@ -933,7 +933,7 @@ function buildMplusHTML(rio) {
     const keyColor = best ? keyLevelColor(best.key) : 'var(--text-dim)';
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
       <img src="${d.img}" onerror="this.remove()" alt="">
-      ${best ? `<div class="dungeon-key-overlay" style="color:${keyColor}">+${best.key}</div>` : ''}
+      ${best ? `<div class="dungeon-key-overlay" style="color:${keyColor}">${best.key}</div>` : ''}
       <div class="dungeon-name-label">${d.short_name}</div>
     </div>`;
   }).join('');
