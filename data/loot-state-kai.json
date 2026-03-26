@@ -158,7 +158,7 @@
     "6_waist": false,
     "6_legs": false,
     "6_feet": false,
-    "6_ring_0": false,
+    "6_ring_0": true,
     "6_ring_1": false,
     "6_trinket": false,
     "7_head": false,
