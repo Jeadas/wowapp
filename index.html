@@ -267,6 +267,8 @@
   .meta-bis-pair .meta-check { flex:1; }
   .loot-greyed { opacity:0.28 !important; filter:grayscale(1) !important; }
   .loot-bis-greyed { box-shadow:inset 0 0 0 2px rgba(128,128,128,0.35) !important; background:rgba(128,128,128,0.06) !important; }
+  .loot-unwanted { opacity:0.2 !important; filter:grayscale(1) sepia(0.6) hue-rotate(300deg) !important; }
+  .edit-grey-active .loot-cell:not(:empty), .edit-grey-active .loot-item { cursor:crosshair; }
   .drop-chance { position:absolute; bottom:3px; right:4px; font-family:'Cinzel',serif; font-size:12px; font-weight:700; color:var(--text-dim); line-height:1; pointer-events:none; user-select:none; }
 
   /* Edit Modal */
@@ -414,6 +416,7 @@
       <button class="player-tab-btn" onclick="switchPlayer('kai',this)">Kai</button>
       <button class="player-tab-btn" onclick="switchPlayer('summary',this)">Summary</button>
       <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
+      <button class="btn btn-edit-bis" id="editGreyBtn" onclick="toggleEditGrey()">Mark Unwanted</button>
       <button class="btn btn-edit-bis" id="refreshSummaryBtn" onclick="refreshSummary()" style="display:none;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;">
           <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
@@ -783,12 +786,16 @@ async function loadFromGitHub() {
       // Support both new format { lootState, bisState } and old bare-object format.
       const lootState = raw.lootState || raw;
       const bisState  = raw.bisState  || null;
+      const greyState = raw.greyState || null;
       localStorage.setItem('lootState_' + player, JSON.stringify(lootState));
-      if (bisState && !localStorage.getItem('bisState_' + player))
-        localStorage.setItem('bisState_' + player, JSON.stringify(bisState));
+      if (bisState  && !localStorage.getItem('bisState_'  + player))
+        localStorage.setItem('bisState_'  + player, JSON.stringify(bisState));
+      if (greyState && !localStorage.getItem('greyState_' + player))
+        localStorage.setItem('greyState_' + player, JSON.stringify(greyState));
       if (player === currentPlayer) {
         applyLootState(lootState);
-        if (bisState) applyBisState(bisState);
+        if (bisState)  applyBisState(bisState);
+        if (greyState) applyGreyState(greyState);
       }
     } catch(e) {}
   }));
@@ -1410,14 +1417,16 @@ async function syncLocalToCloud() {
   status.textContent = '';
   try {
     const player = currentPlayer !== 'summary' ? currentPlayer : 'harry';
-    if (currentPlayer !== 'summary') { savePlayerState(currentPlayer); saveBisState(); }
+    if (currentPlayer !== 'summary') { savePlayerState(currentPlayer); saveBisState(); saveGreyState(); }
     const lootState = loadPlayerState(player);
     let bisState = null;
     try { bisState = JSON.parse(localStorage.getItem('bisState_' + player)); } catch(e) {}
+    let greyState = null;
+    try { greyState = JSON.parse(localStorage.getItem('greyState_' + player)); } catch(e) {}
     const res = await fetch(`${API_BASE}/api/save-raid`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tabId: 'loot-state-' + player, data: { lootState, bisState } }),
+      body: JSON.stringify({ tabId: 'loot-state-' + player, data: { lootState, bisState, greyState } }),
     });
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     btn.textContent = 'Saved ✓';
@@ -1442,12 +1451,15 @@ async function syncCloudToLocal() {
     const raw = await res.json();
     // Support both new format { lootState, bisState } and old format (bare lootState object)
     const lootState = raw.lootState || raw;
-    const bisState = raw.bisState || null;
+    const bisState  = raw.bisState  || null;
+    const greyState = raw.greyState || null;
     localStorage.setItem(getPlayerStateKey(player), JSON.stringify(lootState));
-    if (bisState) localStorage.setItem('bisState_' + player, JSON.stringify(bisState));
+    if (bisState)  localStorage.setItem('bisState_'  + player, JSON.stringify(bisState));
+    if (greyState) localStorage.setItem('greyState_' + player, JSON.stringify(greyState));
     if (currentPlayer === player) {
       applyLootState(lootState);
-      if (bisState) applyBisState(bisState);
+      if (bisState)  applyBisState(bisState);
+      if (greyState) applyGreyState(greyState);
     }
     btn.textContent = 'Applied ✓';
     lootChangedSinceSync = false;
@@ -1463,6 +1475,7 @@ const PLAYERS = ['harry', 'philipp', 'niklas', 'leon', 'kai'];
 let summaryActivePlayers = new Set(PLAYERS);
 let currentPlayer = 'harry';
 let editBisMode = false;
+let editGreyMode = false;
 let lootChangedSinceSync = false; // true when local changes haven't been pushed to cloud
 let applyingLootState    = false; // suppresses dirty flag during programmatic state restore
 let _pendingSummary      = null;  // { btn, skipHistory } stored while unsaved modal is open
@@ -1500,6 +1513,7 @@ function _commitPlayerSwitch(player, btn, skipHistory) {
   if (currentPlayer !== 'summary') {
     savePlayerState(currentPlayer);
     saveBisState();
+    saveGreyState();
   }
   lootChangedSinceSync = false; // reset for the newly displayed player
   document.querySelectorAll('.player-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1508,6 +1522,7 @@ function _commitPlayerSwitch(player, btn, skipHistory) {
   document.getElementById('playerLootView').style.display = isSummary ? 'none' : '';
   document.getElementById('summaryView').style.display    = isSummary ? '' : 'none';
   document.getElementById('editBisBtn').style.display          = isSummary ? 'none' : '';
+  document.getElementById('editGreyBtn').style.display         = isSummary ? 'none' : '';
   document.getElementById('refreshSummaryBtn').style.display   = isSummary ? '' : 'none';
   if (editBisMode) {
     editBisMode = false;
@@ -1515,6 +1530,7 @@ function _commitPlayerSwitch(player, btn, skipHistory) {
     document.getElementById('editBisBtn').textContent = 'Edit BiS';
     document.querySelector('.loot-table-container').classList.remove('edit-bis-active');
   }
+  if (editGreyMode) _exitGreyMode();
   currentPlayer = player;
   if (!skipHistory) history.pushState(null, '', '#loot-' + player);
   if (isSummary) { renderSummary(); }
@@ -1539,14 +1555,16 @@ async function uploadAndSwitchSummary() {
   errEl.textContent = '';
   try {
     const player = currentPlayer;
-    savePlayerState(player); saveBisState();
+    savePlayerState(player); saveBisState(); saveGreyState();
     const lootState = loadPlayerState(player);
     let bisState = null;
     try { bisState = JSON.parse(localStorage.getItem('bisState_' + player)); } catch(e) {}
+    let greyState = null;
+    try { greyState = JSON.parse(localStorage.getItem('greyState_' + player)); } catch(e) {}
     const res = await fetch(`${API_BASE}/api/save-raid`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tabId: 'loot-state-' + player, data: { lootState, bisState } }),
+      body: JSON.stringify({ tabId: 'loot-state-' + player, data: { lootState, bisState, greyState } }),
     });
     if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
     lootChangedSinceSync = false;
@@ -1737,10 +1755,17 @@ function attachBisClickHandlers() {
       if (!cell) return;
       if (cell.classList.contains('loot-cell-multi')) {
         cell.querySelectorAll('.loot-item').forEach(item => {
-          item.addEventListener('click', () => { if (!editBisMode) return; item.classList.toggle('loot-best-1'); saveBisState(); lootChangedSinceSync = true; window.refreshBisDisabled?.(); });
+          item.addEventListener('click', () => {
+            if (editBisMode)       { item.classList.toggle('loot-best-1');  saveBisState();  lootChangedSinceSync = true; window.refreshBisDisabled?.(); }
+            else if (editGreyMode) { item.classList.toggle('loot-unwanted'); saveGreyState(); lootChangedSinceSync = true; }
+          });
         });
       } else {
-        cell.addEventListener('click', () => { if (!editBisMode || !cell.children.length) return; cell.classList.toggle('loot-best-1'); saveBisState(); lootChangedSinceSync = true; window.refreshBisDisabled?.(); });
+        cell.addEventListener('click', () => {
+          if (!cell.children.length) return;
+          if (editBisMode)       { cell.classList.toggle('loot-best-1');  saveBisState();  lootChangedSinceSync = true; window.refreshBisDisabled?.(); }
+          else if (editGreyMode) { cell.classList.toggle('loot-unwanted'); saveGreyState(); lootChangedSinceSync = true; }
+        });
       }
     });
   });
@@ -1798,6 +1823,14 @@ function renderPlayerCells(player) {
       if (Object.values(state).some(v => v)) applyBisState(state);
     }
   } catch(e) {}
+  // Apply saved grey (unwanted) state for this player
+  try {
+    const saved = localStorage.getItem('greyState_' + player);
+    if (saved) {
+      const state = JSON.parse(saved);
+      if (Object.values(state).some(v => v)) applyGreyState(state);
+    }
+  } catch(e) {}
 }
 
 // ── Edit BiS ─────────────────────────────────────────────────
@@ -1841,11 +1874,73 @@ function saveBisState() {
 }
 
 function toggleEditBis() {
+  if (editGreyMode) _exitGreyMode();
   editBisMode = !editBisMode;
   const btn = document.getElementById('editBisBtn');
   btn.classList.toggle('bis-active', editBisMode);
   btn.textContent = editBisMode ? 'Done' : 'Edit BiS';
   document.querySelector('.loot-table-container').classList.toggle('edit-bis-active', editBisMode);
+}
+
+function _exitGreyMode() {
+  editGreyMode = false;
+  const btn = document.getElementById('editGreyBtn');
+  btn.classList.remove('bis-active');
+  btn.textContent = 'Mark Unwanted';
+  document.querySelector('.loot-table-container').classList.remove('edit-grey-active');
+}
+
+function toggleEditGrey() {
+  if (editBisMode) {
+    editBisMode = false;
+    const bisBtn = document.getElementById('editBisBtn');
+    bisBtn.classList.remove('bis-active');
+    bisBtn.textContent = 'Edit BiS';
+    document.querySelector('.loot-table-container').classList.remove('edit-bis-active');
+  }
+  editGreyMode = !editGreyMode;
+  const btn = document.getElementById('editGreyBtn');
+  btn.classList.toggle('bis-active', editGreyMode);
+  btn.textContent = editGreyMode ? 'Done' : 'Mark Unwanted';
+  document.querySelector('.loot-table-container').classList.toggle('edit-grey-active', editGreyMode);
+}
+
+function applyGreyState(state) {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          const k = ri + '_' + slot + '_' + ii;
+          if (k in state) item.classList.toggle('loot-unwanted', !!state[k]);
+        });
+      } else {
+        const k = ri + '_' + slot;
+        if (k in state) cell.classList.toggle('loot-unwanted', !!state[k]);
+      }
+    });
+  });
+}
+
+function saveGreyState() {
+  const S = ['head','neck','shoulders','back','chest','wrist','hands','waist','legs','feet','ring','trinket'];
+  const state = {};
+  document.querySelectorAll('.loot-table tbody .loot-row').forEach((row, ri) => {
+    S.forEach((slot, si) => {
+      const cell = row.cells[si + 1];
+      if (!cell) return;
+      if (cell.classList.contains('loot-cell-multi')) {
+        cell.querySelectorAll('.loot-item').forEach((item, ii) => {
+          state[ri + '_' + slot + '_' + ii] = item.classList.contains('loot-unwanted');
+        });
+      } else {
+        state[ri + '_' + slot] = cell.classList.contains('loot-unwanted');
+      }
+    });
+  });
+  localStorage.setItem('greyState_' + currentPlayer, JSON.stringify(state));
 }
 
 function initBisEdit() {
@@ -1854,6 +1949,13 @@ function initBisEdit() {
     if (saved) {
       const state = JSON.parse(saved);
       if (Object.values(state).some(v => v)) applyBisState(state);
+    }
+  } catch(e) {}
+  try {
+    const saved = localStorage.getItem('greyState_harry');
+    if (saved) {
+      const state = JSON.parse(saved);
+      if (Object.values(state).some(v => v)) applyGreyState(state);
     }
   } catch(e) {}
   attachBisClickHandlers();
@@ -1900,6 +2002,8 @@ function computePlayerContribution(playerName, dungeon, mode) {
   if (!state) return 0;
   let playerBisState = null;
   try { playerBisState = JSON.parse(localStorage.getItem('bisState_' + playerName)); } catch(e) {}
+  let playerGreyState = null;
+  try { playerGreyState = JSON.parse(localStorage.getItem('greyState_' + playerName)); } catch(e) {}
   let count = 0;
 
   ALL_SLOTS.forEach(slot => {
@@ -1933,6 +2037,7 @@ function computePlayerContribution(playerName, dungeon, mode) {
     }
 
     bisKeys.forEach(bisKey => {
+      if (playerGreyState?.[bisKey]) return; // marked unwanted — skip entirely
       const bisDesignated = !!(playerBisState?.[bisKey]);
       let value = 0;
       if (bisDesignated && !bis_complete) value += 1; // contributes to BiS checkbox
@@ -2031,8 +2136,10 @@ async function refreshSummary() {
       const raw = await res.json();
       const lootState = raw.lootState || raw;
       const bisState  = raw.bisState  || null;
+      const greyState = raw.greyState || null;
       localStorage.setItem(getPlayerStateKey(p), JSON.stringify(lootState));
-      if (bisState) localStorage.setItem('bisState_' + p, JSON.stringify(bisState));
+      if (bisState)  localStorage.setItem('bisState_'  + p, JSON.stringify(bisState));
+      if (greyState) localStorage.setItem('greyState_' + p, JSON.stringify(greyState));
     }));
     renderSummary();
     btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh';
