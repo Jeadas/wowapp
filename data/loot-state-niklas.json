@@ -21,7 +21,7 @@
     "back": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "chest": {
@@ -33,7 +33,7 @@
     "wrist": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "hands": {
@@ -67,7 +67,7 @@
       ]
     },
     "trinket": {
-      "hero": true,
+      "hero": false,
       "bis": [
         false
       ]
@@ -154,7 +154,7 @@
     "6_shoulders": false,
     "6_back": false,
     "6_chest": false,
-    "6_wrist": true,
+    "6_wrist": false,
     "6_hands": false,
     "6_waist": false,
     "6_legs": false,
@@ -165,7 +165,7 @@
     "7_head": false,
     "7_neck": false,
     "7_shoulders": false,
-    "7_back": true,
+    "7_back": false,
     "7_chest": false,
     "7_wrist": false,
     "7_hands": false,
