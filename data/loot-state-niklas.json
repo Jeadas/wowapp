@@ -67,7 +67,7 @@
       ]
     },
     "trinket": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
