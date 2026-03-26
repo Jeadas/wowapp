@@ -61,9 +61,9 @@
       ]
     },
     "ring": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "trinket": {
