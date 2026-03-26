@@ -149,10 +149,12 @@
   .dungeon-key-overlay {
     position:absolute; top:0; left:0; right:0; bottom:22px;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Cinzel',serif; font-size:22px; font-weight:700; line-height:1;
-    -webkit-text-stroke: 1.5px rgba(0,0,0,0.85);
-    text-shadow: 0 0 6px rgba(0,0,0,1), 0 0 12px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7);
     pointer-events:none;
+  }
+  .dungeon-key-badge {
+    font-family:'Cinzel',serif; font-size:18px; font-weight:700; line-height:1;
+    background:rgba(0,0,0,0.72); border-radius:4px; padding:3px 7px;
+    border:1px solid rgba(255,255,255,0.08);
   }
   .dungeon-name-label {
     background:rgba(0,0,0,0.6); font-size:9px; padding:4px 4px 3px;
@@ -933,7 +935,7 @@ function buildMplusHTML(rio) {
     const keyColor = best ? keyLevelColor(best.key) : 'var(--text-dim)';
     return `<div class="dungeon-square ${best ? 'dg-cleared' : 'dg-uncleared'}" title="${d.name}${best ? ' · +' + best.key + ' (' + best.score + ')' : ''}">
       <img src="${d.img}" onerror="this.remove()" alt="">
-      ${best ? `<div class="dungeon-key-overlay" style="color:${keyColor}">${best.key}</div>` : ''}
+      ${best ? `<div class="dungeon-key-overlay"><span class="dungeon-key-badge" style="color:${keyColor}">${best.key}</span></div>` : ''}
       <div class="dungeon-name-label">${d.short_name}</div>
     </div>`;
   }).join('');
