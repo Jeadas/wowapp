@@ -55,9 +55,9 @@
       ]
     },
     "feet": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "ring": {
@@ -247,7 +247,7 @@
     "5_waist": false,
     "5_legs": false,
     "5_feet": false,
-    "5_ring": false,
+    "5_ring": true,
     "5_trinket": false,
     "6_head": false,
     "6_neck": false,
