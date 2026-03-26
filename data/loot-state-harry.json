@@ -108,7 +108,7 @@
     "2_waist": false,
     "2_legs": false,
     "2_feet": false,
-    "2_ring_0": false,
+    "2_ring_0": true,
     "2_ring_1": false,
     "2_trinket": false,
     "3_head": false,
