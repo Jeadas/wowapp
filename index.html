@@ -966,12 +966,30 @@ function buildRaidHTML(rio) {
 }
 
 function scoreColor(score) {
-  if (score >= 3000) return '#ff8000';
-  if (score >= 2500) return '#ffd700';
-  if (score >= 2000) return '#a335ee';
-  if (score >= 1500) return '#0070dd';
-  if (score >= 1000) return '#1eff00';
-  if (score > 0)     return '#aaa';
+  if (!score || score <= 0) return 'var(--text-dim)';
+  // Continuous gradient matching Raider.IO's score color ramp
+  const stops = [
+    [0,    [128, 128, 128]],
+    [500,  [30,  255,   0]],
+    [1000, [0,   112, 221]],
+    [1500, [163,  53, 238]],
+    [2500, [255, 128,   0]],
+  ];
+  if (score >= stops[stops.length - 1][0]) {
+    const [r, g, b] = stops[stops.length - 1][1];
+    return `rgb(${r},${g},${b})`;
+  }
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [s0, c0] = stops[i];
+    const [s1, c1] = stops[i + 1];
+    if (score >= s0 && score < s1) {
+      const t = (score - s0) / (s1 - s0);
+      const r = Math.round(c0[0] + t * (c1[0] - c0[0]));
+      const g = Math.round(c0[1] + t * (c1[1] - c0[1]));
+      const b = Math.round(c0[2] + t * (c1[2] - c0[2]));
+      return `rgb(${r},${g},${b})`;
+    }
+  }
   return 'var(--text-dim)';
 }
 
