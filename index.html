@@ -327,7 +327,11 @@
   .edit-bis-active .loot-item:hover { outline:1px dashed rgba(200,168,75,0.5); }
 
   /* Summary */
-  .summary-container { padding:4px 0 20px; display:flex; justify-content:center; }
+  .summary-container { padding:4px 0 20px; display:flex; flex-direction:column; align-items:center; }
+  .summary-player-toggles { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; justify-content:center; }
+  .summary-toggle-btn { display:flex; align-items:center; gap:5px; padding:4px 10px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-dim); font-family:'Cinzel',serif; font-size:10px; letter-spacing:0.5px; cursor:pointer; user-select:none; transition:border-color 0.15s, color 0.15s; }
+  .summary-toggle-btn.active { border-color:var(--gold-dim); color:var(--gold); }
+  .summary-toggle-btn .toggle-check { width:10px; height:10px; border:1px solid currentColor; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:8px; }
   .summary-columns { display:flex; gap:20px; align-items:flex-start; }
   .summary-columns .summary-section { margin-bottom:0; }
   .summary-section { margin-bottom:28px; }
@@ -1456,6 +1460,7 @@ async function syncCloudToLocal() {
 
 // ── Players ──────────────────────────────────────────────────
 const PLAYERS = ['harry', 'philipp', 'niklas', 'leon', 'kai'];
+let summaryActivePlayers = new Set(PLAYERS);
 let currentPlayer = 'harry';
 let editBisMode = false;
 let lootChangedSinceSync = false; // true when local changes haven't been pushed to cloud
@@ -1952,7 +1957,7 @@ function computeSummaryScores() {
       const lo = computePlayerContribution(p, d, 'low')  * w;
       const hi = computePlayerContribution(p, d, 'high') * w;
       playerLow[p] = lo; playerHigh[p] = hi;
-      totalLow += lo; totalHigh += hi;
+      if (summaryActivePlayers.has(p)) { totalLow += lo; totalHigh += hi; }
     });
     return { name: d.name, low: totalLow, high: totalHigh, playerLow, playerHigh };
   });
@@ -1987,11 +1992,33 @@ function renderSummary() {
     </div>`;
   }
 
+  const toggleBar = `<div class="summary-player-toggles">${
+    PLAYERS.map(p => {
+      const active = summaryActivePlayers.has(p);
+      return `<div class="summary-toggle-btn${active ? ' active' : ''}" data-player="${p}">
+        <span class="toggle-check">${active ? '✓' : ''}</span>${p[0].toUpperCase()+p.slice(1)}
+      </div>`;
+    }).join('')
+  }</div>`;
+
   document.getElementById('summaryContent').innerHTML =
+    toggleBar +
     `<div class="summary-columns">` +
     section('Low Keys (6 – 9)',  sortedLow,  'low',  'playerLow') +
     section('High Keys (10+)', sortedHigh, 'high', 'playerHigh') +
     `</div>`;
+
+  document.querySelectorAll('.summary-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = btn.dataset.player;
+      if (summaryActivePlayers.has(p)) {
+        if (summaryActivePlayers.size > 1) summaryActivePlayers.delete(p);
+      } else {
+        summaryActivePlayers.add(p);
+      }
+      renderSummary();
+    });
+  });
 }
 
 async function refreshSummary() {
