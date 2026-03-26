@@ -321,7 +321,8 @@
   .player-tab-btn { padding:7px 16px; background:transparent; border:1px solid transparent; border-bottom:none; color:var(--text-muted); font-family:'Cinzel',serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all .25s; position:relative; bottom:-1px; }
   .player-tab-btn:hover { color:var(--gold); }
   .player-tab-btn.active { color:var(--gold); border-color:var(--border-gold); border-bottom-color:var(--bg-deep); background:var(--bg-deep); }
-  .btn-edit-bis { margin-left:auto; padding:5px 14px !important; font-size:10px !important; align-self:flex-end; margin-bottom:1px; }
+  .player-tab-actions { margin-left:auto; display:flex; gap:4px; align-items:flex-end; margin-bottom:1px; }
+  .btn-edit-bis { padding:5px 14px !important; font-size:10px !important; }
   .btn-edit-bis.bis-active { border-color:var(--gold) !important; color:var(--gold-bright) !important; background:rgba(200,168,75,0.1) !important; }
   .edit-bis-active .loot-cell:not(.loot-cell-multi) { cursor:crosshair; }
   .edit-bis-active .loot-item { cursor:crosshair; }
@@ -415,13 +416,15 @@
       <button class="player-tab-btn" onclick="switchPlayer('leon',this)">Leon</button>
       <button class="player-tab-btn" onclick="switchPlayer('kai',this)">Kai</button>
       <button class="player-tab-btn" onclick="switchPlayer('summary',this)">Summary</button>
-      <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
-      <button class="btn btn-edit-bis" id="editGreyBtn" onclick="toggleEditGrey()">Mark Unwanted</button>
-      <button class="btn btn-edit-bis" id="refreshSummaryBtn" onclick="refreshSummary()" style="display:none;">
+      <div class="player-tab-actions">
+        <button class="btn btn-edit-bis" id="editBisBtn" onclick="toggleEditBis()">Edit BiS</button>
+        <button class="btn btn-edit-bis" id="editGreyBtn" onclick="toggleEditGrey()">Mark Unwanted</button>
+        <button class="btn btn-edit-bis" id="refreshSummaryBtn" onclick="refreshSummary()" style="display:none;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;">
           <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
         </svg>Refresh
       </button>
+      </div>
     </div>
     <!-- Player loot view -->
     <div id="playerLootView">
