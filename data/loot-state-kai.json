@@ -1,13 +1,13 @@
 {
   "lootState": {
     "head": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
     },
     "neck": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
@@ -19,7 +19,7 @@
       ]
     },
     "back": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
@@ -31,13 +31,13 @@
       ]
     },
     "wrist": {
-      "hero": true,
+      "hero": false,
       "bis": [
-        true
+        false
       ]
     },
     "hands": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -49,7 +49,7 @@
       ]
     },
     "legs": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -141,7 +141,7 @@
     "5_shoulders": false,
     "5_back": false,
     "5_chest": false,
-    "5_wrist": false,
+    "5_wrist": true,
     "5_hands": false,
     "5_waist": true,
     "5_legs": false,
