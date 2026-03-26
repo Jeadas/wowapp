@@ -1,7 +1,7 @@
 {
   "lootState": {
     "head": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -13,15 +13,15 @@
       ]
     },
     "shoulders": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "back": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "chest": {
@@ -33,7 +33,7 @@
     "wrist": {
       "hero": false,
       "bis": [
-        false
+        true
       ]
     },
     "hands": {
@@ -43,7 +43,7 @@
       ]
     },
     "waist": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -55,15 +55,15 @@
       ]
     },
     "feet": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "ring": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "trinket": {
@@ -97,7 +97,7 @@
     "1_legs": false,
     "1_feet": false,
     "1_ring": false,
-    "1_trinket_0": true,
+    "1_trinket_0": false,
     "1_trinket_1": false,
     "2_head": false,
     "2_neck": false,
@@ -110,7 +110,7 @@
     "2_legs": false,
     "2_feet": false,
     "2_ring_0": false,
-    "2_ring_1": true,
+    "2_ring_1": false,
     "2_trinket": false,
     "3_head": false,
     "3_neck": false,
@@ -154,7 +154,7 @@
     "6_shoulders": false,
     "6_back": false,
     "6_chest": false,
-    "6_wrist": true,
+    "6_wrist": false,
     "6_hands": false,
     "6_waist": false,
     "6_legs": false,
@@ -165,7 +165,7 @@
     "7_head": false,
     "7_neck": false,
     "7_shoulders": false,
-    "7_back": true,
+    "7_back": false,
     "7_chest": false,
     "7_wrist": false,
     "7_hands": false,

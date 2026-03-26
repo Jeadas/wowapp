@@ -37,7 +37,7 @@
       ]
     },
     "hands": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
