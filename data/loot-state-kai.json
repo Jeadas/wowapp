@@ -21,7 +21,7 @@
     "back": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "chest": {
@@ -31,9 +31,9 @@
       ]
     },
     "wrist": {
-      "hero": false,
+      "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "hands": {
