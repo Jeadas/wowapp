@@ -7,7 +7,7 @@
       ]
     },
     "neck": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -19,13 +19,13 @@
       ]
     },
     "back": {
-      "hero": false,
+      "hero": true,
       "bis": [
         false
       ]
     },
     "chest": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -55,13 +55,13 @@
       ]
     },
     "feet": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
     },
     "ring": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
