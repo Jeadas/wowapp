@@ -1476,7 +1476,9 @@ async function syncCloudToLocal() {
 // ── Players ──────────────────────────────────────────────────
 const PLAYERS = ['harry', 'philipp', 'niklas', 'leon', 'kai'];
 let summaryActivePlayers = new Set(PLAYERS);
-let currentPlayer = 'harry';
+const VALID_PLAYERS_AND_SUMMARY = ['harry', 'philipp', 'niklas', 'leon', 'kai', 'summary'];
+const _savedPlayer = localStorage.getItem('activePlayer');
+let currentPlayer = (VALID_PLAYERS_AND_SUMMARY.includes(_savedPlayer) ? _savedPlayer : null) || 'harry';
 let editBisMode = false;
 let editGreyMode = false;
 let lootChangedSinceSync = false; // true when local changes haven't been pushed to cloud
@@ -1535,6 +1537,7 @@ function _commitPlayerSwitch(player, btn, skipHistory) {
   }
   if (editGreyMode) _exitGreyMode();
   currentPlayer = player;
+  localStorage.setItem('activePlayer', player);
   if (!skipHistory) history.pushState(null, '', '#loot-' + player);
   if (isSummary) { renderSummary(); }
   else           { renderPlayerCells(player); applyLootState(loadPlayerState(player)); }
@@ -2289,6 +2292,10 @@ initLootCells();      // capture Harry's cells after all init is done
       const btn = document.querySelector(`.tab-btn[onclick*="'${id}'"]`);
       if (btn) switchTab(id, btn, true);
     }
+  } else if (currentPlayer !== 'harry') {
+    // Restore the previously selected player (no URL hash to override it).
+    const playerBtn = document.querySelector(`.player-tab-btn[onclick*="'${currentPlayer}'"]`);
+    if (playerBtn) switchPlayer(currentPlayer, playerBtn, true);
   }
 }
 </script>
