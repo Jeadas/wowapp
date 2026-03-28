@@ -69,7 +69,7 @@
     "trinket": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     }
   },
@@ -124,7 +124,7 @@
     "3_feet": false,
     "3_ring": false,
     "3_trinket_0": false,
-    "3_trinket_1": true,
+    "3_trinket_1": false,
     "4_head": false,
     "4_neck": false,
     "4_shoulders": false,
