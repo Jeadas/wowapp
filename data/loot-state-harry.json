@@ -63,7 +63,7 @@
     "ring": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "trinket": {
