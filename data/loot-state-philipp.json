@@ -21,7 +21,7 @@
     "back": {
       "hero": true,
       "bis": [
-        false
+        true
       ]
     },
     "chest": {
