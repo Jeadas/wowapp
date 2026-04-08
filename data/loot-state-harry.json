@@ -55,7 +55,7 @@
       ]
     },
     "feet": {
-      "hero": false,
+      "hero": true,
       "bis": [
         true
       ]
@@ -186,7 +186,7 @@
     "0_hands": false,
     "0_waist": false,
     "0_legs": false,
-    "0_feet": false,
+    "0_feet": true,
     "0_ring": true,
     "0_trinket": false,
     "1_head": false,
@@ -198,7 +198,7 @@
     "1_hands": false,
     "1_waist": false,
     "1_legs": false,
-    "1_feet": false,
+    "1_feet": true,
     "1_ring": false,
     "1_trinket": false,
     "2_head": false,
@@ -223,7 +223,7 @@
     "3_hands": false,
     "3_waist": false,
     "3_legs": false,
-    "3_feet": false,
+    "3_feet": true,
     "3_ring": false,
     "3_trinket_0": false,
     "3_trinket_1": false,
@@ -262,7 +262,7 @@
     "6_hands": false,
     "6_waist": false,
     "6_legs": false,
-    "6_feet": false,
+    "6_feet": true,
     "6_ring_0": true,
     "6_ring_1": true,
     "6_trinket": false,
